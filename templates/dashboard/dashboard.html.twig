@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<!-- CUSTOM CSS -->
+	<link rel="stylesheet" href="{{ asset('styles/style.css') }}">
+{% endblock %}
+
+{% block page_content %}
+	<div class="row content">
+		<div class="row grid-1-5">
+			{# 20% width : Menu#}
+			{% include "/shared_templates/dashboard_menu.html.twig" %}
+			{# 80% width : Main content #}
+			
+		</div>
+	</div>
+{% endblock %}

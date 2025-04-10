@@ -1,0 +1,25 @@
+<header class="navbar sticky-top bg-cstm-blue text-light">
+	<nav class="container-xxl">
+		<div class="d-inline-flex col-auto title-bold ms-2 pe-5 me-5">
+			<img id="logo" src={{ asset('img/logo.png') }} alt="Logo WareHouse" class="col">
+			<a id="headerTitle" href="#" class="my-auto col ms-2 fs-2 text-light">WareHouse</a>
+		</div>
+		{% if app.user == null %}
+			{# If user is not logged in #}
+			<a href={{ path("app_login") }} class="ps-2 ms-auto">Se connecter</a>
+		{% else %}
+			{# If user is logged in #}
+			<div class="d-inline-flex col ms-auto title">
+				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
+				<a href={{ path("dashboard") }} class="my-auto col ms-2 fs-5 text-light">Dashboard</a>
+			</div>
+			<p class="ps-2 ms-auto my-0 py-0">Connecté en tant que <br> {{ app.user.username }}</p>
+			{% if "ROLE_ADMIN" in app.user.roles %}
+				{# IF USER IS ADMINISTRATOR #}
+				<a href={{ path("admin") }} class="ps-2 ms-1">Administration</a>
+			{% endif %}
+			{# Log out #}
+			<a href={{ path("app_logout") }} class="ps-2 ms-1">Se déconnecter</a>
+		{% endif %}
+	</nav>
+</header>

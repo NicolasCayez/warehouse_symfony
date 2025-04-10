@@ -1,0 +1,28 @@
+<footer class="bg-cstm-blue text-light">
+
+	<div class="row text-center">
+		<p class="my-auto py-1">FOOTER  (WIP)</p>
+		<div class="row my-auto py-1 justify-content-center">
+			<a id="LegalNotices" class="mx-auto col-1 fs-6 text-light">Legal Notices</a>
+			{# <a href={{ path("contact") }} class="col-auto px-3 text-light">Formulaire de contact</a> #}
+		</div>
+	</div>
+	<hr class="w-75 mx-auto">
+	<div class="col-auto ms-auto text-center pb-3">
+		{% if app.user != null %} {# If user is logged in #}
+			{# IF USER IS REDACTOR #}
+			{% if "ROLE_REDACTOR" in app.user.roles %}
+				{# <a href={{ path("edit_home_page") }} class="d-inline-flex col-auto title my-auto mx-1 fs-5 text-warning">RÉDACTION</a> #}
+			{% endif %}
+			{# IF USER IS ADMINISTRATOR #}
+			{% if "ROLE_ADMIN" in app.user.roles %}
+				{# <a href={{ path("admin") }} class="d-inline-flex col-auto title my-auto mx-1 fs-5 text-danger">ADMIN</a> #}
+			{% endif %}
+			{# Log out #}
+			{# <a href={{ path("app_logout") }} class="d-inline-flex col-auto title my-auto mx-1 fs-5 text-light">DÉCONNEXION ({{ app.user.username }})</a> #}
+		{% else %} {# If user is not logged in #}
+			{# <a href={{ path("app_login") }} class="d-inline-flex col-auto title my-auto mx-1 fs-5 text-light">CONNEXION</a> #}
+		{% endif %}
+	</div>
+
+</footer>
