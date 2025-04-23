@@ -1,0 +1,74 @@
+<?php
+
+namespace App\DataFixtures;
+
+use App\Entity\Cours;
+use App\Entity\Langages;
+use App\Entity\Niveaux;
+use App\Entity\User;
+use App\Entity\Warehouse;
+use App\Repository\UserRepository;
+use App\Repository\WarehouseRepository;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
+
+use function Symfony\Component\Clock\now;
+
+class WarehouseFixtures extends Fixture implements DependentFixtureInterface
+{
+	public const WAREHOUSE_REFERENCE_TAG = 'warehouse-';
+	public const NB_WAREHOUSE = 4;
+	private UserRepository $userRepository;
+	private WarehouseRepository $warehouseRepository;
+
+	public function __construct(UserRepository $userRepository, WarehouseRepository $warehouseRepository)
+	{
+		$this->userRepository = $userRepository;
+		$this->warehouseRepository = $warehouseRepository;
+	}
+
+	public function load(ObjectManager $manager): void
+	{
+		$faker = Factory::create('fr_FR');
+		// fetching the admin
+		$admin = new User;
+		$users = $this->userRepository->findAll();
+		foreach ($users as $user) {
+			foreach ($user->getRoles() as $role){
+				// dump($role);
+				if ($role == 'ROLE_ADMIN') {
+					$admin = $user;
+				}
+			}
+		}
+		// warehouses
+		for ($i = 0; $i < self::NB_WAREHOUSE; $i++) {
+			$warehouse = new Warehouse();
+			$warehouse->setWhName($faker->lastName());
+			$warehouse->setWhPhone($faker->phoneNumber());
+			$warehouse->setWhAddressNumber($faker->numberBetween(1, 150));
+			$warehouse->setWhAddressRoad($faker->lastName());
+			$warehouse->setWhAddressLabel($faker->lastName());
+			$warehouse->setWhAddressPostalCode($faker->numberBetween(10000, 98000));
+			$warehouse->setWhAddressCountry($faker->country());
+
+			$manager->persist($warehouse);
+			$this->addReference(self::WAREHOUSE_REFERENCE_TAG . $i, $warehouse);
+			$manager->flush();
+			$lastId = $warehouse->getId();
+			$lastWarehouse = $this->warehouseRepository->findOneById($lastId);
+			$lastWarehouse->addUser($admin);
+		}
+		$manager->flush();
+	}
+
+		public function getDependencies(): array
+	{
+			return [
+					UserFixtures::class,
+			];
+	}
+}
+

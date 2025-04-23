@@ -15,14 +15,14 @@
 			{% block importmap %}{{ importmap('app') }}{% endblock %}
 		{% endblock %}
 	</head>
-	<body class="box bg-cstm-darkBlue">
+	<body class="box bg-cstm-darkBlue text-light">
 		<div class="box-container ">
 		{% block body %}
 			{% block header %}
 				{% include "/shared_templates/header.html.twig" %}
 			{% endblock %}
 
-			{% if showMenu %}
+			{% if user_authentified %}
 				{% block page_content %}{% endblock %}
 			{% else %}
 				<div class="row content">

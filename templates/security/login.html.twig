@@ -3,7 +3,7 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <form method="post">
+    <form method="post" class="m-auto">
         {% if error %}
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
@@ -21,7 +21,7 @@
         <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
 
         <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-        >
+        
 
         {#
             Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
@@ -33,7 +33,7 @@
             </div>
         #}
 
-        <button class="btn btn-lg btn-primary" type="submit">
+        <button class="btn btn-lg btn-primary mt-3" type="submit">
             Sign in
         </button>
     </form>

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<!-- CUSTOM CSS -->
+	<link rel="stylesheet" href="{{ asset('styles/style.css') }}">
+{% endblock %}
+
+{% block page_content %}
+	<div class="row content grid-1-5">
+		{# 20% width : Menu#}
+		{% include "/shared_templates/dashboard_menu.html.twig" %}
+		<div class="col">
+			{# 80% width : Main content #}
+				{# 1st ROW : Warehouses List, Selected Warehouse, Search bar #}
+				<div class="row vh-15 text-light grid-1-2-2">
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<div class="h-100">
+								<p class="bg-cstm-blue pb-2 mb-0">Selected</p>
+								{# <p class="text-center my-0 fs-4">{{ warehouse.getWhName }}</p> #}
+							</div>
+						</div>
+					</div>
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<p>Actions</p>
+						</div>
+					</div>
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<p>Filter list</p>
+						</div>
+					</div>
+				</div>
+				{# 2nd ROW : Last events #}
+				<div class="vh-70 p-1">
+					<div class="cstm-card h-100">
+						<p class="row bg-cstm-blue pb-2 mb-0">Products</p>
+						<div class="bg-light h-95 overflow-auto">
+							<ul class="list-unstyled bg-light">
+								{% for one_product in product_list %}
+								<li class="m-0 ps-1">
+									<p class="title cstm-darkBlue">{{ one_product.getProductName }}</p>
+								</li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+{% endblock %}
