@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block page_content %}
+	<div class="row content grid-1-5">
+		{# 20% width : Menu#}
+		{% include "/shared_templates/dashboard_menu.html.twig" %}
+		<div class="col">
+			{# 80% width : Main content #}
+				{# 1st ROW : Warehouses List, Selected Warehouse, Search bar #}
+				<div class="row vh-15 text-light grid-1-2-2">
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<div class="h-100">
+								<p class="bg-cstm-blue pb-2 mb-0">Selected</p>
+								{# <p class="text-center my-0 fs-4">{{ warehouse.getWhName }}</p> #}
+							</div>
+						</div>
+					</div>
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<p>Actions</p>
+						</div>
+					</div>
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<p>Filter list</p>
+						</div>
+					</div>
+				</div>
+				{# 2nd ROW : List #}
+				<div class="vh-70 p-1">
+					<div class="cstm-card h-100">
+						<p class="row bg-cstm-blue pb-2 mb-0">Products</p>
+						<div class="bg-light h-95 overflow-auto">
+							<table class="table table-sm table-striped-columns table-hover table-responsive">
+								<thead>
+									<tr class="m-0 ps-1 text-center">
+										<th scope="col" class="title">Product Name</th>
+										<th scope="col" class="title">Serial</th>
+										<th scope="col" class="title">Ref</th>
+										<th scope="col" class="title">Ref 2</th>
+										<th scope="col" class="title">Value</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for one_product in product_list %}
+										<tr class="m-0 ps-1">
+											<td class="title cstm-darkBlue"><a href={{ path('receptions') }} class="btn-sm cstm-darkBlue">{{ one_product.getProductName }}</a></td>
+											<td class="title cstm-darkBlue">{{ one_product.getProductSerialNumber }}</td>
+											<td class="title cstm-darkBlue">{{ one_product.getProductRef }}</td>
+											<td class="title cstm-darkBlue">{{ one_product.getProductRef2 }}</td>
+											<td class="title cstm-darkBlue text-end">{{ one_product.getProductValue }}</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+{% endblock %}

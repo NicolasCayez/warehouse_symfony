@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block page_content %}
+	<div class="row content grid-1-5">
+		{# 20% width : Menu#}
+		{% include "/shared_templates/dashboard_menu.html.twig" %}
+		<div class="col">
+			{# 80% width : Main content #}
+				{# 1st ROW : Warehouses List, Selected Warehouse, Search bar #}
+				<div class="row vh-15 text-light grid-1-2-2">
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<div class="h-100">
+								<p class="bg-cstm-blue pb-2 mb-0"> Product receptions for warehouse :</p>
+								<p class="text-center my-0 fs-4">{{ warehouse.getWhName }}</p>
+							</div>
+						</div>
+					</div>
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<p>Actions</p>
+							<div class="row my-0 fs-4 justify-content-evenly">
+								<a href={{ path('new_reception', {'id': warehouse.getId}) }} class="col-2 btn btn-sm btn-light">New reception</a>
+								<a href="" class="col-2 btn btn-sm btn-light">Transfert</a>
+								<a href="" class="col-2 btn btn-sm btn-light">Modif stock</a>
+							</div>
+						</div>
+					</div>
+					<div class="col h-100 p-1">
+						<div class="cstm-card h-100">
+							<p>Filter list</p>
+						</div>
+					</div>
+				</div>
+				{# 2nd ROW : List #}
+				<div class="vh-70 p-1">
+					<div class="cstm-card h-100">
+						<p class="row bg-cstm-blue pb-2 mb-0"></p>
+						<div class="bg-light h-95 overflow-auto">
+							<table class="table table-sm table-striped-columns table-hover table-responsive">
+								<thead>
+									<tr class="m-0 ps-1 text-center">
+										<th scope="col" class="title">Date</th>
+										<th scope="col" class="title">Invoice</th>
+										<th scope="col" class="title">Parcel</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for one_reception in receptions_list|sort((a,b) => [b.getMvmtDate] <=> [a.getMvmtDate]) %}
+										<tr class="m-0 ps-1">
+											{# <td class="title cstm-darkBlue"><a href={{ path('receptions') }} class="btn-sm cstm-darkBlue">{{ one_product.getProductName }}</a></td> #}
+											<td class="title cstm-darkBlue">{{ one_reception.getMvmtDate }}</td>
+											<td class="title cstm-darkBlue">{{ one_reception.getInvoiceRef }}</td>
+											<td class="title cstm-darkBlue">{{ one_reception.getParcelRef }}</td>
+											<td class="title cstm-darkBlue"></td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+{% endblock %}

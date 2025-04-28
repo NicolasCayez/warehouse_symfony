@@ -12,7 +12,7 @@
             {% else %}
               {% set active_link = "" %}
             {% endif %}
-            <a class="title text-light mb-1 ms-3 {{ active_link }}" href={{ path("warehouse", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWhName }}</a>
+            <a class="title text-light mb-1 ms-3 {{ active_link }}" href={{ path("warehouses", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWhName }}</a>
           </li>
         {% endfor %}
         <li>
@@ -26,10 +26,11 @@
     <div class="card bg-cstm-blue border-3 ms-3">
       <p></p>
     </div>
-    {# Transactions #}
+    {# Transactions, avtive if warehouse has been selected #}
     <a class="title-bold text-light mt-2 ms-3" href="">Transactions</a>
     <div class="card bg-cstm-blue border-3 ms-3">
-      <a class="title-bold text-light mt-2 ms-3" href={{ path('receptions') }}>Receptions</a>
+      {% if warehouse.getId != null %}
+      <a class="title-bold text-light mt-2 ms-3" href={{ path('receptions', {'id': warehouse.getId}) }}>Receptions</a>
       <div class="card bg-cstm-blue border-3 ms-3">
         <p></p>
       </div>
@@ -44,6 +45,9 @@
       <div class="card bg-cstm-blue border-3 ms-3">
         <p></p>
       </div>
+      {% else %}
+        <p class="title text-light mt-2 ms-3">No Warehouse selected</p>
+      {% endif %}
     </div>
     {# Inventories #}
     <a class="title-bold text-light mt-2 ms-3" href="">Inventrories</a>

@@ -191,6 +191,18 @@ footer:hover{
   color: #3B7BCD;
 }
 
+th {
+  background-color: #254C80 !important;
+  border: solid 2px whitesmoke !important;
+  color: whitesmoke !important;
+}
+thead {
+  border-bottom: solid 2px whitesmoke !important;
+}
+
+.bg-light {
+  --bs-bg-opacity: 0;
+}
 /** ************************* **/
 /** HEADER CONTENT            **/
 /** ************************* **/

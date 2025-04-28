@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ProductController extends AbstractController
 {
-	#[Route('/product', name: 'products')]
+	#[Route('/products', name: 'products')]
 	public function indexProduct(UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductRepository $productRepository): Response
 	{
 		$userAuthentified = false;

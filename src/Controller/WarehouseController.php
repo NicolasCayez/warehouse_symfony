@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class WarehouseController extends AbstractController
 {
-	#[Route('/warehouse/{id}', name: 'warehouse')]
+	#[Route('/warehouses/{id}', name: 'warehouses')]
 	public function indexWarehouse(WarehouseRepository $warehouseRepository, UserRepository $userRepository, $id): Response
 	{
 		$userAuthentified = false;
@@ -28,7 +28,7 @@ final class WarehouseController extends AbstractController
 				$warehouse = $warehouseRepository->findOneById($id);
 			}
 		}
-		return $this->render('warehouse/warehouse.html.twig', [
+		return $this->render('warehouses/warehouses.html.twig', [
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
