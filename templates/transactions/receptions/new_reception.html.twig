@@ -19,7 +19,7 @@
 					<div class="col h-100 p-1">
 						<div class="cstm-card h-100">
 							<p>Invoice / Parcel Informations</p>
-							{% if product_list == 'empty' %}
+							{% if product_list == 'empty' %}{# NEW Reception #}
 								{{ form_start(form) }}
 									<div class="row">
 										<div class="col">
@@ -38,7 +38,7 @@
 										</div>
 									</div>
 								{{ form_end(form) }}
-							{% else %}
+							{% else %}{# EXISTING Reception #}
 								<div class="row title-bold">
 									<div class="col">
 										Invoice : {{ movement.getInvoiceRef }}
@@ -71,43 +71,44 @@
 						<p class="row bg-cstm-blue pb-2 mb-0"></p>
 						{% if product_list != 'empty' %}
 							<div class="bg-light h-95 overflow-auto">
-							<table class="table table-sm table-striped-columns table-hover table-responsive">
-								<thead>
-									<tr class="m-0 ps-1 text-center">
-										<th scope="col" class="title">Product Name</th>
-										<th scope="col" class="title">Serial</th>
-										<th scope="col" class="title">Ref</th>
-										<th scope="col" class="title">Ref 2</th>
-										<th scope="col" class="title">Value</th>
-									</tr>
-								</thead>
-								<tbody>
-									{# {% for one_product in product_list %}
-										<tr class="m-0 ps-1">
-											<td class="title cstm-darkBlue">{{ one_product.getProductName }}</td>
-											<td class="title cstm-darkBlue">{{ one_product.getProductSerialNumber }}</td>
-											<td class="title cstm-darkBlue">{{ one_product.getProductRef }}</td>
-											<td class="title cstm-darkBlue">{{ one_product.getProductRef2 }}</td>
-											<td class="title cstm-darkBlue text-end">{{ one_product.getProductValue }}</td>
-										</tr>
-									{% endfor %} #}
-									<pre>
-										{{ dump(form.vars.value.getProducts) }}
-									</pre>
-									{% for one_product in form.vars.value.getProducts %}
-									<pre>
-										{{ dump(one_product) }}
-									</pre>
-										<tr class="m-0 ps-1">
-											<td class="title cstm-darkBlue">{{ one_product.getProductId }}</td>
-											<td class="title cstm-darkBlue">{{ one_product.getProductSerialNumber }}</td>
-											<td class="title cstm-darkBlue">{{ one_product.getProductRef }}</td>
-											<td class="title cstm-darkBlue">{{ one_product.getProductRef2 }}</td>
-											<td class="title cstm-darkBlue text-end">{{ one_product.getProductValue }}</td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
+								{{ form_start(formSelectProductToAdd) }}
+								{{ form_end(formSelectProductToAdd) }}
+								<p>PAS EN STOCK</p>
+								{# {{ form_start(form_products_not_in_stock) }}
+									{% if form_products_not_in_stock.vars.value.getProducts|length > 0 %}
+										<table class="table table-sm table-striped-columns table-hover table-responsive">
+											<thead>
+												<tr class="m-0 ps-1 text-center">
+													<th scope="col" class="title">Product Name</th>
+													<th scope="col" class="title">Serial</th>
+													<th scope="col" class="title">Ref</th>
+													<th scope="col" class="title">Ref 2</th>
+													<th scope="col" class="title">Value</th>
+													<th scope="col" class="title">Qty</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% for one_product in form_products_not_in_stock.products %}
+													<tr class="m-0 ps-1">
+														<td class="title cstm-darkBlue">{{ one_product.vars.value.getProductName }}</td>
+														<td class="title cstm-darkBlue">{{ one_product.vars.value.getProductSerialNumber }}</td>
+														<td class="title cstm-darkBlue">{{ one_product.vars.value.getProductRef }}</td>
+														<td class="title cstm-darkBlue">{{ one_product.vars.value.getProductRef2 }}</td>
+														<td class="title cstm-darkBlue text-end">{{ one_product.vars.value.getProductValue }}</td>
+														<td class="title cstm-darkBlue text-end">{{ form_row(one_product.qty) }}{{ form_row(one_product.submit) }}</td>
+													</tr>
+													<div class="hidden">
+														{{ form_row(one_product.product_name) }}
+														{{ form_row(one_product.product_serial_number) }}
+														{{ form_row(one_product.product_ref) }}
+														{{ form_row(one_product.product_ref2) }}
+														{{ form_row(one_product.product_value) }}
+													</div>
+												{% endfor %}
+											</tbody>
+										</table>
+									{% endif %}
+								{{ form_end(form_products_not_in_stock) }} #}
 							</div>
 						{% endif %}
 					</div>

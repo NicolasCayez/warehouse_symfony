@@ -2,20 +2,25 @@
 
 namespace App\Form;
 
+use App\Entity\Product;
 use App\Entity\ProductMovement;
+use App\Entity\Warehouse;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductMovementTypeold extends AbstractType
+class ProductMovementType extends AbstractType
 {
 
 	public function buildForm(FormBuilderInterface $builder, array $options): void
 	{
 		$builder
-			->add('lastQty', IntegerType::class)
-			->add('newQty', IntegerType::class)
+			->add('last_qty', IntegerType::class)
+			->add('new_qty', IntegerType::class)
+			->add('submit', SubmitType::class)
 		;
 	}
 
