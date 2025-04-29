@@ -11,11 +11,22 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Product::class);
-    }
+	public function __construct(ManagerRegistry $registry)
+	{
+		parent::__construct($registry, Product::class);
+	}
 
+	public function findAllFiltered($filter): array {
+		return $this->createQueryBuilder('p')
+								->where('p.product_serial_number LIKE :filter
+											OR p.product_name LIKE :filter
+											OR p.product_ref LIKE :filter
+											OR p.product_ref2 LIKE :filter
+											')
+								->setParameter('filter', '%'.$filter.'%')
+								->getQuery()
+								->getResult();
+	}
 //    /**
 //     * @return Product[] Returns an array of Product objects
 //     */

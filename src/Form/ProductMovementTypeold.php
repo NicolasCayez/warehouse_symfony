@@ -2,30 +2,27 @@
 
 namespace App\Form;
 
-
-use App\Entity\ProductReception;
+use App\Entity\ProductMovement;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductReceptionType extends AbstractType
+class ProductMovementTypeold extends AbstractType
 {
-	public function getParent()
-	{
-		return MovementType::class;
-	}
+
 	public function buildForm(FormBuilderInterface $builder, array $options): void
 	{
-		parent::buildForm($builder, $options);
 		$builder
-			->add('invoiceRef')
-			->add('parcelRef')
+			->add('lastQty', IntegerType::class)
+			->add('newQty', IntegerType::class)
 		;
 	}
+
 	public function configureOptions(OptionsResolver $resolver): void
 	{
 		$resolver->setDefaults([
-			'data_class' => ProductReception::class,
+			'data_class' => ProductMovement::class,
 		]);
 	}
 }

@@ -58,6 +58,10 @@
 					<div class="col h-100 p-1">
 						<div class="cstm-card h-100">
 							<p>Filter list</p>
+							{% if product_list != 'empty' %}
+								{% include "/shared_templates/filter_form.html.twig" %}
+							{% endif %}
+							
 						</div>
 					</div>
 				</div>
@@ -78,9 +82,24 @@
 									</tr>
 								</thead>
 								<tbody>
-									{% for one_product in product_list %}
+									{# {% for one_product in product_list %}
 										<tr class="m-0 ps-1">
 											<td class="title cstm-darkBlue">{{ one_product.getProductName }}</td>
+											<td class="title cstm-darkBlue">{{ one_product.getProductSerialNumber }}</td>
+											<td class="title cstm-darkBlue">{{ one_product.getProductRef }}</td>
+											<td class="title cstm-darkBlue">{{ one_product.getProductRef2 }}</td>
+											<td class="title cstm-darkBlue text-end">{{ one_product.getProductValue }}</td>
+										</tr>
+									{% endfor %} #}
+									<pre>
+										{{ dump(form.vars.value.getProducts) }}
+									</pre>
+									{% for one_product in form.vars.value.getProducts %}
+									<pre>
+										{{ dump(one_product) }}
+									</pre>
+										<tr class="m-0 ps-1">
+											<td class="title cstm-darkBlue">{{ one_product.getProductId }}</td>
 											<td class="title cstm-darkBlue">{{ one_product.getProductSerialNumber }}</td>
 											<td class="title cstm-darkBlue">{{ one_product.getProductRef }}</td>
 											<td class="title cstm-darkBlue">{{ one_product.getProductRef2 }}</td>

@@ -29,6 +29,7 @@
 					<div class="col h-100 p-1">
 						<div class="cstm-card h-100">
 							<p>Filter list</p>
+							{# {% include "/shared_templates/filter_form.html.twig" %} #}
 						</div>
 					</div>
 				</div>
@@ -49,10 +50,9 @@
 									{% for one_reception in receptions_list|sort((a,b) => [b.getMvmtDate] <=> [a.getMvmtDate]) %}
 										<tr class="m-0 ps-1">
 											{# <td class="title cstm-darkBlue"><a href={{ path('receptions') }} class="btn-sm cstm-darkBlue">{{ one_product.getProductName }}</a></td> #}
-											<td class="title cstm-darkBlue">{{ one_reception.getMvmtDate }}</td>
+											<td class="title cstm-darkBlue">{{ one_reception.getMvmtDate|date("Y - m - d") }}</td>
 											<td class="title cstm-darkBlue">{{ one_reception.getInvoiceRef }}</td>
 											<td class="title cstm-darkBlue">{{ one_reception.getParcelRef }}</td>
-											<td class="title cstm-darkBlue"></td>
 										</tr>
 									{% endfor %}
 								</tbody>

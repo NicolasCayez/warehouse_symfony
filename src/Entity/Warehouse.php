@@ -19,7 +19,7 @@ class Warehouse
      * @var Collection<int, Product>
      */
     #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'warehouses')]
-    private Collection $product_id;
+    private Collection $products;
 
     #[ORM\Column(length: 50)]
     private ?string $warehouse_name = null;
@@ -62,7 +62,7 @@ class Warehouse
 
     public function __construct()
     {
-        $this->product_id = new ArrayCollection();
+        $this->products = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->movements = new ArrayCollection();
     }
@@ -75,23 +75,23 @@ class Warehouse
     /**
      * @return Collection<int, Product>
      */
-    public function getProductId(): Collection
+    public function getProducts(): Collection
     {
-        return $this->product_id;
+        return $this->products;
     }
 
-    public function addProductId(Product $productId): static
+    public function addProduct(Product $product): static
     {
-        if (!$this->product_id->contains($productId)) {
-            $this->product_id->add($productId);
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
         }
 
         return $this;
     }
 
-    public function removeProductId(Product $productId): static
+    public function removeProduct(Product $product): static
     {
-        $this->product_id->removeElement($productId);
+        $this->products->removeElement($product);
 
         return $this;
     }

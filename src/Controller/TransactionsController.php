@@ -2,9 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
+use App\Entity\ProductMovement;
 use App\Entity\ProductReception;
 use App\Entity\User;
 use App\Entity\Warehouse;
+use App\Form\ProductCollectionForMovementType;
+use App\Form\ProductMovementType;
+use App\Form\ProductReceptionDetailType;
 use App\Form\ProductReceptionFormType;
 use App\Form\ProductReceptionType;
 use App\Repository\MovementRepository;
@@ -14,6 +19,9 @@ use App\Repository\UserRepository;
 use App\Repository\WarehouseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -68,7 +76,7 @@ final class TransactionsController extends AbstractController
 			$userAuthentified = false;
 			$warehousesList = [];
 			$warehouse = New Warehouse;
-			$productList = [];
+			// $productList = [];
 			// if user autentified 
 			if($this->getUser() instanceof User){
 				$userAuthentified = true;
@@ -78,7 +86,7 @@ final class TransactionsController extends AbstractController
 				if ($warehouseRepository->findOneById($id)) {
 					$warehouse = $warehouseRepository->findOneById($id);
 				}
-				$productList = $productRepository->findAll();
+				// $productList = $productRepository->findAll();
 			}
 			// Form
 			$productReception = new ProductReception;
@@ -90,7 +98,7 @@ final class TransactionsController extends AbstractController
 				$manager->persist($productReception);
 				$manager->flush();
 				$mvmtId = $productReception->getId();
-				return $this->redirectToRoute('new_reception_detail', ['id' => $id, 'mvmtId' => $mvmtId]);
+				return $this->redirectToRoute('new_reception_detail', ['id' => $id, 'mvmtId' => $mvmtId, 'filter' => '!']);
 			}
 			return $this->render('transactions/receptions/new_reception.html.twig', [
 				'user_authentified' => $userAuthentified,
@@ -101,13 +109,15 @@ final class TransactionsController extends AbstractController
 			]);
 		}
 	//* NEW RECEPTION DETAIL : EDIT AND ADD PRODUCTS
-	#[Route('/receptions/new/{id}/{mvmtId}', name: 'new_reception_detail')]
-	public function newReceptionDetail(Request $request, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, MovementRepository $movementRepository, ProductRepository $productRepository, $id, $mvmtId): Response
+	#[Route('/receptions/new/{id}/{mvmtId}/{filter}', name: 'new_reception_detail')]
+	public function newReceptionDetail(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $mvmtId, $filter): Response
 	{
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
 		$productList = [];
+		$filterForm = null;
+		$productReception = new ProductReception;
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
@@ -117,25 +127,39 @@ final class TransactionsController extends AbstractController
 			if ($warehouseRepository->findOneById($id)) {
 				$warehouse = $warehouseRepository->findOneById($id);
 			}
-			$productList = $productRepository->findAll();
-			$movement = $movementRepository->findOneById($mvmtId);
+			$productList = $productRepository->findAllFiltered($filter);
+						//filter product list
+			$filterForm = $formFactory->createBuilder()
+						->add('filter', TextType::class)
+						->add('applyFilter', SubmitType::class)
+						->getForm();
+			$filterForm->handleRequest($request);
+			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+			$data = $filterForm->getData();
+			return $this->redirectToRoute('new_reception_detail', ['id' => $id, 'mvmtId' => $mvmtId, 'filter' => $data['filter']]);
+			}
+			$productReception = $productReceptionRepository->findOneById($mvmtId);
 		}
 		// Form
-		$productReception = new ProductReception;
-		// $form = $this->createForm(ProductReceptionType::class, $productReception);
-		// $form->handleRequest($request);
-		// if ($form->isSubmitted() && $form->isValid() ) {
-		// 	$productReception = $form->getData();
-		// 	$manager->persist($productReception);
-		// 	$manager->flush();
-		// }
+		// $form = $this->createForm(ProductReceptionDetailType::class, $productReception);
+		// $form = $this->createForm(ProductCollectionForMovementType::class, $warehouse);
+		// ! ICI liste a créer mais comme les produits doivent exister sans lien vers une warehouse la liste de warehouse (ou product List (collection)) est un tableau
+		// ! Faire un MERGE ? créer une entité qui sert de collection ?
+		$form = $this->createForm(ProductCollectionForMovementType::class, $warehouse);
+		$form->handleRequest($request);
+		if ($form->isSubmitted() && $form->isValid() ) {
+			$productReception = $form->getData();
+			$manager->persist($productReception);
+			$manager->flush();
+		}
 		return $this->render('transactions/receptions/new_reception.html.twig', [
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
-			'movement' => $movement,
+			'movement' => $productReception,
 			'product_list' => $productList,
-			// 'form' => $form,
+			'filter_form' => $filterForm,
+			'form' => $form,
 		]);
 	}
 

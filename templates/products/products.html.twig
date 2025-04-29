@@ -24,6 +24,7 @@
 					<div class="col h-100 p-1">
 						<div class="cstm-card h-100">
 							<p>Filter list</p>
+							{% include "/shared_templates/filter_form.html.twig" %}
 						</div>
 					</div>
 				</div>
@@ -45,7 +46,8 @@
 								<tbody>
 									{% for one_product in product_list %}
 										<tr class="m-0 ps-1">
-											<td class="title cstm-darkBlue"><a href={{ path('receptions') }} class="btn-sm cstm-darkBlue">{{ one_product.getProductName }}</a></td>
+											{# <td class="title cstm-darkBlue"><a href={{ path('receptions') }} class="btn-sm cstm-darkBlue">{{ one_product.getProductName }}</a></td> #}
+											<td class="title cstm-darkBlue">{{ one_product.getProductName }}</td>
 											<td class="title cstm-darkBlue">{{ one_product.getProductSerialNumber }}</td>
 											<td class="title cstm-darkBlue">{{ one_product.getProductRef }}</td>
 											<td class="title cstm-darkBlue">{{ one_product.getProductRef2 }}</td>
