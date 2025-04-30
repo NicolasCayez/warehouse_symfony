@@ -49,10 +49,10 @@ class Product
     private ?Supplier $supplier = null;
 
     /**
-     * @var Collection<int, ProductMovement>
+     * @var Collection<int, Movement>
      */
-    #[ORM\OneToMany(targetEntity: ProductMovement::class, mappedBy: 'product_id')]
-    private Collection $productMovements;
+    #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'product_id')]
+    private Collection $movements;
 
     /**
      * @var Collection<int, Warehouse>
@@ -61,19 +61,19 @@ class Product
     private Collection $warehouses;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $product_serial_number = null;
+    private ?string $productSerialNumber = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $product_name = null;
+    private ?string $productName = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $product_ref = null;
+    private ?string $productRef = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $product_ref2 = null;
+    private ?string $productRef2 = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2, nullable: true)]
-    private ?string $product_value = null;
+    private ?string $productValue = null;
 
     public function __construct()
     {
@@ -81,7 +81,7 @@ class Product
         $this->productSizes = new ArrayCollection();
         $this->productColors = new ArrayCollection();
         $this->productInfos = new ArrayCollection();
-        $this->productMovements = new ArrayCollection();
+        $this->movements = new ArrayCollection();
         $this->warehouses = new ArrayCollection();
     }
 
@@ -98,7 +98,7 @@ class Product
         return $this->family;
     }
 
-    public function addFamilyId(Family $family): static
+    public function addFamily(Family $family): static
     {
         if (!$this->family->contains($family)) {
             $this->family->add($family);
@@ -107,7 +107,7 @@ class Product
         return $this;
     }
 
-    public function removeFamilyId(Family $family): static
+    public function removeFamily(Family $family): static
     {
         $this->family->removeElement($family);
 
@@ -229,29 +229,29 @@ class Product
     }
 
     /**
-     * @return Collection<int, ProductMovement>
+     * @return Collection<int, Movement>
      */
-    public function getProductMovements(): Collection
+    public function getMovements(): Collection
     {
-        return $this->productMovements;
+        return $this->movements;
     }
 
-    public function addProductMovement(ProductMovement $productMovement): static
+    public function addMovement(Movement $movement): static
     {
-        if (!$this->productMovements->contains($productMovement)) {
-            $this->productMovements->add($productMovement);
-            $productMovement->setProduct($this);
+        if (!$this->movements->contains($movement)) {
+            $this->movements->add($movement);
+            $movement->setProduct($this);
         }
 
         return $this;
     }
 
-    public function removeProductMovement(ProductMovement $productMovement): static
+    public function removeMovement(Movement $movement): static
     {
-        if ($this->productMovements->removeElement($productMovement)) {
+        if ($this->movements->removeElement($movement)) {
             // set the owning side to null (unless already changed)
-            if ($productMovement->getProduct() === $this) {
-                $productMovement->setProduct(null);
+            if ($movement->getProduct() === $this) {
+                $movement->setProduct(null);
             }
         }
 
@@ -270,7 +270,7 @@ class Product
     {
         if (!$this->warehouses->contains($warehouse)) {
             $this->warehouses->add($warehouse);
-            $warehouse->addProductId($this);
+            $warehouse->addProduct($this);
         }
 
         return $this;
@@ -279,7 +279,7 @@ class Product
     public function removeWarehouse(Warehouse $warehouse): static
     {
         if ($this->warehouses->removeElement($warehouse)) {
-            $warehouse->removeProductId($this);
+            $warehouse->removeProduct($this);
         }
 
         return $this;
@@ -287,60 +287,60 @@ class Product
 
     public function getProductSerialNumber(): ?string
     {
-        return $this->product_serial_number;
+        return $this->productSerialNumber;
     }
 
-    public function setProductSerialNumber(?string $product_serial_number): static
+    public function setProductSerialNumber(?string $productSerialNumber): static
     {
-        $this->product_serial_number = $product_serial_number;
+        $this->productSerialNumber = $productSerialNumber;
 
         return $this;
     }
 
     public function getProductName(): ?string
     {
-        return $this->product_name;
+        return $this->productName;
     }
 
-    public function setProductName(string $product_name): static
+    public function setProductName(string $productName): static
     {
-        $this->product_name = $product_name;
+        $this->productName = $productName;
 
         return $this;
     }
 
     public function getProductRef(): ?string
     {
-        return $this->product_ref;
+        return $this->productRef;
     }
 
-    public function setProductRef(?string $product_ref): static
+    public function setProductRef(?string $productRef): static
     {
-        $this->product_ref = $product_ref;
+        $this->productRef = $productRef;
 
         return $this;
     }
 
     public function getProductRef2(): ?string
     {
-        return $this->product_ref2;
+        return $this->productRef2;
     }
 
-    public function setProductRef2(?string $product_ref2): static
+    public function setProductRef2(?string $productRef2): static
     {
-        $this->product_ref2 = $product_ref2;
+        $this->productRef2 = $productRef2;
 
         return $this;
     }
 
     public function getProductValue(): ?string
     {
-        return $this->product_value;
+        return $this->productValue;
     }
 
-    public function setProductValue(?string $product_value): static
+    public function setProductValue(?string $productValue): static
     {
-        $this->product_value = $product_value;
+        $this->productValue = $productValue;
 
         return $this;
     }

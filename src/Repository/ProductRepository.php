@@ -18,10 +18,10 @@ class ProductRepository extends ServiceEntityRepository
 
 	public function findAllFiltered($filter): array {
 		return $this->createQueryBuilder('p')
-								->where('p.product_serial_number LIKE :filter
-											OR p.product_name LIKE :filter
-											OR p.product_ref LIKE :filter
-											OR p.product_ref2 LIKE :filter
+								->where('p.productSerialNumber LIKE :filter
+											OR p.productName LIKE :filter
+											OR p.productRef LIKE :filter
+											OR p.productRef2 LIKE :filter
 											')
 								->setParameter('filter', '%'.$filter.'%')
 								->getQuery()

@@ -2,17 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Movement;
 use App\Entity\Product;
 use App\Entity\ProductMovement;
 use App\Entity\ProductReception;
 use App\Entity\User;
 use App\Entity\Warehouse;
-use App\Form\ProductCollectionForMovementType;
-use App\Form\ProductMovementType;
-use App\Form\ProductNewQtyType;
-use App\Form\ProductNotInStockCollectionType;
-use App\Form\ProductReceptionDetailType;
-use App\Form\ProductReceptionFormType;
 use App\Form\ProductReceptionType;
 use App\Repository\MovementRepository;
 use App\Repository\ProductReceptionRepository;
@@ -23,7 +18,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -75,7 +69,7 @@ final class TransactionsController extends AbstractController
 	}
 
 	//* NEW RECEPTION
-	#[Route('/receptions/new/{id}', name: 'new_reception')]
+	#[Route('/receptions/{id}/new', name: 'new_reception')]
 	public function newReception(Request $request, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductRepository $productRepository, $id,): Response
 	{
 		$userAuthentified = false;
@@ -102,8 +96,8 @@ final class TransactionsController extends AbstractController
 			$productReception->setWarehouse($warehouse);
 			$manager->persist($productReception);
 			$manager->flush();
-			$mvmtId = $productReception->getId();
-			return $this->redirectToRoute('new_reception_detail', ['id' => $id, 'mvmtId' => $mvmtId, 'filter' => '!']);
+			$productReceptionId = $productReception->getId();
+			return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => '!']);
 		}
 		return $this->render('transactions/receptions/new_reception.html.twig', [
 			'user_authentified' => $userAuthentified,
@@ -114,13 +108,14 @@ final class TransactionsController extends AbstractController
 		]);
 	}
 	//* NEW RECEPTION DETAIL : EDIT AND ADD PRODUCTS
-	#[Route('/receptions/new/{id}/{mvmtId}', name: 'new_reception_detail')]
-	public function newReceptionDetail(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $mvmtId): Response
+	#[Route('/receptions/{id}/{productReceptionId}', name: 'reception_detail')]
+	public function newReceptionDetail(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, MovementRepository $movementRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId): Response
 	{
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
 		$productList = [];
+		$allProductList = [];
 		$filterForm = null;
 		$productReception = new ProductReception;
 		// if user autentified 
@@ -142,22 +137,21 @@ final class TransactionsController extends AbstractController
 			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
 				$data = $filterForm->getData();
 				if ($data['filter'] != '') {
-					return $this->redirectToRoute('new_reception_detail_filter', ['id' => $id, 'mvmtId' => $mvmtId, 'filter' => $data['filter']]);
+					return $this->redirectToRoute('reception_detail_filter', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => $data['filter']]);
 				}
 			}
-			$productReception = $productReceptionRepository->findOneById($mvmtId);
+			$productReception = $productReceptionRepository->findOneById($productReceptionId);
 		}
-		//* Form all products IN stock
-
-		//* Form all products NOT IN stock
-		// adding products if not in stock
-		$productList = new ArrayCollection(['products' => []]);
 		$products = [];
 		foreach ($allProductList as $product) {
 			if (!($warehouse->getProducts()->contains($product))) {
 				array_push($products, $product);
 			}
 		}
+		// ! ****************************
+		//! Refaire le formulaire depuis warehouse all data pour avoir les produits
+		// ! ****************************
+		//* Form for all products NOT selected in the reception
 		$formSelectProductToAdd = $formFactory->createBuilder()
 					->add('products', ChoiceType::class, [
 						'choices' => $products,
@@ -170,31 +164,43 @@ final class TransactionsController extends AbstractController
 														) : '';
 							} 
 						])
+					->add('submit', SubmitType::class)
 					->getForm();
 		if ($formSelectProductToAdd->isSubmitted() && $formSelectProductToAdd->isValid() ) {
 			$productWithQty = $formSelectProductToAdd->getData();
-			$newProductMovement = new ProductMovement;
-			$newProductMovement->setProduct($productWithQty['product']);
-			$newProductMovement->setMovement($mvmtId);
-			$newProductMovement->setNewQty($productWithQty['new_qty']);
-			$manager->persist($newProductMovement);
+			$newMovement = new Movement;
+			$newMovement->setProduct($productWithQty['product']);
+			$newMovement->setNewQty($productWithQty['newQty']);
+			$manager->persist($newMovement);
 			$manager->flush();
-			return $this->redirectToRoute('new_reception_detail', ['id' => $id, 'mvmtId' => $mvmtId]);
+			return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
 		}
+		//* Form for all products selected in the reception
+		$movement = $movementRepository->findOneById($productReceptionId);
+		$formSelectedProducts = $movement;
+		// $formSelectedProducts = $this->createForm(MovementDetailType::class, $movement);
+		// $formSelectedProducts->handleRequest($request);
+		// if ($formSelectedProducts->isSubmitted() && $formSelectedProducts->isValid() ) {
+		// 	$productReceptionUpdated = $formSelectedProducts->getData();
+		// 	$manager->persist($productReceptionUpdated);
+		// 	$manager->flush();
+		// 	return $this->redirectToRoute('new_reception_detail', ['id' => $id, 'mvmtId' => $mvmtId]);
+		// }
 
 		return $this->render('transactions/receptions/new_reception.html.twig', [
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
-			'movement' => $productReception,
+			'product_reception' => $productReception,
 			'product_list' => $productList,
 			'filter_form' => $filterForm,
-			'formSelectProductToAdd' => $formSelectProductToAdd,
+			'form_select_product_to_add' => $formSelectProductToAdd,
+			'form_selected_products' => $formSelectedProducts,
 		]);
 	}
 	//* NEW RECEPTION DETAIL : EDIT AND ADD PRODUCTS
-	#[Route('/receptions/new/{id}/{mvmtId}/{filter}', name: 'new_reception_detail_filter')]
-	public function newReceptionDetailFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $mvmtId, $filter): Response
+	#[Route('/receptions/{id}/{productReceptionId}/{filter}', name: 'reception_detail_filter')]
+	public function newReceptionDetailFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId, $filter): Response
 	{
 		$userAuthentified = false;
 		$warehousesList = [];
@@ -221,11 +227,11 @@ final class TransactionsController extends AbstractController
 			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
 				$data = $filterForm->getData();
 				if ($data['filter'] == '') {
-					return $this->redirectToRoute('new_reception_detail', ['id' => $id, 'mvmtId' => $mvmtId]);
+					return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
 				}
-				return $this->redirectToRoute('new_reception_detail_filter', ['id' => $id, 'mvmtId' => $mvmtId, 'filter' => $data['filter']]);
+				return $this->redirectToRoute('reception_detail_filter', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => $data['filter']]);
 			}
-			$productReception = $productReceptionRepository->findOneById($mvmtId);
+			$productReception = $productReceptionRepository->findOneById($productReceptionId);
 		}
 		//* Form all products IN stock
 
@@ -253,22 +259,22 @@ final class TransactionsController extends AbstractController
 					->getForm();
 		if ($formSelectProductToAdd->isSubmitted() && $formSelectProductToAdd->isValid() ) {
 			$productWithQty = $formSelectProductToAdd->getData();
-			$newProductMovement = new ProductMovement;
-			$newProductMovement->setProduct($productWithQty['product']);
-			$newProductMovement->setMovement($mvmtId);
-			$newProductMovement->setNewQty($productWithQty['new_qty']);
-			$manager->persist($newProductMovement);
+			$newMovement = new Movement;
+			$newMovement->setProduct($productWithQty['product']);
+			$newMovement->setNewQty($productWithQty['new_qty']);
+			$manager->persist($newMovement);
 			$manager->flush();
-			return $this->redirectToRoute('new_reception_detail_filter', ['id' => $id, 'mvmtId' => $mvmtId, 'filter' => $filter]);
+			return $this->redirectToRoute('reception_detail_filter', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => $filter]);
 		}
 		return $this->render('transactions/receptions/new_reception.html.twig', [
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
-			'movement' => $productReception,
+			'product_reception' => $productReception,
 			'product_list' => $productList,
 			'filter_form' => $filterForm,
-			'formSelectProductToAdd' => $formSelectProductToAdd,
+			'form_select_product_to_add' => $formSelectProductToAdd,
+			// 'form_selected_products' => $formSelectedProducts,
 		]);
 	}
 

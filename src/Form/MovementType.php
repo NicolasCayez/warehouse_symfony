@@ -18,10 +18,6 @@ class MovementType extends AbstractType
 			->add('submit', SubmitType::class, ['label' => 'Create',])
 		;
 	}
-// last_qty
-// new_qty
-// product
-// movement
 	public function configureOptions(OptionsResolver $resolver): void
 	{
 		$resolver->setDefaults([

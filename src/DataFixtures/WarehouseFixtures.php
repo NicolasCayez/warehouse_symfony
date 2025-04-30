@@ -43,16 +43,26 @@ class WarehouseFixtures extends Fixture implements DependentFixtureInterface
 				}
 			}
 		}
+		// fake warehouse referencing all products -> used as collection when renderding forms with all the products / suppliers, etc list
+		$warehouse = new Warehouse();
+		$warehouse->setWarehouseName('ALL_DATA');
+		$manager->persist($warehouse);
+		$this->addReference(self::WAREHOUSE_REFERENCE_TAG . 0, $warehouse);
+		$manager->flush();
+		$lastId = $warehouse->getId();
+		$lastWarehouse = $this->warehouseRepository->findOneById($lastId);
+		$lastWarehouse->addUser($admin);
+		$manager->flush();
 		// warehouses
-		for ($i = 0; $i < self::NB_WAREHOUSE; $i++) {
+		for ($i = 1; $i < self::NB_WAREHOUSE; $i++) {
 			$warehouse = new Warehouse();
-			$warehouse->setWhName($faker->lastName());
-			$warehouse->setWhPhone($faker->phoneNumber());
-			$warehouse->setWhAddressNumber($faker->numberBetween(1, 150));
-			$warehouse->setWhAddressRoad($faker->lastName());
-			$warehouse->setWhAddressLabel($faker->lastName());
-			$warehouse->setWhAddressPostalCode($faker->numberBetween(10000, 98000));
-			$warehouse->setWhAddressCountry($faker->country());
+			$warehouse->setWarehouseName($faker->lastName());
+			$warehouse->setWarehousePhone($faker->phoneNumber());
+			$warehouse->setWarehouseAddressNumber($faker->numberBetween(1, 150));
+			$warehouse->setWarehouseAddressRoad($faker->lastName());
+			$warehouse->setWarehouseAddressLabel($faker->lastName());
+			$warehouse->setWarehouseAddressPostalCode($faker->numberBetween(10000, 98000));
+			$warehouse->setWarehouseAddressCountry($faker->country());
 
 			$manager->persist($warehouse);
 			$this->addReference(self::WAREHOUSE_REFERENCE_TAG . $i, $warehouse);

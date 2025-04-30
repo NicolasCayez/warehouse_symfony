@@ -3,14 +3,21 @@
 namespace App\Entity;
 
 use App\Repository\StockTransfertRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StockTransfertRepository::class)]
-class StockTransfert extends Movement
+class StockTransfert
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+    
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $stock_transfert_message = null;
+    private ?string $stockTransfertMessage = null;
 
     #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'linkedStockTransfert', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -19,14 +26,37 @@ class StockTransfert extends Movement
     #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'linkedTransfert', cascade: ['persist', 'remove'])]
     private ?self $linkedStockTransfert = null;
 
-    public function getStockTransfertMessage(): ?string
+    #[ORM\Column]
+    private ?\DateTimeImmutable $stockTransfertDate = null;
+
+    #[ORM\ManyToOne(inversedBy: 'stockTransferts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Warehouse $warehouse = null;
+
+    /**
+     * @var Collection<int, Movement>
+     */
+    #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'stockTransfert')]
+    private Collection $movements;
+
+    public function __construct()
     {
-        return $this->stock_transfert_message;
+        $this->movements = new ArrayCollection();
     }
 
-    public function setStockTransfertMessage(string $stock_transfert_message): static
+    public function getId(): ?int
     {
-        $this->stock_transfert_message = $stock_transfert_message;
+        return $this->id;
+    }
+
+    public function getStockTransfertMessage(): ?string
+    {
+        return $this->stockTransfertMessage;
+    }
+
+    public function setStockTransfertMessage(string $stockTransfertMessage): static
+    {
+        $this->stockTransfertMessage = $stockTransfertMessage;
 
         return $this;
     }
@@ -56,6 +86,60 @@ class StockTransfert extends Movement
         }
 
         $this->linkedStockTransfert = $linkedStockTransfert;
+
+        return $this;
+    }
+
+    public function getStockTransfertDate(): ?\DateTimeImmutable
+    {
+        return $this->stockTransfertDate;
+    }
+
+    public function setStockTransfertDate(\DateTimeImmutable $stockTransfertDate): static
+    {
+        $this->stockTransfertDate = $stockTransfertDate;
+
+        return $this;
+    }
+
+    public function getWarehouse(): ?Warehouse
+    {
+        return $this->warehouse;
+    }
+
+    public function setWarehouse(?Warehouse $warehouse): static
+    {
+        $this->warehouse = $warehouse;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Movement>
+     */
+    public function getProductMovements(): Collection
+    {
+        return $this->movements;
+    }
+
+    public function addProductMovement(Movement $movement): static
+    {
+        if (!$this->movements->contains($movement)) {
+            $this->movements->add($movement);
+            $movement->setStockTransfert($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductMovement(Movement $movement): static
+    {
+        if ($this->movements->removeElement($movement)) {
+            // set the owning side to null (unless already changed)
+            if ($movement->getStockTransfert() === $this) {
+                $movement->setStockTransfert(null);
+            }
+        }
 
         return $this;
     }

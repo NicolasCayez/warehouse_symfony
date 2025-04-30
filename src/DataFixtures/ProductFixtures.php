@@ -52,6 +52,8 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
 	public function load(ObjectManager $manager): void
 	{
 		$faker = Factory::create('fr_FR');
+		// link product to ALL_DATA warahouse
+		$all_data_warehouse = $this->warehouseRepository->findOneByWarehouse_name('ALL_DATA');
 		// Families
 		$families = $this->familyRepository->findAll();
 		// Brands
@@ -73,7 +75,8 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
 			$product->setProductRef($faker->userName());
 			$product->setProductRef2($faker->userName());
 			$product->setProductValue($faker->randomFloat(2, 5, 3000));
-			$product->addFamilyId($family);
+			$product->addWarehouse($all_data_warehouse);
+			$product->addFamily($family);
 			$product->setBrand($brand);
 			$product->setSupplier($supplier);
 			$manager->persist($product);
@@ -81,6 +84,8 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
 			$manager->flush();
 			$lastId = $product->getId();
 			$lastProduct = $this->productRepository->findOneById($lastId);
+			// link product to ALL_DATA warahouse
+			$all_data_warehouse->addProduct($lastProduct);
 			// Family
 			$family->addProduct($lastProduct);
 			// Brand

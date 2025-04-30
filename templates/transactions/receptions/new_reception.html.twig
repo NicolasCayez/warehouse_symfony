@@ -12,7 +12,7 @@
 						<div class="cstm-card h-100">
 							<div class="h-100">
 								<p class="bg-cstm-blue pb-2 mb-0"> Product receptions for warehouse :</p>
-								<p class="text-center my-0 fs-4">{{ warehouse.getWhName }}</p>
+								<p class="text-center my-0 fs-4">{{ warehouse.getWarehouseName }}</p>
 							</div>
 						</div>
 					</div>
@@ -23,15 +23,15 @@
 								{{ form_start(form) }}
 									<div class="row">
 										<div class="col">
-											{{ form_row(form.invoiceRef, {'label': 'Invoice'}) }}
+											{{ form_row(form.productReceptionInvoiceRef, {'label': 'Invoice'}) }}
 										</div>
 										<div class="col">
-											{{ form_row(form.parcelRef, {'label': 'Parcel'}) }}
+											{{ form_row(form.productReceptionParcelRef, {'label': 'Parcel'}) }}
 										</div>
 									</div>
 									<div class="row">
 										<div class="col">
-											{{ form_row(form.mvmtDate, {'label': 'Date'}) }}
+											{{ form_row(form.productReceptionDate, {'label': 'Date'}) }}
 										</div>
 										<div class="col">
 											{{ form_row(form.submit) }}
@@ -41,15 +41,15 @@
 							{% else %}{# EXISTING Reception #}
 								<div class="row title-bold">
 									<div class="col">
-										Invoice : {{ movement.getInvoiceRef }}
+										Invoice : {{ product_reception.getProductReceptionInvoiceRef }}
 									</div>
 									<div class="col">
-										Parcel : {{ movement.getParcelRef }}
+										Parcel : {{ product_reception.getProductReceptionParcelRef }}
 									</div>
 								</div>
 								<div class="row title-bold">
 									<div class="col">
-										{{ movement.getMvmtDate|date("Y - m - d") }}
+										{{ product_reception.getProductReceptionDate|date("Y - m - d") }}
 									</div>
 								</div>
 							{% endif %}
@@ -71,9 +71,20 @@
 						<p class="row bg-cstm-blue pb-2 mb-0"></p>
 						{% if product_list != 'empty' %}
 							<div class="bg-light h-95 overflow-auto">
-								{{ form_start(formSelectProductToAdd) }}
-								{{ form_end(formSelectProductToAdd) }}
-								<p>PAS EN STOCK</p>
+								<p>PRODUCT LIST</p>
+								{{ form_start(form_select_product_to_add) }}
+								{{ form_end(form_select_product_to_add) }}
+								<hr>
+								<p>SELECTION</p>
+								{# {% if form_selected_products.getProductMovements %}
+									{% for item in form_selected_products.getProductMovements %}
+									<pre>
+										{{ dump(item) }}
+									</pre>
+									{% endfor %}
+								{% endif %} #}
+								{# {{ form_start(form_selected_products) }}
+								{{ form_end(form_selected_products) }} #}
 								{# {{ form_start(form_products_not_in_stock) }}
 									{% if form_products_not_in_stock.vars.value.getProducts|length > 0 %}
 										<table class="table table-sm table-striped-columns table-hover table-responsive">

@@ -36,34 +36,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $user_last_name = null;
+    private ?string $userLastName = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $user_first_name = null;
+    private ?string $userFirstName = null;
 
     #[ORM\Column(length: 13, nullable: true)]
-    private ?string $user_phone = null;
+    private ?string $userPhone = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $user_address_number = null;
+    private ?int $userAddressNumber = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $user_address_road = null;
+    private ?string $userAddressRoad = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $user_address_label = null;
+    private ?string $userAddressLabel = null;
 
     #[ORM\Column(length: 8, nullable: true)]
-    private ?string $user_address_postal_code = null;
+    private ?string $userAddressPostalCode = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $user_address_city = null;
+    private ?string $userAddressCity = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $user_address_state = null;
+    private ?string $userAddressState = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $user_address_country = null;
+    private ?string $userAddressCountry = null;
 
     /**
      * @var Collection<int, Warehouse>
@@ -152,120 +152,120 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserLastName(): ?string
     {
-        return $this->user_last_name;
+        return $this->userLastName;
     }
 
-    public function setUserLastName(string $user_last_name): static
+    public function setUserLastName(string $userLastName): static
     {
-        $this->user_last_name = $user_last_name;
+        $this->userLastName = $userLastName;
 
         return $this;
     }
 
     public function getUserFirstName(): ?string
     {
-        return $this->user_first_name;
+        return $this->userFirstName;
     }
 
-    public function setUserFirstName(string $user_first_name): static
+    public function setUserFirstName(string $userFirstName): static
     {
-        $this->user_first_name = $user_first_name;
+        $this->userFirstName = $userFirstName;
 
         return $this;
     }
 
     public function getUserPhone(): ?string
     {
-        return $this->user_phone;
+        return $this->userPhone;
     }
 
-    public function setUserPhone(?string $user_phone): static
+    public function setUserPhone(?string $userPhone): static
     {
-        $this->user_phone = $user_phone;
+        $this->userPhone = $userPhone;
 
         return $this;
     }
 
     public function getUserAddressNumber(): ?int
     {
-        return $this->user_address_number;
+        return $this->userAddressNumber;
     }
 
-    public function setUserAddressNumber(?int $user_address_number): static
+    public function setUserAddressNumber(?int $userAddressNumber): static
     {
-        $this->user_address_number = $user_address_number;
+        $this->userAddressNumber = $userAddressNumber;
 
         return $this;
     }
 
     public function getUserAddressRoad(): ?string
     {
-        return $this->user_address_road;
+        return $this->userAddressRoad;
     }
 
-    public function setUserAddressRoad(?string $user_address_road): static
+    public function setUserAddressRoad(?string $userAddressRoad): static
     {
-        $this->user_address_road = $user_address_road;
+        $this->userAddressRoad = $userAddressRoad;
 
         return $this;
     }
 
     public function getUserAddressLabel(): ?string
     {
-        return $this->user_address_label;
+        return $this->userAddressLabel;
     }
 
-    public function setUserAddressLabel(?string $user_address_label): static
+    public function setUserAddressLabel(?string $userAddressLabel): static
     {
-        $this->user_address_label = $user_address_label;
+        $this->userAddressLabel = $userAddressLabel;
 
         return $this;
     }
 
     public function getUserAddressPostalCode(): ?string
     {
-        return $this->user_address_postal_code;
+        return $this->userAddressPostalCode;
     }
 
-    public function setUserAddressPostalCode(?string $user_address_postal_code): static
+    public function setUserAddressPostalCode(?string $userAddressPostalCode): static
     {
-        $this->user_address_postal_code = $user_address_postal_code;
+        $this->userAddressPostalCode = $userAddressPostalCode;
 
         return $this;
     }
 
     public function getUserAddressCity(): ?string
     {
-        return $this->user_address_city;
+        return $this->userAddressCity;
     }
 
-    public function setUserAddressCity(?string $user_address_city): static
+    public function setUserAddressCity(?string $userAddressCity): static
     {
-        $this->user_address_city = $user_address_city;
+        $this->userAddressCity = $userAddressCity;
 
         return $this;
     }
 
     public function getUserAddressState(): ?string
     {
-        return $this->user_address_state;
+        return $this->userAddressState;
     }
 
-    public function setUserAddressState(?string $user_address_state): static
+    public function setUserAddressState(?string $userAddressState): static
     {
-        $this->user_address_state = $user_address_state;
+        $this->userAddressState = $userAddressState;
 
         return $this;
     }
 
     public function getUserAddressCountry(): ?string
     {
-        return $this->user_address_country;
+        return $this->userAddressCountry;
     }
 
-    public function setUserAddressCountry(?string $user_address_country): static
+    public function setUserAddressCountry(?string $userAddressCountry): static
     {
-        $this->user_address_country = $user_address_country;
+        $this->userAddressCountry = $userAddressCountry;
 
         return $this;
     }

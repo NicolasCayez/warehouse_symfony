@@ -22,49 +22,70 @@ class Warehouse
     private Collection $products;
 
     #[ORM\Column(length: 50)]
-    private ?string $warehouse_name = null;
+    private ?string $warehouseName = null;
 
     #[ORM\Column(length: 13, nullable: true)]
-    private ?string $warehouse_phone = null;
+    private ?string $warehousePhone = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $warehouse_address_number = null;
+    private ?int $warehouseAddressNumber = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $warehouse_address_road = null;
+    private ?string $warehouseAddressRoad = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $warehouse_address_label = null;
+    private ?string $warehouseAddressLabel = null;
 
     #[ORM\Column(length: 8, nullable: true)]
-    private ?string $warehouse_address_postal_code = null;
+    private ?string $warehouseAddressPostalCode = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $warehouse_address_city = null;
+    private ?string $warehouseAddressCity = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $warehouse_address_state = null;
+    private ?string $warehouseAddressState = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $warehouse_address_country = null;
+    private ?string $warehouseAddressCountry = null;
 
     /**
      * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'warehouse_id')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'warehouseId')]
     private Collection $users;
 
     /**
-     * @var Collection<int, Movement>
+     * @var Collection<int, Inventory>
      */
-    #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'warehouse_id')]
-    private Collection $movements;
+    #[ORM\OneToMany(targetEntity: Inventory::class, mappedBy: 'warehouse')]
+    private Collection $inventories;
+
+    /**
+     * @var Collection<int, ProductReception>
+     */
+    #[ORM\OneToMany(targetEntity: ProductReception::class, mappedBy: 'warehouse')]
+    private Collection $productReceptions;
+
+    /**
+     * @var Collection<int, StockTransfert>
+     */
+    #[ORM\OneToMany(targetEntity: StockTransfert::class, mappedBy: 'warehouse')]
+    private Collection $stockTransferts;
+
+    /**
+     * @var Collection<int, StockModification>
+     */
+    #[ORM\OneToMany(targetEntity: StockModification::class, mappedBy: 'warehouse')]
+    private Collection $stockModifications;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->users = new ArrayCollection();
-        $this->movements = new ArrayCollection();
+        $this->inventories = new ArrayCollection();
+        $this->productReceptions = new ArrayCollection();
+        $this->stockTransferts = new ArrayCollection();
+        $this->stockModifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,110 +117,110 @@ class Warehouse
         return $this;
     }
 
-    public function getWhName(): ?string
+    public function getWarehouseName(): ?string
     {
-        return $this->warehouse_name;
+        return $this->warehouseName;
     }
 
-    public function setWhName(string $warehouse_name): static
+    public function setWarehouseName(string $warehouseName): static
     {
-        $this->warehouse_name = $warehouse_name;
+        $this->warehouseName = $warehouseName;
 
         return $this;
     }
 
-    public function getWhPhone(): ?string
+    public function getWarehousePhone(): ?string
     {
-        return $this->warehouse_phone;
+        return $this->warehousePhone;
     }
 
-    public function setWhPhone(?string $warehouse_phone): static
+    public function setWarehousePhone(?string $warehousePhone): static
     {
-        $this->warehouse_phone = $warehouse_phone;
+        $this->warehousePhone = $warehousePhone;
 
         return $this;
     }
 
-    public function getWhAddressNumber(): ?int
+    public function getWarehouseAddressNumber(): ?int
     {
-        return $this->warehouse_address_number;
+        return $this->warehouseAddressNumber;
     }
 
-    public function setWhAddressNumber(?int $warehouse_address_number): static
+    public function setWarehouseAddressNumber(?int $warehouseAddressNumber): static
     {
-        $this->warehouse_address_number = $warehouse_address_number;
+        $this->warehouseAddressNumber = $warehouseAddressNumber;
 
         return $this;
     }
 
-    public function getWhAddressRoad(): ?string
+    public function getWarehouseAddressRoad(): ?string
     {
-        return $this->warehouse_address_road;
+        return $this->warehouseAddressRoad;
     }
 
-    public function setWhAddressRoad(?string $warehouse_address_road): static
+    public function setWarehouseAddressRoad(?string $warehouseAddressRoad): static
     {
-        $this->warehouse_address_road = $warehouse_address_road;
+        $this->warehouseAddressRoad = $warehouseAddressRoad;
 
         return $this;
     }
 
-    public function getWhAddressLabel(): ?string
+    public function getWarehouseAddressLabel(): ?string
     {
-        return $this->warehouse_address_label;
+        return $this->warehouseAddressLabel;
     }
 
-    public function setWhAddressLabel(?string $warehouse_address_label): static
+    public function setWarehouseAddressLabel(?string $warehouseAddressLabel): static
     {
-        $this->warehouse_address_label = $warehouse_address_label;
+        $this->warehouseAddressLabel = $warehouseAddressLabel;
 
         return $this;
     }
 
-    public function getWhAddressPostalCode(): ?string
+    public function getWarehouseAddressPostalCode(): ?string
     {
-        return $this->warehouse_address_postal_code;
+        return $this->warehouseAddressPostalCode;
     }
 
-    public function setWhAddressPostalCode(?string $warehouse_address_postal_code): static
+    public function setWarehouseAddressPostalCode(?string $warehouseAddressPostalCode): static
     {
-        $this->warehouse_address_postal_code = $warehouse_address_postal_code;
+        $this->warehouseAddressPostalCode = $warehouseAddressPostalCode;
 
         return $this;
     }
 
-    public function getWhAddressCity(): ?string
+    public function getWarehouseAddressCity(): ?string
     {
-        return $this->warehouse_address_city;
+        return $this->warehouseAddressCity;
     }
 
-    public function setWhAddressCity(?string $warehouse_address_city): static
+    public function setWarehouseAddressCity(?string $warehouseAddressCity): static
     {
-        $this->warehouse_address_city = $warehouse_address_city;
+        $this->warehouseAddressCity = $warehouseAddressCity;
 
         return $this;
     }
 
-    public function getWhAddressState(): ?string
+    public function getWarehouseAddressState(): ?string
     {
-        return $this->warehouse_address_state;
+        return $this->warehouseAddressState;
     }
 
-    public function setWhAddressState(?string $warehouse_address_state): static
+    public function setWarehouseAddressState(?string $warehouseAddressState): static
     {
-        $this->warehouse_address_state = $warehouse_address_state;
+        $this->warehouseAddressState = $warehouseAddressState;
 
         return $this;
     }
 
-    public function getWhAddressCountry(): ?string
+    public function getWarehouseAddressCountry(): ?string
     {
-        return $this->warehouse_address_country;
+        return $this->warehouseAddressCountry;
     }
 
-    public function setWhAddressCountry(?string $warehouse_address_country): static
+    public function setWarehouseAddressCountry(?string $warehouseAddressCountry): static
     {
-        $this->warehouse_address_country = $warehouse_address_country;
+        $this->warehouseAddressCountry = $warehouseAddressCountry;
 
         return $this;
     }
@@ -232,32 +253,123 @@ class Warehouse
     }
 
     /**
-     * @return Collection<int, Movement>
+     * @return Collection<int, Inventory>
      */
-    public function getMovements(): Collection
+    public function getInventories(): Collection
     {
-        return $this->movements;
+        return $this->inventories;
     }
 
-    public function addMovement(Movement $movement): static
+    public function addInventory(Inventory $inventory): static
     {
-        if (!$this->movements->contains($movement)) {
-            $this->movements->add($movement);
-            $movement->setWarehouse($this);
+        if (!$this->inventories->contains($inventory)) {
+            $this->inventories->add($inventory);
+            $inventory->setWarehouse($this);
         }
 
         return $this;
     }
 
-    public function removeMovement(Movement $movement): static
+    public function removeInventory(Inventory $inventory): static
     {
-        if ($this->movements->removeElement($movement)) {
+        if ($this->inventories->removeElement($inventory)) {
             // set the owning side to null (unless already changed)
-            if ($movement->getWarehouse() === $this) {
-                $movement->setWarehouse(null);
+            if ($inventory->getWarehouse() === $this) {
+                $inventory->setWarehouse(null);
             }
         }
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, ProductReception>
+     */
+    public function getProductReceptions(): Collection
+    {
+        return $this->productReceptions;
+    }
+
+    public function addProductReception(ProductReception $productReception): static
+    {
+        if (!$this->productReceptions->contains($productReception)) {
+            $this->productReceptions->add($productReception);
+            $productReception->setWarehouse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductReception(ProductReception $productReception): static
+    {
+        if ($this->productReceptions->removeElement($productReception)) {
+            // set the owning side to null (unless already changed)
+            if ($productReception->getWarehouse() === $this) {
+                $productReception->setWarehouse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, StockTransfert>
+     */
+    public function getStockTransferts(): Collection
+    {
+        return $this->stockTransferts;
+    }
+
+    public function addStockTransfert(StockTransfert $stockTransfert): static
+    {
+        if (!$this->stockTransferts->contains($stockTransfert)) {
+            $this->stockTransferts->add($stockTransfert);
+            $stockTransfert->setWarehouse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStockTransfert(StockTransfert $stockTransfert): static
+    {
+        if ($this->stockTransferts->removeElement($stockTransfert)) {
+            // set the owning side to null (unless already changed)
+            if ($stockTransfert->getWarehouse() === $this) {
+                $stockTransfert->setWarehouse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, StockModification>
+     */
+    public function getStockModifications(): Collection
+    {
+        return $this->stockModifications;
+    }
+
+    public function addStockModification(StockModification $stockModification): static
+    {
+        if (!$this->stockModifications->contains($stockModification)) {
+            $this->stockModifications->add($stockModification);
+            $stockModification->setWarehouse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStockModification(StockModification $stockModification): static
+    {
+        if ($this->stockModifications->removeElement($stockModification)) {
+            // set the owning side to null (unless already changed)
+            if ($stockModification->getWarehouse() === $this) {
+                $stockModification->setWarehouse(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

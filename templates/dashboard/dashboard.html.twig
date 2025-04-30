@@ -25,7 +25,7 @@
 									{% else %}
 										{% set active_link = "" %}
 									{% endif %}
-									<a class="title mb-1 ms-1 cstm-darkBlue {{ active_link }}" href={{ path("dashboard", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWhName }}</a>
+									<a class="title mb-1 ms-1 cstm-darkBlue {{ active_link }}" href={{ path("dashboard", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWarehouseName }}</a>
 								</li>
 								{% endfor %}
 							</ul>
@@ -35,10 +35,10 @@
 				<div class="col vh-15 p-1">
 					<div class="cstm-card h-100">
 						<div class="bg-light h-100">
-							<p class="bg-cstm-blue pb-2 mb-0">Selected : <span class="ps-1 my-0">{{ warehouse.getWhName }}</span></p>
-							<p class="row ps-1 my-0 cstm-darkBlue">{{ warehouse.getWhAddressNumber ~ ' ' ~ warehouse.getWhAddressRoad ~ ' ' ~ warehouse.getWhAddressPostalCode ~ ' ' ~ warehouse.getWhAddressCity }}</p>
-							<p class="row ps-1 my-0 cstm-darkBlue">{{ warehouse.getWhAddressState ~ ' ' ~ warehouse.getWhAddressCountry }}</p>
-							<p class="row ps-1 my-0 cstm-darkBlue">{{ warehouse.getWhPhone }}</p>
+							<p class="bg-cstm-blue pb-2 mb-0">Selected : <span class="ps-1 my-0">{{ warehouse.getWarehouseName }}</span></p>
+							<p class="row ps-1 my-0 cstm-darkBlue">{{ warehouse.getWarehouseAddressNumber ~ ' ' ~ warehouse.getWarehouseAddressRoad ~ ' ' ~ warehouse.getWarehouseAddressPostalCode ~ ' ' ~ warehouse.getWarehouseAddressCity }}</p>
+							<p class="row ps-1 my-0 cstm-darkBlue">{{ warehouse.getWarehouseAddressState ~ ' ' ~ warehouse.getWarehouseAddressCountry }}</p>
+							<p class="row ps-1 my-0 cstm-darkBlue">{{ warehouse.getWarehousePhone }}</p>
 						</div>
 					</div>
 				</div>

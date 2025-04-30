@@ -22,7 +22,7 @@ class Brand
     private Collection $products;
 
     #[ORM\Column(length: 50)]
-    private ?string $brand_name = null;
+    private ?string $brandName = null;
 
     public function __construct()
     {
@@ -66,12 +66,12 @@ class Brand
 
     public function getBrandName(): ?string
     {
-        return $this->brand_name;
+        return $this->brandName;
     }
 
-    public function setBrandName(string $brand_name): static
+    public function setBrandName(string $brandName): static
     {
-        $this->brand_name = $brand_name;
+        $this->brandName = $brandName;
 
         return $this;
     }

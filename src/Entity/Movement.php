@@ -3,24 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\MovementRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\DiscriminatorColumn;
-use Doctrine\ORM\Mapping\DiscriminatorMap;
-use Doctrine\ORM\Mapping\InheritanceType;
 
 #[ORM\Entity(repositoryClass: MovementRepository::class)]
-// #[InheritanceType('SINGLE_TABLE')]
-#[InheritanceType('JOINED')]
-#[DiscriminatorColumn(name: 'movement_type', type: 'string')]
-#[DiscriminatorMap([
-    'movement' => Movement::class,
-    'inventory' => Inventory::class,
-    'stockModification' => StockModification::class,
-    'productReception' => ProductReception::class,
-    'stockTransfert' => StockTransfert::class])]
 class Movement
 {
     #[ORM\Id]
@@ -28,79 +13,128 @@ class Movement
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, ProductMovement>
-     */
-    #[ORM\OneToMany(targetEntity: ProductMovement::class, mappedBy: 'movement_id')]
-    private Collection $productMovements;
-
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?\DateTimeImmutable $movement_date = null;
-
     #[ORM\ManyToOne(inversedBy: 'movements')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Warehouse $warehouse = null;
+    private ?Product $product = null;
 
-    public function __construct()
-    {
-        $this->productMovements = new ArrayCollection();
-    }
+    #[ORM\Column]
+    private ?int $lastQty = null;
+
+    #[ORM\Column]
+    private ?int $newQty = null;
+
+    #[ORM\ManyToOne(inversedBy: 'movements')]
+    private ?ProductReception $productReception = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Movements')]
+    private ?StockModification $stockModification = null;
+
+    #[ORM\ManyToOne(inversedBy: 'movements')]
+    private ?StockTransfert $stockTransfert = null;
+
+    #[ORM\ManyToOne(inversedBy: 'movements')]
+    private ?Inventory $inventory = null;
+
+    #[ORM\Column(length: 20)]
+    private ?string $movementType = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, ProductMovement>
-     */
-    public function getProductMovements(): Collection
+    public function getProduct(): ?Product
     {
-        return $this->productMovements;
+        return $this->product;
     }
 
-    public function addProductMovement(ProductMovement $productMovement): static
+    public function setProduct(?Product $product): static
     {
-        if (!$this->productMovements->contains($productMovement)) {
-            $this->productMovements->add($productMovement);
-            $productMovement->setMovement($this);
-        }
+        $this->product = $product;
 
         return $this;
     }
 
-    public function removeProductMovement(ProductMovement $productMovement): static
+    public function getLastQty(): ?int
     {
-        if ($this->productMovements->removeElement($productMovement)) {
-            // set the owning side to null (unless already changed)
-            if ($productMovement->getMovement() === $this) {
-                $productMovement->setMovement(null);
-            }
-        }
+        return $this->lastQty;
+    }
+
+    public function setLastQty(int $lastQty): static
+    {
+        $this->lastQty = $lastQty;
 
         return $this;
     }
 
-    public function getMvmtDate(): ?\DateTimeImmutable
+    public function getNewQty(): ?int
     {
-        return $this->movement_date;
+        return $this->newQty;
     }
 
-    public function setMvmtDate(\DateTimeImmutable $movement_date): static
+    public function setNewQty(int $newQty): static
     {
-        $this->movement_date = $movement_date;
+        $this->newQty = $newQty;
 
         return $this;
     }
 
-    public function getWarehouse(): ?Warehouse
+    public function getProductReception(): ?ProductReception
     {
-        return $this->warehouse;
+        return $this->productReception;
     }
 
-    public function setWarehouse(?Warehouse $warehouse): static
+    public function setProductReception(?ProductReception $productReception): static
     {
-        $this->warehouse = $warehouse;
+        $this->productReception = $productReception;
+
+        return $this;
+    }
+
+    public function getStockModification(): ?StockModification
+    {
+        return $this->stockModification;
+    }
+
+    public function setStockModification(?StockModification $stockModification): static
+    {
+        $this->stockModification = $stockModification;
+
+        return $this;
+    }
+
+    public function getStockTransfert(): ?StockTransfert
+    {
+        return $this->stockTransfert;
+    }
+
+    public function setStockTransfert(?StockTransfert $stockTransfert): static
+    {
+        $this->stockTransfert = $stockTransfert;
+
+        return $this;
+    }
+
+    public function getInventory(): ?Inventory
+    {
+        return $this->inventory;
+    }
+
+    public function setInventory(?Inventory $inventory): static
+    {
+        $this->inventory = $inventory;
+
+        return $this;
+    }
+
+    public function getMovementType(): ?string
+    {
+        return $this->movementType;
+    }
+
+    public function setMovementType(string $movementType): static
+    {
+        $this->movementType = $movementType;
 
         return $this;
     }

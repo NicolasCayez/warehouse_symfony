@@ -12,7 +12,7 @@
 						<div class="cstm-card h-100">
 							<div class="h-100">
 								<p class="bg-cstm-blue pb-2 mb-0"> Product receptions for warehouse :</p>
-								<p class="text-center my-0 fs-4">{{ warehouse.getWhName }}</p>
+								<p class="text-center my-0 fs-4">{{ warehouse.getWarehouseName }}</p>
 							</div>
 						</div>
 					</div>
@@ -50,9 +50,9 @@
 									{% for one_reception in receptions_list|sort((a,b) => [b.getMvmtDate] <=> [a.getMvmtDate]) %}
 										<tr class="m-0 ps-1">
 											{# <td class="title cstm-darkBlue"><a href={{ path('receptions') }} class="btn-sm cstm-darkBlue">{{ one_product.getProductName }}</a></td> #}
-											<td class="title cstm-darkBlue">{{ one_reception.getMvmtDate|date("Y - m - d") }}</td>
-											<td class="title cstm-darkBlue">{{ one_reception.getInvoiceRef }}</td>
-											<td class="title cstm-darkBlue">{{ one_reception.getParcelRef }}</td>
+											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionDate|date("Y - m - d") }}</td>
+											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionInvoiceRef }}</td>
+											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionParcelRef }}</td>
 										</tr>
 									{% endfor %}
 								</tbody>

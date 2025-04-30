@@ -6,14 +6,16 @@
     <div class="card bg-cstm-blue border-3 ms-3">
       <ul class="list-unstyled">
         {% for one_warehouse in user_warehouses %}
-          <li>
-            {% if one_warehouse.getId == warehouse.getId %}
-              {% set active_link = "title-bold" %}
-            {% else %}
-              {% set active_link = "" %}
-            {% endif %}
-            <a class="title text-light mb-1 ms-3 {{ active_link }}" href={{ path("warehouses", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWhName }}</a>
-          </li>
+          {% if one_warehouse.getWarehouseName != 'ALL_DATA' %}
+            <li>
+              {% if one_warehouse.getId == warehouse.getId %}
+                {% set active_link = "title-bold" %}
+              {% else %}
+                {% set active_link = "" %}
+              {% endif %}
+              <a class="title text-light mb-1 ms-3 {{ active_link }}" href={{ path("warehouses", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWarehouseName }}</a>
+            </li>
+          {% endif %}
         {% endfor %}
         <li>
           <a class="title-bold text-light mb-1 ms-3" href="">New Warehouse</a>

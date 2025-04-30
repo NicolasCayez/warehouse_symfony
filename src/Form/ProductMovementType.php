@@ -2,9 +2,11 @@
 
 namespace App\Form;
 
+use App\Entity\Movement;
 use App\Entity\Product;
 use App\Entity\ProductMovement;
 use App\Entity\Warehouse;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -27,7 +29,7 @@ class ProductMovementType extends AbstractType
 	public function configureOptions(OptionsResolver $resolver): void
 	{
 		$resolver->setDefaults([
-			'data_class' => ProductMovement::class,
+			'data_class' => Movement::class,
 		]);
 	}
 }

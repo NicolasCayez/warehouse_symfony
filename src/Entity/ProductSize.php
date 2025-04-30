@@ -18,16 +18,16 @@ class ProductSize
     private ?Product $product = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $product_size_height = null;
+    private ?float $productSizeHeight = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $product_size_width = null;
+    private ?float $productSizeWidth = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $product_size_depth = null;
+    private ?float $productSizeDepth = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $product_size_weight = null;
+    private ?float $productSizeWeight = null;
 
     public function getId(): ?int
     {
@@ -48,48 +48,48 @@ class ProductSize
 
     public function getProductSizeHeight(): ?float
     {
-        return $this->product_size_height;
+        return $this->productSizeHeight;
     }
 
-    public function setProductSizeHeight(?float $product_size_height): static
+    public function setProductSizeHeight(?float $productSizeHeight): static
     {
-        $this->product_size_height = $product_size_height;
+        $this->productSizeHeight = $productSizeHeight;
 
         return $this;
     }
 
     public function getProductSizeWidth(): ?float
     {
-        return $this->product_size_width;
+        return $this->productSizeWidth;
     }
 
-    public function setProductSizeWidth(?float $product_size_width): static
+    public function setProductSizeWidth(?float $productSizeWidth): static
     {
-        $this->product_size_width = $product_size_width;
+        $this->productSizeWidth = $productSizeWidth;
 
         return $this;
     }
 
     public function getProductSizeDepth(): ?float
     {
-        return $this->product_size_depth;
+        return $this->productSizeDepth;
     }
 
-    public function setProductSizeDepth(?float $product_size_depth): static
+    public function setProductSizeDepth(?float $productSizeDepth): static
     {
-        $this->product_size_depth = $product_size_depth;
+        $this->productSizeDepth = $productSizeDepth;
 
         return $this;
     }
 
     public function getProductSizeWeight(): ?float
     {
-        return $this->product_size_weight;
+        return $this->productSizeWeight;
     }
 
-    public function setProductSizeWeight(?float $product_size_weight): static
+    public function setProductSizeWeight(?float $productSizeWeight): static
     {
-        $this->product_size_weight = $product_size_weight;
+        $this->productSizeWeight = $productSizeWeight;
 
         return $this;
     }

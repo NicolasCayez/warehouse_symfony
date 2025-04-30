@@ -19,10 +19,10 @@ class ProductInfo
     private ?Product $product = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $product_info_name = null;
+    private ?string $productInfoName = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $product_info_content = null;
+    private ?string $productInfoContent = null;
 
     public function getId(): ?int
     {
@@ -43,24 +43,24 @@ class ProductInfo
 
     public function getProductInfoName(): ?string
     {
-        return $this->product_info_name;
+        return $this->productInfoName;
     }
 
-    public function setProductInfoName(string $product_info_name): static
+    public function setProductInfoName(string $productInfoName): static
     {
-        $this->product_info_name = $product_info_name;
+        $this->productInfoName = $productInfoName;
 
         return $this;
     }
 
     public function getProductInfoContent(): ?string
     {
-        return $this->product_info_content;
+        return $this->productInfoContent;
     }
 
-    public function setProductInfoContent(string $product_info_content): static
+    public function setProductInfoContent(string $productInfoContent): static
     {
-        $this->product_info_content = $product_info_content;
+        $this->productInfoContent = $productInfoContent;
 
         return $this;
     }

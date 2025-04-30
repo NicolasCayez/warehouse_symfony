@@ -22,31 +22,31 @@ class Supplier
     private Collection $products;
 
     #[ORM\Column(length: 50)]
-    private ?string $supplier_name = null;
+    private ?string $supplierName = null;
 
     #[ORM\Column(length: 13, nullable: true)]
-    private ?string $supplier_phone = null;
+    private ?string $supplierPhone = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $supplier_address_number = null;
+    private ?int $supplierAddressNumber = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $supplier_address_road = null;
+    private ?string $supplierAddressRoad = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $supplier_address_label = null;
+    private ?string $supplierAddressLabel = null;
 
     #[ORM\Column(length: 8, nullable: true)]
-    private ?string $supplier_address_postal_code = null;
+    private ?string $supplierAddressPostalCode = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $supplier_address_city = null;
+    private ?string $supplierAddressCity = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $supplier_address_state = null;
+    private ?string $supplierAddressState = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $supplier_address_country = null;
+    private ?string $supplierAddressCountry = null;
 
     public function __construct()
     {
@@ -90,108 +90,108 @@ class Supplier
 
     public function getSupplierName(): ?string
     {
-        return $this->supplier_name;
+        return $this->supplierName;
     }
 
-    public function setSupplierName(string $supplier_name): static
+    public function setSupplierName(string $supplierName): static
     {
-        $this->supplier_name = $supplier_name;
+        $this->supplierName = $supplierName;
 
         return $this;
     }
 
     public function getSupplierPhone(): ?string
     {
-        return $this->supplier_phone;
+        return $this->supplierPhone;
     }
 
-    public function setSupplierPhone(?string $supplier_phone): static
+    public function setSupplierPhone(?string $supplierPhone): static
     {
-        $this->supplier_phone = $supplier_phone;
+        $this->supplierPhone = $supplierPhone;
 
         return $this;
     }
 
     public function getSupplierAddressNumber(): ?int
     {
-        return $this->supplier_address_number;
+        return $this->supplierAddressNumber;
     }
 
-    public function setSupplierAddressNumber(?int $supplier_address_number): static
+    public function setSupplierAddressNumber(?int $supplierAddressNumber): static
     {
-        $this->supplier_address_number = $supplier_address_number;
+        $this->supplierAddressNumber = $supplierAddressNumber;
 
         return $this;
     }
 
     public function getSupplierAddressRoad(): ?string
     {
-        return $this->supplier_address_road;
+        return $this->supplierAddressRoad;
     }
 
-    public function setSupplierAddressRoad(?string $supplier_address_road): static
+    public function setSupplierAddressRoad(?string $supplierAddressRoad): static
     {
-        $this->supplier_address_road = $supplier_address_road;
+        $this->supplierAddressRoad = $supplierAddressRoad;
 
         return $this;
     }
 
     public function getSupplierAddressLabel(): ?string
     {
-        return $this->supplier_address_label;
+        return $this->supplierAddressLabel;
     }
 
-    public function setSupplierAddressLabel(?string $supplier_address_label): static
+    public function setSupplierAddressLabel(?string $supplierAddressLabel): static
     {
-        $this->supplier_address_label = $supplier_address_label;
+        $this->supplierAddressLabel = $supplierAddressLabel;
 
         return $this;
     }
 
     public function getSupplierAddressPostalCode(): ?string
     {
-        return $this->supplier_address_postal_code;
+        return $this->supplierAddressPostalCode;
     }
 
-    public function setSupplierAddressPostalCode(?string $supplier_address_postal_code): static
+    public function setSupplierAddressPostalCode(?string $supplierAddressPostalCode): static
     {
-        $this->supplier_address_postal_code = $supplier_address_postal_code;
+        $this->supplierAddressPostalCode = $supplierAddressPostalCode;
 
         return $this;
     }
 
     public function getSupplierAddressCity(): ?string
     {
-        return $this->supplier_address_city;
+        return $this->supplierAddressCity;
     }
 
-    public function setSupplierAddressCity(?string $supplier_address_city): static
+    public function setSupplierAddressCity(?string $supplierAddressCity): static
     {
-        $this->supplier_address_city = $supplier_address_city;
+        $this->supplierAddressCity = $supplierAddressCity;
 
         return $this;
     }
 
     public function getSupplierAddressState(): ?string
     {
-        return $this->supplier_address_state;
+        return $this->supplierAddressState;
     }
 
-    public function setSupplierAddressState(?string $supplier_address_state): static
+    public function setSupplierAddressState(?string $supplierAddressState): static
     {
-        $this->supplier_address_state = $supplier_address_state;
+        $this->supplierAddressState = $supplierAddressState;
 
         return $this;
     }
 
     public function getSupplierAddressCountry(): ?string
     {
-        return $this->supplier_address_country;
+        return $this->supplierAddressCountry;
     }
 
-    public function setSupplierAddressCountry(?string $supplier_address_country): static
+    public function setSupplierAddressCountry(?string $supplierAddressCountry): static
     {
-        $this->supplier_address_country = $supplier_address_country;
+        $this->supplierAddressCountry = $supplierAddressCountry;
 
         return $this;
     }

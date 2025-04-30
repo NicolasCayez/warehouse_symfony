@@ -22,7 +22,7 @@ class Family
     private Collection $products;
 
     #[ORM\Column(length: 50)]
-    private ?string $family_name = null;
+    private ?string $familyName = null;
 
     public function __construct()
     {
@@ -46,7 +46,7 @@ class Family
     {
         if (!$this->products->contains($product)) {
             $this->products->add($product);
-            $product->addFamilyId($this);
+            $product->addFamily($this);
         }
 
         return $this;
@@ -55,7 +55,7 @@ class Family
     public function removeProduct(Product $product): static
     {
         if ($this->products->removeElement($product)) {
-            $product->removeFamilyId($this);
+            $product->removeFamily($this);
         }
 
         return $this;
@@ -63,12 +63,12 @@ class Family
 
     public function getFamilyName(): ?string
     {
-        return $this->family_name;
+        return $this->familyName;
     }
 
-    public function setFamilyName(string $family_name): static
+    public function setFamilyName(string $familyName): static
     {
-        $this->family_name = $family_name;
+        $this->familyName = $familyName;
 
         return $this;
     }
