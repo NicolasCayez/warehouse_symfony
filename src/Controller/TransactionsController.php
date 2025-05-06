@@ -30,15 +30,36 @@ use Symfony\Component\Routing\Attribute\Route;
 final class TransactionsController extends AbstractController
 {	
 	//* **************************************************
-	//* TRANSFERTS
+	//* TRANSACTIONS
 	//* **************************************************
-	#[Route('/transferts', name: 'transferts')]
-	public function indexTransfert(): Response
+	#[Route('/Transactions', name: 'transactions')]
+	public function indexTransactions(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository): Response
 	{
-		return $this->render('transactions/transferts/transferts.html.twig', [
-			'showMenu' => true,
+		$userAuthentified = false;
+		$warehousesList = [];
+		$warehouse = New Warehouse;
+		// if user autentified 
+		if($this->getUser() instanceof User){
+			$userAuthentified = true;
+			// List of warehouses for the user
+			$user = $userRepository->findOneById($this->getUser());
+			$warehousesList = $user->getWarehouses();
+			// if ($warehouseRepository->findOneById($id)) {
+			// 	$warehouse = $warehouseRepository->findOneById($id);
+			// }
+			// $receptionsList = $productReceptionRepository->findByWarehouse($id);
+		}
+		return $this->render('transactions/transactions.html.twig', [
+			'user_authentified' => $userAuthentified,
+			'user_warehouses' => $warehousesList,
+			'warehouse' => $warehouse,
+			// 'receptions_list' => $receptionsList,
 		]);
 	}
+
+	//* **************************************************
+	//* TRANSFERTS
+	//* **************************************************
 
 	//* **************************************************
 	//* RECEPTIONS
@@ -158,7 +179,8 @@ final class TransactionsController extends AbstractController
 																								'Value : ' . $p->getProductValue()
 																							) : '';
 																} 
-											]);
+											])
+						->add('add_product', SubmitType::class);
 			$formSelectProductToAdd->handleRequest($request);
 			if ($formSelectProductToAdd->isSubmitted() && $formSelectProductToAdd->isValid() ) {
 				$productAndQty = $formSelectProductToAdd->getData();
@@ -178,6 +200,7 @@ final class TransactionsController extends AbstractController
 					$productReception->addMovement($newMovement);
 				}
 				$manager->flush();
+				return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
 			}
 			//* Form for all products selected in the reception
 			$formSelectedProducts = $this->createForm(ProductCollectionFromProductReceptionType::class, $productReception);
@@ -213,6 +236,7 @@ final class TransactionsController extends AbstractController
 			
 			return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
 		}
+		// ! FAIRE AVEC FILTRE
 	//* NEW RECEPTION DETAIL : EDIT AND ADD PRODUCTS
 	#[Route('/receptions/{id}/{productReceptionId}/{filter}', name: 'reception_detail_filter')]
 	public function newReceptionDetailFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId, $filter): Response

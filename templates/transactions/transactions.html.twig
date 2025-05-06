@@ -11,7 +11,7 @@
 					<div class="col h-100 p-1">
 						<div class="cstm-card h-100">
 							<div class="h-100">
-								<p class="bg-cstm-blue pb-2 mb-0"> Transferts for warehouse :</p>
+								<p class="bg-cstm-blue pb-2 mb-0"> Product receptions for warehouse :</p>
 								<p class="text-center my-0 fs-4">{{ warehouse.getWarehouseName }}</p>
 							</div>
 						</div>
@@ -20,7 +20,9 @@
 						<div class="cstm-card h-100">
 							<p>Actions</p>
 							<div class="row my-0 fs-4 justify-content-evenly">
-								{% include "/shared_templates/action_buttons.html.twig" %}
+								{# <a href={{ path('receptions') }} class="col-2 btn btn-sm btn-light">Receptions</a> #}
+								<a href={{ path('transferts') }} class="col-2 btn btn-sm btn-light">Transferts</a>
+								<a href="" class="col-2 btn btn-sm btn-light">Stock Modifications</a>
 							</div>
 						</div>
 					</div>
@@ -33,7 +35,7 @@
 				</div>
 				{# 2nd ROW : List #}
 				<div class="vh-70 p-1">
-					<div class="cstm-card h-100">
+					{# <div class="cstm-card h-100">
 						<p class="row bg-cstm-blue pb-2 mb-0"></p>
 						<div class="bg-light h-95 overflow-auto">
 							<table class="table table-sm table-striped-columns table-hover table-responsive">
@@ -45,18 +47,18 @@
 									</tr>
 								</thead>
 								<tbody>
-									{# {% for one_reception in receptions_list|sort((a,b) => [b.getProductReceptionDate] <=> [a.getProductReceptionDate]) %}
+									{% for one_reception in receptions_list|sort((a,b) => [b.getProductReceptionDate] <=> [a.getProductReceptionDate]) %}
 										<tr class="m-0 ps-1">
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionDate|date("Y - m - d") }}</td>
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionInvoiceRef }}</td>
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionParcelRef }}</td>
 											<td class="title cstm-darkBlue"> <a href={{ path('reception_detail', { 'id': warehouse.getId, 'productReceptionId': one_reception.getId }) }} class="btn btn-sm btn-primary">Detail</a></td>
 										</tr>
-									{% endfor %} #}
+									{% endfor %}
 								</tbody>
 							</table>
 						</div>
-					</div>
+					</div> #}
 				</div>
 		</div>
 	</div>

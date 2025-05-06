@@ -19,14 +19,16 @@
 						<div class="bg-light h-70 overflow-hidden">
 							<ul class="list-unstyled bg-light mt-0">
 								{% for one_warehouse in user_warehouses %}
-								<li>
-									{% if one_warehouse.getId == warehouse.getId %}
-										{% set active_link = "title-bold" %}
-									{% else %}
-										{% set active_link = "" %}
+									{% if one_warehouse.getWarehouseName != 'ALL_DATA' %}
+										<li>
+											{% if one_warehouse.getId == warehouse.getId %}
+												{% set active_link = "title-bold" %}
+											{% else %}
+												{% set active_link = "" %}
+											{% endif %}
+											<a class="title mb-1 ms-1 cstm-darkBlue {{ active_link }}" href={{ path("dashboard", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWarehouseName }}</a>
+										</li>
 									{% endif %}
-									<a class="title mb-1 ms-1 cstm-darkBlue {{ active_link }}" href={{ path("dashboard", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWarehouseName }}</a>
-								</li>
 								{% endfor %}
 							</ul>
 						</div>

@@ -180,6 +180,9 @@ footer:hover{
 .bg-cstm-lightBlue{
   background-color: #3B7BCD;
 }
+.bg-cstm-light{
+  background-color: whitesmoke;
+}
 
 .cstm-darkBlue{
   color: #0F1E33;
@@ -189,6 +192,9 @@ footer:hover{
 }
 .cstm-lightBlue{
   color: #3B7BCD;
+}
+.cstm-light{
+  color: whitesmoke;
 }
 
 th {

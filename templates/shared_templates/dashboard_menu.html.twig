@@ -29,15 +29,13 @@
       <p></p>
     </div>
     {# Transactions, avtive if warehouse has been selected #}
-    <a class="title-bold text-light mt-2 ms-3" href="">Transactions</a>
+    <a class="title-bold text-light mt-2 ms-3" href={{ path('transactions', {'id': warehouse.getId}) }}>Transactions</a>
     <div class="card bg-cstm-blue border-3 ms-3">
       {% if warehouse.getId != null %}
       <a class="title-bold text-light mt-2 ms-3" href={{ path('receptions', {'id': warehouse.getId}) }}>Receptions</a>
       <div class="card bg-cstm-blue border-3 ms-3">
         <p></p>
       </div>
-      {# Transferts #}
-      <a class="title-bold text-light mt-2 ms-3" href={{ path('transferts') }}>Transferts</a>
       {# New transfert #}
       <div class="card bg-cstm-blue border-3 ms-3">
         <a class="title text-light mt-2 ms-3 ps-1" href="">New transfert</a>
@@ -48,6 +46,8 @@
         <p></p>
       </div>
       {% else %}
+        {# Transferts #}
+        <a class="title-bold text-light mt-2 ms-3" href={{ path('transferts') }}>Transferts</a>
         <p class="title text-light mt-2 ms-3">No Warehouse selected</p>
       {% endif %}
     </div>
