@@ -117,12 +117,12 @@ class StockTransfert
     /**
      * @return Collection<int, Movement>
      */
-    public function getProductMovements(): Collection
+    public function getMovements(): Collection
     {
         return $this->movements;
     }
 
-    public function addProductMovement(Movement $movement): static
+    public function addMovement(Movement $movement): static
     {
         if (!$this->movements->contains($movement)) {
             $this->movements->add($movement);
@@ -132,7 +132,7 @@ class StockTransfert
         return $this;
     }
 
-    public function removeProductMovement(Movement $movement): static
+    public function removeMovement(Movement $movement): static
     {
         if ($this->movements->removeElement($movement)) {
             // set the owning side to null (unless already changed)

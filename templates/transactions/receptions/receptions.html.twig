@@ -47,12 +47,12 @@
 									</tr>
 								</thead>
 								<tbody>
-									{% for one_reception in receptions_list|sort((a,b) => [b.getMvmtDate] <=> [a.getMvmtDate]) %}
+									{% for one_reception in receptions_list|sort((a,b) => [b.getProductReceptionDate] <=> [a.getProductReceptionDate]) %}
 										<tr class="m-0 ps-1">
-											{# <td class="title cstm-darkBlue"><a href={{ path('receptions') }} class="btn-sm cstm-darkBlue">{{ one_product.getProductName }}</a></td> #}
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionDate|date("Y - m - d") }}</td>
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionInvoiceRef }}</td>
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionParcelRef }}</td>
+											<td class="title cstm-darkBlue"> <a href={{ path('reception_detail', { 'id': warehouse.getId, 'productReceptionId': one_reception.getId }) }} class="btn btn-sm btn-primary">Detail</a></td>
 										</tr>
 									{% endfor %}
 								</tbody>

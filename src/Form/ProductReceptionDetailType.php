@@ -22,8 +22,8 @@ class ProductReceptionDetailType extends MovementType
 		// $builder
 		// 	->remove('mvmtDate');
 		$builder
-			->add('productMovements', CollectionType::class, [
-				'entry_type' => ProductMovementType::class,
+			->add('Movements', CollectionType::class, [
+				'entry_type' => MovementType::class,
 				'entry_options' => ['label' =>false],
 				])
 		;

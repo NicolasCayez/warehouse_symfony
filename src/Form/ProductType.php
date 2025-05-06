@@ -22,8 +22,8 @@ class ProductType extends AbstractType
 			->add('product_ref', TextType::class)
 			->add('product_ref2', TextType::class)
 			->add('product_value', NumberType::class)
-			->add('qty', IntegerType::class, ['mapped' => false])
-			->add('submit', SubmitType::class, ['label' => 'Create',])
+			// ->add('qty', IntegerType::class, ['mapped' => false])
+			// ->add('submit', SubmitType::class, ['label' => 'Create',])
 		;
 	}
 	public function configureOptions(OptionsResolver $resolver): void

@@ -3,12 +3,16 @@
 namespace App\DataFixtures;
 
 use App\Entity\Cours;
+use App\Entity\Inventory;
 use App\Entity\Langages;
 use App\Entity\Niveaux;
 use App\Entity\User;
 use App\Entity\Warehouse;
+use App\Repository\InventoryRepository;
 use App\Repository\UserRepository;
 use App\Repository\WarehouseRepository;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -22,11 +26,13 @@ class WarehouseFixtures extends Fixture implements DependentFixtureInterface
 	public const NB_WAREHOUSE = 4;
 	private UserRepository $userRepository;
 	private WarehouseRepository $warehouseRepository;
+	private InventoryRepository $inventoryRepository;
 
-	public function __construct(UserRepository $userRepository, WarehouseRepository $warehouseRepository)
+	public function __construct(UserRepository $userRepository, WarehouseRepository $warehouseRepository, InventoryRepository $inventoryRepository)
 	{
 		$this->userRepository = $userRepository;
 		$this->warehouseRepository = $warehouseRepository;
+		$this->inventoryRepository = $inventoryRepository;
 	}
 
 	public function load(ObjectManager $manager): void
@@ -67,9 +73,12 @@ class WarehouseFixtures extends Fixture implements DependentFixtureInterface
 			$manager->persist($warehouse);
 			$this->addReference(self::WAREHOUSE_REFERENCE_TAG . $i, $warehouse);
 			$manager->flush();
-			$lastId = $warehouse->getId();
-			$lastWarehouse = $this->warehouseRepository->findOneById($lastId);
-			$lastWarehouse->addUser($admin);
+			$warehouse->addUser($admin);
+			$firstInventory = new Inventory();
+			$firstInventory->setInventoryDate(new DateTimeImmutable());
+			$warehouse->addInventory($firstInventory);
+			// $firstInventory->setWarehouse($warehouse);
+			$firstInventory->setInventoryClosed(true);
 		}
 		$manager->flush();
 	}

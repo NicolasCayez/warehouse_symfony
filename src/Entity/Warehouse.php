@@ -57,7 +57,7 @@ class Warehouse
     /**
      * @var Collection<int, Inventory>
      */
-    #[ORM\OneToMany(targetEntity: Inventory::class, mappedBy: 'warehouse')]
+    #[ORM\OneToMany(targetEntity: Inventory::class, mappedBy: 'warehouse', cascade: ['persist'])]
     private Collection $inventories;
 
     /**

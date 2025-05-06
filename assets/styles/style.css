@@ -318,6 +318,17 @@ a:hover{
   flex-direction: row;
   justify-content: space-evenly;
 }
+
+.form_row_span {
+  display: grid;
+  grid-template-columns: 6fr 1fr 1fr;
+  margin-left: auto;
+  margin-right: 0;
+}
+.form_row_span div {
+  display: flex;
+  margin-left: auto;
+}
 /* .form-checkbox-cstm div:has(input[type=checkbox]) {
   display: flex;
   flex-direction: row;
