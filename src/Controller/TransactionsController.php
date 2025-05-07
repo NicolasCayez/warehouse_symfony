@@ -35,6 +35,7 @@ final class TransactionsController extends AbstractController
 	#[Route('/Transactions', name: 'transactions')]
 	public function indexTransactions(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository): Response
 	{
+		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
@@ -50,6 +51,7 @@ final class TransactionsController extends AbstractController
 			// $receptionsList = $productReceptionRepository->findByWarehouse($id);
 		}
 		return $this->render('transactions/transactions.html.twig', [
+			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
@@ -69,6 +71,7 @@ final class TransactionsController extends AbstractController
 	#[Route('/receptions/{id}', name: 'receptions')]
 	public function indexReception(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, $id): Response
 	{
+		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
@@ -84,6 +87,7 @@ final class TransactionsController extends AbstractController
 			$receptionsList = $productReceptionRepository->findByWarehouse($id);
 		}
 		return $this->render('transactions/receptions/receptions.html.twig', [
+			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
@@ -95,6 +99,7 @@ final class TransactionsController extends AbstractController
 	#[Route('/receptions/{id}/new', name: 'new_reception', methods: ['GET', 'POST'])]
 	public function newReception(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductRepository $productRepository, $id,): Response
 	{
+		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
@@ -123,6 +128,7 @@ final class TransactionsController extends AbstractController
 			return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => '!']);
 		}
 		return $this->render('transactions/receptions/reception_detail.html.twig', [
+			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
@@ -134,6 +140,7 @@ final class TransactionsController extends AbstractController
 		#[Route('/receptions/{id}/{productReceptionId}', name: 'reception_detail', methods: ['GET', 'POST'])]
 		public function newReceptionDetail(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, MovementRepository $movementRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId): Response
 		{
+			$routeName = $request->attributes->get('_route');
 			$userAuthentified = false;
 			$warehousesList = [];
 			$warehouse = New Warehouse;
@@ -214,6 +221,7 @@ final class TransactionsController extends AbstractController
 				return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
 			}
 			return $this->render('transactions/receptions/reception_detail.html.twig', [
+				'route_name' => $routeName,
 				'user_authentified' => $userAuthentified,
 				'user_warehouses' => $warehousesList,
 				'warehouse' => $warehouse,
@@ -241,6 +249,7 @@ final class TransactionsController extends AbstractController
 	#[Route('/receptions/{id}/{productReceptionId}/{filter}', name: 'reception_detail_filter')]
 	public function newReceptionDetailFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId, $filter): Response
 	{
+		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
@@ -306,6 +315,7 @@ final class TransactionsController extends AbstractController
 			return $this->redirectToRoute('reception_detail_filter', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => $filter]);
 		}
 		return $this->render('transactions/receptions/reception_detail.html.twig', [
+			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
@@ -323,6 +333,7 @@ final class TransactionsController extends AbstractController
 	#[Route('/stock_modifications', name: 'stock_modifications')]
 	public function indexStockModifications(): Response
 	{
+		// $routeName = $request->attributes->get('_route');
 		return $this->render('transactions/stock_modifications/stock_modifications.html.twig', [
 			'showMenu' => true,
 		]);

@@ -1,5 +1,5 @@
 <header class="navbar sticky-top bg-cstm-blue text-light vh-10">
-	<nav class="container-xxl">
+	<nav class="box-container">
 		<div class="d-inline-flex col-auto title-bold ms-2 pe-5 me-5">
 			<img id="logo" src={{ asset('img/logo.png') }} alt="Logo WareHouse" class="col">
 			<a id="headerTitle" href="#" class="my-auto col ms-2 fs-2 text-light">WareHouse</a>
@@ -9,18 +9,35 @@
 			<a href={{ path("app_login") }} class="ps-2 ms-auto">Se connecter</a>
 		{% else %}
 			{# If user is logged in #}
-			<div class="d-inline-flex col ms-auto title">
+			{# Link #}
+			<div class="d-inline-flex col-auto ms-5 title">
 				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
-				<a href={{ path("dashboard_default") }} class="my-auto col ms-2 fs-5 text-light">Dashboard</a>
+				<a href={{ path("home") }} class="my-auto col ms-2 fs-5 text-light {{ 'home' in route_name ? 'title-bold' }}">Home</a>
 			</div>
+			{# Link #}
+			<div class="d-inline-flex col-auto ms-5 title">
+				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
+				<a href={{ path("warehouses") }} class="my-auto col ms-2 fs-5 text-light {{ 'warehouses' in route_name ? 'title-bold' }}">Warehouses</a>
+			</div>
+			{# Link #}
+			<div class="d-inline-flex col-auto ms-5 title">
+				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
+				<a href={{ path("products") }} class="my-auto col ms-2 fs-5 text-light {{ 'product' in route_name ? 'title-bold' }}">Products</a>
+			</div>
+			{# Link #}
+			<div class="d-inline-flex col-auto ms-5 title">
+				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
+				<a href={{ path("transactions") }} class="my-auto col ms-2 fs-5 text-light {{ 'transaction' in route_name ? 'title-bold' }}">Transactions History</a>
+			</div>
+			{# COnnected informations #}
 			<p class="px-2 ms-auto my-0 py-0 text-center fs-5">Connecté : <br> {{ app.user.username }}</p>
 			<div class="col-auto text-center">
 				{% if "ROLE_ADMIN" in app.user.roles %}
 					{# IF USER IS ADMINISTRATOR #}
-					<a href={{ path("admin") }} class="row ps-2 ms-1 fs-5 text-warning">Administration</a>
+					<a href={{ path("admin") }} class="row px-2 ms-1 fs-5 text-warning">Administration</a>
 				{% endif %}
 				{# Log out #}
-				<a href={{ path("app_logout") }} class="row ps-2 ms-1 fs-5 text-danger">Se déconnecter</a>
+				<a href={{ path("app_logout") }} class="row px-2 ms-1 fs-5 text-danger">Se déconnecter</a>
 			</div>
 		{% endif %}
 	</nav>

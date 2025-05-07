@@ -1,9 +1,24 @@
-
-{% if route_name == 'transferts' %}
-
-{% elseif route_name == 'transfert_detail' %}
-  <a href={{ path('new_transfert', {'id': warehouse.getId}) }} class="col-2 btn btn-sm btn-light">New Transfert</a>
+{% if 'home' in route_name %}
+  <a href={{ path('transferts') }} class="col btn btn-sm btn-light">All Transferts</a>
+  <a href="" class="col btn btn-sm btn-light">Dashboard</a>
+  <a href="" class="col btn btn-sm btn-light">All Products</a>
+  <a href="" class="col-2 btn btn-sm btn-light">All Stock Modif</a>
+  <a href="" class="col-2 btn btn-sm btn-light">All Inventories</a>
 {% endif %}
 
-<a href="" class="col-2 btn btn-sm btn-light">Transfert</a>
-<a href="" class="col-2 btn btn-sm btn-light">Modif stock</a>
+{% if 'warehouse' in route_name %}
+  <a href="" class="col btn btn-sm btn-light">Products</a>
+  <a href="" class="col btn btn-sm btn-light">Stock Modif</a>
+  <a href="" class="col btn btn-sm btn-light">Inventories</a>
+{% endif %}
+
+{% if 'transfert_by_warehouse' in route_name %}
+  <a href={{ path('new_transfert', {'id': warehouse.getId}) }} class="col btn btn-sm btn-light"> New Transfert</a>
+  <a href="" class="col btn btn-sm btn-light">Products</a>
+  <a href="" class="col btn btn-sm btn-light">Stock Modif</a>
+  <a href="" class="col btn btn-sm btn-light">Inventories</a>
+{% endif %}
+
+{% if route_name == 'transfert_detail' %}
+{% endif %}
+

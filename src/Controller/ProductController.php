@@ -21,6 +21,7 @@ final class ProductController extends AbstractController
 	#[Route('/products', name: 'products')]
 	public function indexProduct(Request $request, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductRepository $productRepository, FormFactoryInterface $formFactory): Response
 	{
+		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
@@ -48,6 +49,7 @@ final class ProductController extends AbstractController
 			}
 		}
 		return $this->render('products/products.html.twig', [
+			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
@@ -58,6 +60,7 @@ final class ProductController extends AbstractController
 	#[Route('/products/{filter}', name: 'products_filtered')]
 	public function indexProductFiltered(Request $request, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductRepository $productRepository, FormFactoryInterface $formFactory, $filter): Response
 	{
+		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
@@ -83,6 +86,7 @@ final class ProductController extends AbstractController
 			}
 		}
 		return $this->render('products/products.html.twig', [
+			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,

@@ -44,8 +44,8 @@ final class WipController extends AbstractController
 	#[Route('/transferts', name: 'transferts')]
 	public function indexTransfert(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository): Response
 	{
-		$userAuthentified = false;
 		$routeName = $request->attributes->get('_route');
+		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
 		// if user autentified 
@@ -70,7 +70,7 @@ final class WipController extends AbstractController
 
 
 
-	#[Route('/transferts/{id}', name: 'transfert_detail')]
+	#[Route('/transferts/{id}', name: 'transfert_by_warehouse')]
 	public function transfertByWarehouse(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository, $id): Response
 	{
 		$userAuthentified = false;

@@ -7,31 +7,25 @@ use App\Entity\Warehouse;
 use App\Repository\UserRepository;
 use App\Repository\WarehouseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class DashboardController extends AbstractController
+final class HomeController extends AbstractController
 {
 	// DEFAULT ROUTE
 	#[Route('/', name: '')]
 	public function index(): Response
 	{
-		return $this->redirectToRoute('dashboard', [
+		return $this->redirectToRoute('home', [
 			'id' => 'default',
 		]);
 	}
 	// DEFAULT dashboard no parameters
-	#[Route('/dashboard', name: 'dashboard_default')]
-	public function dashboardDefault(): Response
+	#[Route('/home', name: 'home')]
+	public function home(Request $request, UserRepository $userRepository): Response
 	{
-		return $this->redirectToRoute('dashboard', [
-			'id' => 'default',
-		]);
-	}
-	// ROUTE : dashboard with selected warehouse
-	#[Route('/dashboard/{id}', name: 'dashboard')]
-	public function dashboard(WarehouseRepository $warehouseRepository, UserRepository $userRepository, $id): Response
-	{
+		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
@@ -41,14 +35,12 @@ final class DashboardController extends AbstractController
 			// List of warehouses for the user
 			$user = $userRepository->findOneById($this->getUser());
 			$warehousesList = $user->getWarehouses();
-			if ($warehouseRepository->findOneById($id)) {
-				$warehouse = $warehouseRepository->findOneById($id);
-			}
 		}
-		return $this->render('dashboard/dashboard.html.twig', [
+		return $this->render('home/home.html.twig', [
+			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
-			'warehouse' => $warehouse,
+			// 'warehouse' => $warehouse,
 		]);
 	}
 }

@@ -1,16 +1,3 @@
-.test-red {
-  border: solid 2px red;
-}
-.test-blue {
-  border: solid 2px blue;
-}
-.test-green {
-  border: solid 2px green;
-}
-.test-orange {
-  border: solid 2px orange;
-}
-
 /** ************************* **/
 /** FONTS                     **/
 /** ************************* **/
@@ -30,6 +17,48 @@
 }
 .text{
   font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/** ************************* **/
+/** COLORS                    **/
+/** ************************* **/
+.bg-cstm-darkBlue{
+  background-color: #0F1E33;
+}
+.bg-cstm-blue{
+  background-color: #254C80;
+}
+.bg-cstm-lightBlue{
+  background-color: #3B7BCD;
+}
+.bg-cstm-light{
+  background-color: whitesmoke;
+}
+
+.cstm-bluedark{
+  color: #0F1E33;
+}
+.cstm-blue{
+  color: #254C80;
+}
+.cstm-light-blue{
+  color: #3B7BCD;
+}
+.cstm-light{
+  color: whitesmoke;
+}
+
+th {
+  background-color: #254C80 !important;
+  border: solid 2px whitesmoke !important;
+  color: whitesmoke !important;
+}
+thead {
+  border-bottom: solid 2px whitesmoke !important;
+}
+
+.bg-light {
+  --bs-bg-opacity: 0;
 }
 
 /** ************************* **/
@@ -53,19 +82,16 @@ body{
 header{
   height: 10vh;
 }
-.content{
-  flex: 1 1 auto;
-  padding: 0.2rem;
-}
+
 footer{
   flex: 0 1 auto;
   opacity: 0.9;
-  height: fit-content;
+  height: 40px;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  translate: 0 calc(100% - 4.5vh);
+  translate: 0 calc(100% - 30px);
   transition: ease-in-out;
   transition-duration: 0.5s;
   transition-delay: 0.5s;
@@ -77,6 +103,7 @@ body {
 }
 footer:hover{
   opacity: 1;
+  height: fit-content;
   translate: 0 0;
   transition: ease-in-out;
   transition-duration: 0.3s;
@@ -161,6 +188,10 @@ footer:hover{
   height: 95%;
 }
 
+.h-fill {
+  flex: 1 1 auto;
+}
+
 /** ************************* **/
 /** CUSTOM GRID WIDTH         **/
 /** ************************* **/
@@ -168,47 +199,7 @@ footer:hover{
   width: 40%;
 }
 
-/** ************************* **/
-/** COLORS                    **/
-/** ************************* **/
-.bg-cstm-darkBlue{
-  background-color: #0F1E33;
-}
-.bg-cstm-blue{
-  background-color: #254C80;
-}
-.bg-cstm-lightBlue{
-  background-color: #3B7BCD;
-}
-.bg-cstm-light{
-  background-color: whitesmoke;
-}
 
-.cstm-darkBlue{
-  color: #0F1E33;
-}
-.cstm-blue{
-  color: #254C80;
-}
-.cstm-lightBlue{
-  color: #3B7BCD;
-}
-.cstm-light{
-  color: whitesmoke;
-}
-
-th {
-  background-color: #254C80 !important;
-  border: solid 2px whitesmoke !important;
-  color: whitesmoke !important;
-}
-thead {
-  border-bottom: solid 2px whitesmoke !important;
-}
-
-.bg-light {
-  --bs-bg-opacity: 0;
-}
 /** ************************* **/
 /** HEADER CONTENT            **/
 /** ************************* **/

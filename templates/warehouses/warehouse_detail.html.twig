@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<!-- CUSTOM CSS -->
+	<link rel="stylesheet" href="{{ asset('styles/style.css') }}">
+{% endblock %}
+
+{% block page_content %}
+	{# ROW 1 : *** #}
+	<div class="row h-fill py-0 mt-1">
+		{# ROW 1 COL 1 #}
+		<div class="col">
+			<div class="d-flex row text-light h-100 py-1">
+				{# ROW 1 COL 1 CARD 1 #}
+				<div class="col cstm-card h-100 mx-1">
+					<p>Warehouse detail</p>
+					{# ROW 1 COL 1 ROW 1 #}
+					<div class="row">
+						<div class="col mx-1">
+							<div class="card bg-cstm-light ">
+								<p class="row my-0 cstm-darkBlue mx-auto title-bold">{{ warehouse.getWarehouseName }}</p>
+								<hr class="w-75 mx-auto">
+								<p class="row ps-3 my-0 cstm-darkBlue">{{ warehouse.getWarehouseAddressNumber ~ ' ' ~ warehouse.getWarehouseAddressRoad ~ ' ' ~ warehouse.getWarehouseAddressPostalCode ~ ' ' ~ warehouse.getWarehouseAddressCity }}</p>
+								<p class="row ps-3 my-0 cstm-darkBlue">{{ warehouse.getWarehouseAddressState ~ ' ' ~ warehouse.getWarehouseAddressCountry }}</p>
+								<p class="row ps-3 my-0 cstm-darkBlue">{{ warehouse.getWarehousePhone }}</p>
+							</div>
+						</div>
+						<div class="col mx-1">
+
+						</div>
+					</div>
+					{# ROW 1 COL 1 ROW 2 #}
+					<div class="row mt-1">
+						<div class="col mx-1">
+							<div class="card bg-cstm-light ">
+								<p class="row my-0 cstm-darkBlue mx-3 title-bold">Stats</p>
+								<hr class="w-75 mx-auto">
+								<p class="row ps-3 my-0 cstm-darkBlue">Stat1</p>
+								<p class="row ps-3 my-0 cstm-darkBlue">Stat1</p>
+								<p class="row ps-3 my-0 cstm-darkBlue">Stat1</p>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		{# ROW 1 COL 2 #}
+		<div class="col">
+			{# ROW 1 COL 2 ROW 1 #}
+			<div class="row text-light h-100 py-1">
+				{# ROW 1 COL 2 ROW 1 CARD 1 #}
+				<div class="col cstm-card h-100 mx-1">
+					<p>Actions</p>
+					<div class="row row-cols-5 my-0 fs-4 justify-content-evenly">
+						{% include "/shared_templates/action_buttons.html.twig" %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -8,12 +8,10 @@
 {% block page_content %}
 	{# ROW 1 : *** #}
 	<div class="row h-fill py-0 mt-1">
-		{# ROW 1 COL 1 #}
-		<div class="col">
-			<div class="row text-light h-100 py-1">
-				{# ROW 1 COL 1CARD 1 #}
-				<div class="col cstm-card h-100 mx-1">
-					<p>Warehouses</p>
+		<div class="row text-light py-1">
+			<div class="col cstm-card h-100 mx-1">
+				<p class="bg-cstm-blue pb-2 mb-0">My Warehouses</p>
+				<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 justify-content-evenly bg-light overflow-hidden">
 					{% for one_warehouse in user_warehouses %}
 						{% if one_warehouse.getWarehouseName != 'ALL_DATA' %}
 							<a class="col p-1 title cstm-bluedark" href={{ path("warehouse_detail", {'id': one_warehouse.getId}) }}>
@@ -27,18 +25,6 @@
 							</a>
 						{% endif %}
 					{% endfor %}
-				</div>
-			</div>
-		</div>
-		{# ROW 1 COL 2 #}
-		<div class="col">
-			<div class="row text-light h-100 py-1">
-				{# ROW 1 COL 2 CARD 1 #}
-				<div class="col cstm-card h-100 mx-1">
-					<p>Actions</p>
-					<div class="row row-cols-5 my-0 fs-4 justify-content-evenly">
-						{% include "/shared_templates/action_buttons.html.twig" %}
-					</div>
 				</div>
 			</div>
 		</div>

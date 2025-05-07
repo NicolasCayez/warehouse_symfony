@@ -1,6 +1,6 @@
 <nav id="dashboard" class="col text-light cardContainer vh-85">
   <div id="dashboardCard" class="card cstm-card w-100 h-100">
-    <a class="title-bold fs-5 text-light mt-2 ms-3" href={{ path("dashboard_default") }}>Dashboard</a>
+    <a class="title-bold fs-5 text-light mt-2 ms-3" href={{ path("home") }}>Dashboard</a>
     {# My Warehouses #}
     <p class="title-bold text-light mt-2 ms-3">My Warehouses</p>
     <div class="card bg-cstm-blue border-3 ms-3">
@@ -8,11 +8,11 @@
         {% for one_warehouse in user_warehouses %}
           {% if one_warehouse.getWarehouseName != 'ALL_DATA' %}
             <li>
-              {% if one_warehouse.getId == warehouse.getId %}
+              {# {% if one_warehouse.getId == warehouse.getId %}
                 {% set active_link = "title-bold" %}
-              {% else %}
+              {% else %} #}
                 {% set active_link = "" %}
-              {% endif %}
+              {# {% endif %} #}
               <a class="title text-light mb-1 ms-3 {{ active_link }}" href={{ path("warehouses", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWarehouseName }}</a>
             </li>
           {% endif %}
@@ -29,10 +29,10 @@
       <p></p>
     </div>
     {# Transactions, avtive if warehouse has been selected #}
-    <a class="title-bold text-light mt-2 ms-3" href={{ path('transactions', {'id': warehouse.getId}) }}>Transactions</a>
+    <a class="title-bold text-light mt-2 ms-3" href={{ path('transactions') }}>Transactions</a>
     <div class="card bg-cstm-blue border-3 ms-3">
-      {% if warehouse.getId != null %}
-      <a class="title-bold text-light mt-2 ms-3" href={{ path('receptions', {'id': warehouse.getId}) }}>Receptions</a>
+      {# {% if warehouse.getId != null %} #}
+      {# <a class="title-bold text-light mt-2 ms-3" href={{ path('receptions') }}>Receptions</a> #}
       <div class="card bg-cstm-blue border-3 ms-3">
         <p></p>
       </div>
@@ -45,11 +45,11 @@
       <div class="card bg-cstm-blue border-3 ms-3">
         <p></p>
       </div>
-      {% else %}
+      {# {% else %} #}
         {# Transferts #}
         <a class="title-bold text-light mt-2 ms-3" href={{ path('transferts') }}>Transferts</a>
         <p class="title text-light mt-2 ms-3">No Warehouse selected</p>
-      {% endif %}
+      {# {% endif %} #}
     </div>
     {# Inventories #}
     <a class="title-bold text-light mt-2 ms-3" href="">Inventrories</a>
