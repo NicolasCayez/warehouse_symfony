@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\StockModification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,6 +18,18 @@ class StockModificationRepository extends ServiceEntityRepository
         parent::__construct($registry, StockModification::class);
     }
 
+    public function findByStockModificationFiltered($warehouse, $filter): array {
+		return $this->createQueryBuilder('sm')
+								->where('sm.stockModificationMessage LIKE :filter
+                                        AND t.warehouse = :warehouse
+											')
+								->setParameters(new ArrayCollection([
+                                    new Parameter('warehouse', $warehouse),
+                                    new Parameter('filter', '%'.$filter.'%')
+                                ]))
+								->getQuery()
+								->getResult();
+	}
 //    /**
 //     * @return StockModification[] Returns an array of StockModification objects
 //     */

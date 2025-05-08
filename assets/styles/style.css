@@ -191,6 +191,13 @@ footer:hover{
 .h-fill {
   flex: 1 1 auto;
 }
+.h-fill2 {
+  flex: 0 1 50px;
+}
+
+tbody {
+  height: inherit !important;
+}
 
 /** ************************* **/
 /** CUSTOM GRID WIDTH         **/
@@ -316,16 +323,28 @@ a:hover{
   justify-content: space-evenly;
 }
 
-.form_row_span {
+.form-row-span-2 {
   display: grid;
-  grid-template-columns: 6fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   margin-left: auto;
   margin-right: 0;
 }
-.form_row_span div {
+.form-row-span-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-left: auto;
+  margin-right: 0;
+}
+.form-row-span-3 div {
   display: flex;
   margin-left: auto;
 }
+.form-row-span-3 div label {
+  margin-left: 1em;
+  margin-right: 1em;
+  width: 50%;
+}
+
 /* .form-checkbox-cstm div:has(input[type=checkbox]) {
   display: flex;
   flex-direction: row;

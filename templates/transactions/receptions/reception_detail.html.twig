@@ -7,7 +7,7 @@
 		<div class="col">
 			{# 80% width : Main content #}
 				{# 1st ROW : Warehouses List, Selected Warehouse, Search bar #}
-				<div class="row vh-15 text-light grid-1-2-2">
+				<div class="row vh-15 text-light">
 					<div class="col h-100 p-1">
 						<div class="cstm-card h-100">
 							<div class="h-100">
@@ -21,20 +21,14 @@
 							<p>Invoice / Parcel Informations</p>
 							{% if product_list == 'empty' %}{# NEW Reception #}
 								{{ form_start(form) }}
-									<div class="row">
-										<div class="col">
+									<div class="row form-row-span-3">
 											{{ form_row(form.productReceptionInvoiceRef, {'label': 'Invoice'}) }}
-										</div>
-										<div class="col">
 											{{ form_row(form.productReceptionParcelRef, {'label': 'Parcel'}) }}
-										</div>
-									</div>
-									<div class="row">
-										<div class="col">
 											{{ form_row(form.productReceptionDate, {'label': 'Date'}) }}
-										</div>
+									</div>
+									<div class="row mt-1  text-end">
 										<div class="col">
-											{{ form_row(form.submit) }}
+											{{ form_row(form.submit, {'attr': {'class': 'btn btn-sm btn-light'}}) }}
 										</div>
 									</div>
 								{{ form_end(form) }}
@@ -111,7 +105,7 @@
 																{{ form_row(one_movement.newQty, {'label': 'Qty (' ~ one_movement.vars.value.getNewQty ~ ')', 'value': one_movement.vars.value.newQty}) }}
 																{{ form_row(one_movement.submit, {'label': 'Update', 'attr': {'class': 'btn btn-sm btn-success'}}) }}
 																<div>
-																	<a class='btn btn-sm btn-danger' href={{ path('delete_movement', {'id': warehouse.getId, 'productReceptionId': product_reception.getId, 'movementId': one_movement.vars.value.getId}) }}>Delete</a>
+																	<a class='btn btn-sm btn-danger' href={{ path('delete_reception_movement', {'id': warehouse.getId, 'productReceptionId': product_reception.getId, 'movementId': one_movement.vars.value.getId}) }}>Delete</a>
 																</div>
 															</td>
 														</tr>

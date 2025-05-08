@@ -6,39 +6,48 @@
 {% endblock %}
 
 {% block page_content %}
-	{# ROW 1 : *** #}
-	<div class="row h-fill py-0 mt-1">
-		{# ROW 1 COL 1 #}
-		<div class="col">
+	<div class="d-flex flex-row h-fill py-0 mt-1">
+		{# COL 1 #}
+		<div class="col-2">
 			<div class="row text-light h-100 py-1">
-				{# ROW 1 COL 1CARD 1 #}
+				{# Dashboard #}
 				<div class="col cstm-card h-100 mx-1">
-					<p>Warehouses</p>
-					{% for one_warehouse in user_warehouses %}
-						{% if one_warehouse.getWarehouseName != 'ALL_DATA' %}
-							<a class="col p-1 title cstm-bluedark" href={{ path("warehouse_detail", {'id': one_warehouse.getId}) }}>
-								<div class="card bg-cstm-light ">
-									<p class="row my-0 cstm-darkBlue mx-auto title-bold">{{ one_warehouse.getWarehouseName }}</p>
-									<hr class="w-75 mx-auto">
-									<p class="row ps-3 my-0 cstm-darkBlue">{{ one_warehouse.getWarehouseAddressNumber ~ ' ' ~ one_warehouse.getWarehouseAddressRoad ~ ' ' ~ one_warehouse.getWarehouseAddressPostalCode ~ ' ' ~ one_warehouse.getWarehouseAddressCity }}</p>
-									<p class="row ps-3 my-0 cstm-darkBlue">{{ one_warehouse.getWarehouseAddressState ~ ' ' ~ one_warehouse.getWarehouseAddressCountry }}</p>
-									<p class="row ps-3 my-0 cstm-darkBlue">{{ one_warehouse.getWarehousePhone }}</p>
-								</div>
-							</a>
-						{% endif %}
-					{% endfor %}
+					<p>Dashboard</p>
+					{% include "/shared_templates/dashboard_menu.html.twig" %}
 				</div>
 			</div>
 		</div>
-		{# ROW 1 COL 2 #}
-		<div class="col">
-			<div class="row text-light h-100 py-1">
-				{# ROW 1 COL 2 CARD 1 #}
-				<div class="col cstm-card h-100 mx-1">
-					<p>Actions</p>
-					<div class="row row-cols-5 my-0 fs-4 justify-content-evenly">
-						{% include "/shared_templates/action_buttons.html.twig" %}
-					</div>
+
+
+		{# COL 2 #}
+		<div class="col d-flex flex-column pe-2">
+			{# COL 2 ROW 1 #}
+			<div class="row text-light py-1">
+				<div class="cstm-card mx-1">
+					<p>Warehouses</p>
+					<ul class="list-unstyled mt-0 overflow-auto row row-cols-1 row-cols-lg-2">
+						{% for one_warehouse in user_warehouses %}
+							{% if one_warehouse.getWarehouseName != 'ALL_DATA' %}
+								<li class="col px-1">
+									<a class="col p-1 title cstm-bluedark" href={{ path("warehouse_detail", {'id': one_warehouse.getId}) }}>
+										<div class="card bg-cstm-light ">
+											<p class="row my-0 cstm-darkBlue mx-auto title-bold">{{ one_warehouse.getWarehouseName }}</p>
+											<hr class="w-75 mx-auto">
+											<p class="row ps-3 my-0 cstm-darkBlue">{{ one_warehouse.getWarehouseAddressNumber ~ ' ' ~ one_warehouse.getWarehouseAddressRoad ~ ' ' ~ one_warehouse.getWarehouseAddressPostalCode ~ ' ' ~ one_warehouse.getWarehouseAddressCity }}</p>
+											<p class="row ps-3 my-0 cstm-darkBlue">{{ one_warehouse.getWarehouseAddressState ~ ' ' ~ one_warehouse.getWarehouseAddressCountry }}</p>
+											<p class="row ps-3 my-0 cstm-darkBlue">{{ one_warehouse.getWarehousePhone }}</p>
+										</div>
+									</a>
+								</li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+			{# COL 2 ROW 2 #}
+			<div class="row text-light h-fill py-1">
+				<div class="cstm-card mx-1">
+					<p>Other informations</p>
 				</div>
 			</div>
 		</div>

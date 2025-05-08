@@ -1,4 +1,8 @@
 {{ form_start(filter_form) }}
-  {{ form_row(filter_form.filter) }}
-  {{ form_row(filter_form.applyFilter) }}
+  <div class="row my-0 justify-content-evenly">
+    <div class="form-row-span-2">
+      {{ form_row(filter_form.filter, {'label': false, 'attr': {'class': 'w-100'}}) }}
+      {{ form_row(filter_form.applyFilter) }}
+    </div>
+  </div>
 {{ form_end(filter_form) }}

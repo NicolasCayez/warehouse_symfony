@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\StockTransfert;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +18,27 @@ class StockTransfertRepository extends ServiceEntityRepository
         parent::__construct($registry, StockTransfert::class);
     }
 
-//    /**
-//     * @return StockTransfert[] Returns an array of StockTransfert objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findAllFiltered($filter): array {
+		return $this->createQueryBuilder('st')
+								->where('st.stockTransfertMessage LIKE :filter')
+								->setParameters(new ArrayCollection([
+                                    new Parameter('filter', '%'.$filter.'%')
+                                ]))
+								->getQuery()
+								->getResult();
+	}
 
-//    public function findOneBySomeField($value): ?StockTransfert
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+	public function findByWarehouseFiltered($warehouse, $filter): array {
+		return $this->createQueryBuilder('t')
+								->where('t.stockTransfertMessage LIKE :filter
+                                        AND t.warehouse = :warehouse
+											')
+								->setParameters(new ArrayCollection([
+                                    new Parameter('warehouse', $warehouse),
+                                    new Parameter('filter', '%'.$filter.'%')
+                                ]))
+								->getQuery()
+								->getResult();
+	}
+
 }

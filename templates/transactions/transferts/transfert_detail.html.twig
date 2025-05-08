@@ -6,49 +6,126 @@
 {% endblock %}
 
 {% block page_content %}
-	<div class="row content grid-1-5">
-		{# 20% width : Menu#}
-		{% include "/shared_templates/dashboard_menu.html.twig" %}
-		<div class="col">
-			{# 80% width : Main content #}
-			<div class="row h-100 align-content-start">
-
-				{{ form_start(form_new_transfert_detail) }}
-					{# 1st ROW : Warehouses List, Selected Warehouse, Search bar #}
-					<div class="h-35 text-light">
-						<div class="col h-100 p-1">
-							<div class="cstm-card h-100">
-								{# <p>New stock transfert from warehouse : <span class="bg-cstm-light cstm-darkBlue">{{ form_new_transfert.warehouse_origin.warehouse_name.vars.value }}</span> to warehouse : {{ form_row(form_new_transfert.warehouses_destination) }}</p>
-								{{ form_row(form_new_transfert.stock_transfert_date) }}
-								{{ form_row(form_new_transfert.stock_transfert_message) }}
-								{{ form_row(form_new_transfert.submit) }} #}
+	<div class="row h-fill py-0 mt-1">
+		{# COL 1 #}
+		<div class="col-2">
+			<div class="d-flex row text-light h-100 py-1">
+				{# Dashboard #}
+				<div class="col cstm-card h-100 mx-1">
+					<p>Dashboard</p>
+					{% include "/shared_templates/dashboard_menu.html.twig" %}
+				</div>
+			</div>
+		</div>
+		{# COL 2 #}
+		<div class="col d-flex flex-column">
+			{# COL 2 ROW 1 #}
+			<div class="row text-light py-1">
+				{# COL 2 ROW 1 COL 1 #}
+				<div class="col d-flex flex-column text-light">
+					<div class="cstm-card mx-1 h-100">
+						<p>Stock Transfert detail</p>
+						{{ form_start(form_transfert_detail) }}
+							<div class="row me-auto">
+								Date: 
+								<div class="col-auto px-2">
+									{{ form_transfert_detail.vars.value.getStockTransfertDate|date('Y - m - d') }}
+								</div>
+								|
+								<div class="col-auto px-2">
+									{{ form_transfert_detail.vars.value.getWarehouse.getWarehouseName ~ ' -> ' ~ form_transfert_detail.vars.value.getLinkedTransfert.getWarehouse.getWarehouseName }}
+								</div>
+								| Message :
+								<div class="col-auto px-2">
+									{{ form_transfert_detail.vars.value.getStockTransfertMessage }}
+								</div>
 							</div>
-						</div>
+							<div class="hidden">
+								{{ form_row(form_transfert_detail) }}
+							</div>
+						{{ form_end(form_transfert_detail) }}
 					</div>
-					{# 2nd ROW : Last events #}
-					<div class="h-55 p-1">
-						<div class="cstm-card h-100">
-							<p>Selected Products</p>
-
-
-
-
-
-
-
-							
-						</div>
-					{# 2nd ROW : Last events #}
-					<div class="row h-20 p-1 mb-0">
-						<div class="col-auto cstm-card ms-auto p-1 mt-auto">
-							<button class="btn btn-light">Validation</button>
-						</div>
+				</div>
+				{# COL 2 ROW 1 COL 2 #}
+				<div class="col text-light">
+					<div class="cstm-card mx-1 h-100">
+						<p>Filter product lists</p>
+						{% include "/shared_templates/filter_form.html.twig" %}
 					</div>
-					<div class="hidden">
-						{# {{ form_row(form_new_transfert_detail) }} #}
+				</div>
+			</div>
+			{# COL 2 ROW 2 #}
+			<div class="row text-light py-1">
+				{# COL 2 ROW 1 COL 1 #}
+				<div class="col d-flex flex-column text-light">
+					<div class="cstm-card mx-1 h-100">
+						<p>Products to add</p>
+						{{ form_start(form_select_product_to_add) }}
+							<div class="row form-row-span-3">
+								{{ form_row(form_select_product_to_add.product) }}
+								{{ form_row(form_select_product_to_add.qty, {'attr': {'class': 'w-100'}}) }}
+								{{ form_row(form_select_product_to_add.submit, {'attr': {'class': 'mt-auto'}}) }}
+							</div>
+						{{ form_end(form_select_product_to_add) }}
 					</div>
-				{{ form_end(form_new_transfert_detail) }}
-
+				</div>
+			</div>
+			{# COL 2 ROW 3 #}
+			<div class="row text-light py-1 h-fill">
+				{# COL 2 ROW 1 COL 1 #}
+				<div class="col d-flex flex-column text-light h-100">
+					<div class="cstm-card mx-1 h-100">
+						<p>Transferred products</p>
+						{{ form_start(form_selected_products) }}
+							{% if form_selected_products.vars.value.getMovements|length > 0 %}
+								{# {{ form_row(form_selected_products.test_submit) }} #}
+								<table class="table table-sm table-striped-columns table-hover table-responsive">
+									<thead>
+										<tr class="m-0 ps-1 text-center">
+											<th scope="col" class="title">Product Name</th>
+											<th scope="col" class="title">Serial</th>
+											<th scope="col" class="title">Ref</th>
+											<th scope="col" class="title">Ref 2</th>
+											<th scope="col" class="title">Value</th>
+											<th scope="col" class="title">Stock Qty</th>
+											<th scope="col" class="title w-50">Quantity to transfert</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for one_movement in form_selected_products.movements %}
+											{% if my_filter in one_movement.vars.value.getProduct.getProductName or my_filter == '' %}
+												<tr class="m-0 ps-1">
+													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getId }} / {{ one_movement.vars.value.getProduct.getProductName }}</td>
+													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductSerialNumber }}</td>
+													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductRef }}</td>
+													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductRef2 }}</td>
+													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductValue }}</td>
+													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductQuantity(utils, inventoryRepository, productReceptionRepository, stockModificationRepository, stockTransfertRepository, warehouse) - one_movement.vars.value.getNewQty }}</td>
+													<td class="title cstm-darkBlue text-end form-row-span-3">
+														{{ form_row(one_movement.newQty, {'label': 'Qty (' ~ one_movement.vars.value.getNewQty ~ ')', 'value': one_movement.vars.value.newQty, 'attr': {'class': 'w-75'}}) }}
+														<div class="my-auto ms-auto">
+															{{ form_row(one_movement.submit, {'label': 'Update', 'attr': {'class': 'btn btn-sm btn-success'}}) }}
+														</div>
+														<div class="mx-0 w-auto mx-auto">
+															<a class='btn btn-sm btn-danger my-auto' href={{ path('delete_transfert_movement', {'id': warehouse.getId, 'transfertId': stock_transfert.getId, 'movementId': one_movement.vars.value.getId}) }}>Delete</a>
+														</div>
+													</td>
+												</tr>
+												<div class="hidden">
+													{{ form_row(one_movement) }}
+												</div>
+											{% else %}
+												<div class="hidden">
+													{{ form_row(one_movement) }}
+												</div>
+											{% endif %}
+										{% endfor %}
+									</tbody>
+								</table>
+							{% endif %}
+						{{ form_end(form_selected_products) }}
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

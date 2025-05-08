@@ -33,9 +33,6 @@ final class ProductController extends AbstractController
 			// List of warehouses for the user
 			$user = $userRepository->findOneById($this->getUser());
 			$warehousesList = $user->getWarehouses();
-			// if ($warehouseRepository->findOneById($id)) {
-			// 	$warehouse = $warehouseRepository->findOneById($id);
-			// }
 			$productList = $productRepository->findAll();
 			//filter product list
 			$filterForm = $formFactory->createBuilder()

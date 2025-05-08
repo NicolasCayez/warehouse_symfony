@@ -6,15 +6,25 @@
 {% endblock %}
 
 {% block page_content %}
-	{# ROW 1 : *** #}
 	<div class="row h-fill py-0 mt-1">
-		{# ROW 1 COL 1 #}
-		<div class="col">
+		{# COL 1 #}
+		<div class="col-2">
 			<div class="d-flex row text-light h-100 py-1">
-				{# ROW 1 COL 1 CARD 1 #}
+				{# Dashboard #}
+				<div class="col cstm-card h-100 mx-1">
+					<p>Dashboard</p>
+					{% include "/shared_templates/dashboard_menu.html.twig" %}
+
+				</div>
+			</div>
+		</div>
+		{# COL 2 #}
+		<div class="col">
+			{# COL 2 ROW 1 #}
+			<div class="row text-light h-100 py-1">
+				{# COL 2 ROW 1 CARD 1 #}
 				<div class="col cstm-card h-100 mx-1">
 					<p>Warehouse detail</p>
-					{# ROW 1 COL 1 ROW 1 #}
 					<div class="row">
 						<div class="col mx-1">
 							<div class="card bg-cstm-light ">
@@ -26,10 +36,8 @@
 							</div>
 						</div>
 						<div class="col mx-1">
-
 						</div>
 					</div>
-					{# ROW 1 COL 1 ROW 2 #}
 					<div class="row mt-1">
 						<div class="col mx-1">
 							<div class="card bg-cstm-light ">
@@ -40,20 +48,6 @@
 								<p class="row ps-3 my-0 cstm-darkBlue">Stat1</p>
 							</div>
 						</div>
-
-					</div>
-				</div>
-			</div>
-		</div>
-		{# ROW 1 COL 2 #}
-		<div class="col">
-			{# ROW 1 COL 2 ROW 1 #}
-			<div class="row text-light h-100 py-1">
-				{# ROW 1 COL 2 ROW 1 CARD 1 #}
-				<div class="col cstm-card h-100 mx-1">
-					<p>Actions</p>
-					<div class="row row-cols-5 my-0 fs-4 justify-content-evenly">
-						{% include "/shared_templates/action_buttons.html.twig" %}
 					</div>
 				</div>
 			</div>

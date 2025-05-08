@@ -1,58 +1,61 @@
 {% extends 'base.html.twig' %}
 
 {% block page_content %}
-	<div class="row content grid-1-5">
-		{# 20% width : Menu#}
-		{% include "/shared_templates/dashboard_menu.html.twig" %}
-		<div class="col">
-			{# 80% width : Main content #}
-				{# 1st ROW : Warehouses List, Selected Warehouse, Search bar #}
-				<div class="row vh-15 text-light grid-1-2-2">
-					<div class="col h-100 p-1">
-						<div class="cstm-card h-100">
-							<div class="h-100">
-								<p class="bg-cstm-blue pb-2 mb-0"> Product receptions for warehouse :</p>
-								<p class="text-center my-0 fs-4">{{ warehouse.getWarehouseName }}</p>
-							</div>
-						</div>
-					</div>
-					<div class="col h-100 p-1">
-						<div class="cstm-card h-100">
-							<p>Actions</p>
-							<div class="row my-0 fs-4 justify-content-evenly">
-								<a href={{ path('new_reception', {'id': warehouse.getId}) }} class="col-2 btn btn-sm btn-light">New reception</a>
-								<a href="" class="col-2 btn btn-sm btn-light">Transfert</a>
-								<a href="" class="col-2 btn btn-sm btn-light">Modif stock</a>
-							</div>
-						</div>
-					</div>
-					<div class="col h-100 p-1">
-						<div class="cstm-card h-100">
-							<p>Filter list</p>
-							{# {% include "/shared_templates/filter_form.html.twig" %} #}
-						</div>
+	<div class="row h-fill py-0 mt-1">
+		{# COL 1 #}
+		<div class="col-2">
+			<div class="d-flex row text-light h-100 py-1">
+				{# Dashboard #}
+				<div class="col cstm-card h-100 mx-1">
+					<p>Dashboard</p>
+					{% include "/shared_templates/dashboard_menu.html.twig" %}
+				</div>
+			</div>
+		</div>
+		{# COL 2 #}
+		<div class="col d-flex flex-column">
+			{# COL 2 ROW 1 #}
+			<div class="row text-light py-1">
+				{# COL 2 ROW 1 COL 1 #}
+				<div class="col d-flex flex-column text-light">
+					<div class="cstm-card mx-1 h-100">
+						<p>Warehouses</p>
+						{% include "/shared_templates/warehouse_select.html.twig" %}
 					</div>
 				</div>
-				{# 2nd ROW : List #}
-				<div class="vh-70 p-1">
-					<div class="cstm-card h-100">
-						<p class="row bg-cstm-blue pb-2 mb-0"></p>
-						<div class="bg-light h-95 overflow-auto">
+				{# COL 2 ROW 1 COL 2 #}
+				<div class="col text-light">
+					<div class="cstm-card mx-1 h-100">
+						<p>Filter List</p>
+						{% include "/shared_templates/filter_form.html.twig" %}
+					</div>
+				</div>
+			</div>
+			{# COL 2 ROW 2 #}
+			<div class="row text-light py-1 h-fill">
+				{# COL 2 ROW 1 COL 1 #}
+				<div class="col d-flex flex-column text-light h-100">
+					<div class="cstm-card mx-1 h-100">
+						<p>Receptions</p>
+						<div class="bg-light overflow-auto vh-60">
 							<table class="table table-sm table-striped-columns table-hover table-responsive">
 								<thead>
 									<tr class="m-0 ps-1 text-center">
-										<th scope="col" class="title">Date</th>
+										<th scope="col" class="title">Transfert Date</th>
+										<th scope="col" class="title">Warehouse</th>
 										<th scope="col" class="title">Invoice</th>
 										<th scope="col" class="title">Parcel</th>
+										<th scope="col" class="title"></th>
 									</tr>
 								</thead>
 								<tbody>
 									{% for one_reception in receptions_list|sort((a,b) => [b.getProductReceptionDate] <=> [a.getProductReceptionDate]) %}
 										<tr class="m-0 ps-1">
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionDate|date("Y - m - d") }}</td>
+											<td class="title cstm-darkBlue">{{ one_reception.getWarehouse.getWarehouseName }}</td>
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionInvoiceRef }}</td>
 											<td class="title cstm-darkBlue">{{ one_reception.getProductReceptionParcelRef }}</td>
-											<td class="title cstm-darkBlue"> <a href={{ path('reception_detail', { 'id': warehouse.getId, 'productReceptionId': one_reception.getId }) }} class="btn btn-sm btn-primary">Detail</a></td>
+											<td class="title cstm-darkBlue"> <a href={{ path('reception_detail', { 'id': one_reception.getWarehouse.getId, 'productReceptionId': one_reception.getId }) }} class="btn btn-sm btn-primary">Detail</a></td>
 										</tr>
 									{% endfor %}
 								</tbody>
@@ -60,6 +63,7 @@
 						</div>
 					</div>
 				</div>
+			</div>
 		</div>
 	</div>
 {% endblock %}

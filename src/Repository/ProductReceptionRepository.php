@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\ProductReception;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +18,29 @@ class ProductReceptionRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductReception::class);
     }
 
-//    /**
-//     * @return ProductReception[] Returns an array of ProductReception objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findAllFiltered($filter): array {
+		return $this->createQueryBuilder('pr')
+								->where('pr.productReceptionInvoiceRef LIKE :filter
+                                        OR pr.productReceptionParcelRef LIKE :filter')
+								->setParameters(new ArrayCollection([
+                                    new Parameter('filter', '%'.$filter.'%')
+                                ]))
+								->getQuery()
+								->getResult();
+	}
 
-//    public function findOneBySomeField($value): ?ProductReception
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findByWarehouseFiltered($warehouse, $filter): array {
+		return $this->createQueryBuilder('pr')
+								->where('pr.productReceptionInvoiceRef LIKE :filter
+                                        OR pr.productReceptionParcelRef LIKE :filter
+                                        AND pr.warehouse = :warehouse
+											')
+								->setParameters(new ArrayCollection([
+                                    new Parameter('warehouse', $warehouse),
+                                    new Parameter('filter', '%'.$filter.'%')
+                                ]))
+								->getQuery()
+								->getResult();
+	}
+
 }

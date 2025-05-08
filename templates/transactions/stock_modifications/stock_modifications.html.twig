@@ -1,34 +1,67 @@
 {% extends 'base.html.twig' %}
 
-{% block stylesheets %}
-	<!-- CUSTOM CSS -->
-	<link rel="stylesheet" href="{{ asset('styles/style.css') }}">
-{% endblock %}
-
 {% block page_content %}
-	<div class="row content grid-1-5">
-		{# 20% width : Menu#}
-		{% include "/shared_templates/dashboard_menu.html.twig" %}
-		<div class="col">
-			{# 80% width : Main content #}
-			<div class="row h-100 align-content-start">
-				{# 1st ROW : Warehouses List, Selected Warehouse, Search bar #}
-				<div class="h-35 text-light">
-					<div class="col h-100 p-1">
-						<div class="cstm-card h-100">
-							<p>STOCK MODIFICATIONS</p>
-						</div>
+	<div class="row h-fill py-0 mt-1">
+		{# COL 1 #}
+		<div class="col-2">
+			<div class="d-flex row text-light h-100 py-1">
+				{# Dashboard #}
+				<div class="col cstm-card h-100 mx-1">
+					<p>Dashboard</p>
+					{% include "/shared_templates/dashboard_menu.html.twig" %}
+				</div>
+			</div>
+		</div>
+		{# COL 2 #}
+		<div class="col d-flex flex-column">
+			{# COL 2 ROW 1 #}
+			<div class="row text-light py-1">
+				{# COL 2 ROW 1 COL 1 #}
+				<div class="col d-flex flex-column text-light">
+					<div class="cstm-card mx-1 h-100">
+						<p>Warehouses</p>
 					</div>
 				</div>
-				{# 2nd ROW : Last events #}
-				<div class="h-55 p-1">
-					<div class="cstm-card h-100">
-						<p>Selected Products</p>
+				{# COL 2 ROW 1 COL 2 #}
+				<div class="col text-light">
+					<div class="cstm-card mx-1 h-100">
+						<p>Filter List</p>
+						{# {% include "/shared_templates/filter_form.html.twig" %} #}
 					</div>
-				{# 2nd ROW : Last events #}
-				<div class="row h-20 p-1 mb-0">
-					<div class="col-auto cstm-card ms-auto p-1 mt-auto">
-						<button class="btn btn-light">Validation</button>
+				</div>
+			</div>
+			{# COL 2 ROW 2 #}
+			<div class="row text-light py-1 h-fill">
+				{# COL 2 ROW 1 COL 1 #}
+				<div class="col d-flex flex-column text-light h-100">
+					<div class="cstm-card mx-1 h-100">
+						<p>Transferts</p>
+						<div class="bg-light overflow-auto vh-60">
+							<table class="table table-sm table-striped-columns table-hover table-responsive">
+								<thead>
+									<tr class="m-0 ps-1 text-center">
+										<th scope="col" class="title">Transfert Date</th>
+										<th scope="col" class="title">Message</th>
+										<th scope="col" class="title">Warehouse</th>
+										<th scope="col" class="title">Origin -> Destination</th>
+										<th scope="col" class="title"></th>
+									</tr>
+								</thead>
+								<tbody>
+									{# {% for one_transfert in transfert_list|sort((a,b) => [b.getStockTransfertDate] <=> [a.getStockTransfertDate]) %}
+										{% if one_transfert.getId < one_transfert.getLinkedTransfert.getId %}
+											<tr class="m-0 ps-1">
+												<td class="title cstm-darkBlue">{{ one_transfert.getStockTransfertDate|date("Y - m - d") }}</td>
+												<td class="title cstm-darkBlue">{{ one_transfert.getStockTransfertMessage }}</td>
+												<td class="title cstm-darkBlue">{{ one_transfert.getWarehouse.getWarehouseName }}</td>
+												<td class="title cstm-darkBlue">{{ one_transfert.getWarehouse.getWarehouseName ~ ' -> ' ~ one_transfert.getLinkedTransfert.getWarehouse.getWarehouseName }}</td>
+												<td class="title cstm-darkBlue"> <a href={{ path('transfert_detail', { 'id': one_transfert.getWarehouse.getId, 'transfertId': one_transfert.getId }) }} class="btn btn-sm btn-primary">Detail</a></td>
+											</tr>
+										{% endif %}
+									{% endfor %} #}
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>

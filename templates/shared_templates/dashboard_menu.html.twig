@@ -1,66 +1,38 @@
-<nav id="dashboard" class="col text-light cardContainer vh-85">
-  <div id="dashboardCard" class="card cstm-card w-100 h-100">
-    <a class="title-bold fs-5 text-light mt-2 ms-3" href={{ path("home") }}>Dashboard</a>
-    {# My Warehouses #}
-    <p class="title-bold text-light mt-2 ms-3">My Warehouses</p>
-    <div class="card bg-cstm-blue border-3 ms-3">
-      <ul class="list-unstyled">
-        {% for one_warehouse in user_warehouses %}
-          {% if one_warehouse.getWarehouseName != 'ALL_DATA' %}
-            <li>
-              {# {% if one_warehouse.getId == warehouse.getId %}
-                {% set active_link = "title-bold" %}
-              {% else %} #}
-                {% set active_link = "" %}
-              {# {% endif %} #}
-              <a class="title text-light mb-1 ms-3 {{ active_link }}" href={{ path("warehouses", {'id': one_warehouse.getId}) }}>{{ one_warehouse.getWarehouseName }}</a>
-            </li>
-          {% endif %}
-        {% endfor %}
-        <li>
-          <a class="title-bold text-light mb-1 ms-3" href="">New Warehouse</a>
-        </li>
-      </ul>
-    </div>
-    
-    {# Items #}
-    <a class="title-bold text-light mt-2 ms-3" href={{ path('products') }}>Products</a>
-    <div class="card bg-cstm-blue border-3 ms-3">
-      <p></p>
-    </div>
-    {# Transactions, avtive if warehouse has been selected #}
-    <a class="title-bold text-light mt-2 ms-3" href={{ path('transactions') }}>Transactions</a>
-    <div class="card bg-cstm-blue border-3 ms-3">
-      {# {% if warehouse.getId != null %} #}
-      {# <a class="title-bold text-light mt-2 ms-3" href={{ path('receptions') }}>Receptions</a> #}
-      <div class="card bg-cstm-blue border-3 ms-3">
-        <p></p>
-      </div>
-      {# New transfert #}
-      <div class="card bg-cstm-blue border-3 ms-3">
-        <a class="title text-light mt-2 ms-3 ps-1" href="">New transfert</a>
-      </div>
-      {# Stock modifications #}
-      <a class="title-bold text-light mt-2 ms-3" href={{ path('stock_modifications') }}>Stock modifications</a>
-      <div class="card bg-cstm-blue border-3 ms-3">
-        <p></p>
-      </div>
-      {# {% else %} #}
-        {# Transferts #}
-        <a class="title-bold text-light mt-2 ms-3" href={{ path('transferts') }}>Transferts</a>
-        <p class="title text-light mt-2 ms-3">No Warehouse selected</p>
-      {# {% endif %} #}
-    </div>
-    {# Inventories #}
-    <a class="title-bold text-light mt-2 ms-3" href="">Inventrories</a>
-    <div class="card bg-cstm-blue border-3 ms-3">
-      {# New inventory #}
-      <a class="title text-light mt-2 ms-3 ps-1" href="">New inventory</a>
-    </div>
-    {# Reports #}
-    <a class="title-bold text-light mt-2 ms-3" href="">Reports</a>
-    <div class="card bg-cstm-blue border-3 ms-3">
-      <p></p>
-    </div>
+Selected Warehouse :
+  <div class="row row-cols-1 justify-content-center">
+    {% if warehouse is defined and warehouse.getId != null %}
+      <p class="col m-1">{{ warehouse.getWarehouseName }}</p>
+    {% else %}
+      <p class="col m-1 text-center">No Warehouse selected</p>
+    {% endif %}
   </div>
-</nav>
+
+Warehouses
+  <div class="row row-cols-1 justify-content-center">
+    <a href={{ path('warehouses') }} class="col-8 btn btn-sm btn-light m-1 {{ 'warehouses' in route_name ? 'title-bold' }}">Warehouses</a>
+  </div>
+
+Products
+  <div class="row row-cols-1 justify-content-center">
+    <a href={{ path('products') }} class="col-8 btn btn-sm btn-light m-1 {{ 'products' in route_name ? 'title-bold' }}">Products</a>
+    <a href="" class="col-8 btn btn-sm btn-secondary m-1 {{ 'warehouses' in route_name ? 'title-bold' }}">New product</a>
+  </div>
+
+Transactions
+  <div class="row row-cols-1 justify-content-center">
+    <a href={{ path('receptions') }} class="col-8 btn btn-sm btn-light m-1 {{ 'receptions' in route_name ? 'title-bold' }}">Product receptions</a>
+    <a href={{ path('transferts') }} class="col-8 btn btn-sm btn-light m-1 {{ 'transferts' in route_name ? 'title-bold' }}">Stock transferts</a>
+    {% if warehouse is defined and warehouse.getId != null %}
+      <a href={{ path("new_transfert", {"id": warehouse.getId}) }} class="col-8 btn btn-sm btn-light m-1 {{ 'new_transfert' in route_name ? 'title-bold' }}"> New Transfert</a>
+    {% endif %}
+    <a href={{ path('stock_modifications') }} class="col-8 btn btn-sm btn-light m-1 {{ 'stock_modifications' in route_name ? 'title-bold' }}">Stock Modifications</a>
+    <a href="" class="col-8 btn btn-sm btn-secondary m-1">Inventories</a>
+  </div>
+
+Suppliers
+  <div class="row row-cols-1 justify-content-center">
+    <a href="" class="col-8 btn btn-sm btn-secondary m-1 {{ 'warehouses' in route_name ? 'title-bold' }}">Suppliers</a>
+    <a href="" class="col-8 btn btn-sm btn-secondary m-1 {{ 'warehouses' in route_name ? 'title-bold' }}">New supplier</a>
+  </div>
+
+

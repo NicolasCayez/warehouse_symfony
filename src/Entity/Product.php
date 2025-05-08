@@ -2,7 +2,12 @@
 
 namespace App\Entity;
 
+use App\Repository\InventoryRepository;
+use App\Repository\ProductReceptionRepository;
 use App\Repository\ProductRepository;
+use App\Repository\StockModificationRepository;
+use App\Repository\StockTransfertRepository;
+use App\Service\Utils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -343,5 +348,15 @@ class Product
         $this->productValue = $productValue;
 
         return $this;
+    }
+
+    public function getProductQuantity(Utils $utils,
+                                    InventoryRepository $inventoryRepository,
+                                    ProductReceptionRepository $productReceptionRepository,
+                                    StockModificationRepository $stockModificationRepository,
+                                    StockTransfertRepository $stockTransfertRepository,
+                                    Warehouse $warehouse): ?string
+    {
+        return $utils->getProductQuantity($utils, $inventoryRepository, $productReceptionRepository, $stockModificationRepository, $stockTransfertRepository, $warehouse, $this);
     }
 }

@@ -14,6 +14,7 @@ use App\Form\QtyType;
 use App\Repository\MovementRepository;
 use App\Repository\ProductReceptionRepository;
 use App\Repository\ProductRepository;
+use App\Repository\StockModificationRepository;
 use App\Repository\UserRepository;
 use App\Repository\WarehouseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -32,7 +33,7 @@ final class TransactionsController extends AbstractController
 	//* **************************************************
 	//* TRANSACTIONS
 	//* **************************************************
-	#[Route('/Transactions', name: 'transactions')]
+	#[Route('/transactions', name: 'transactions')]
 	public function indexTransactions(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository): Response
 	{
 		$routeName = $request->attributes->get('_route');
@@ -42,20 +43,21 @@ final class TransactionsController extends AbstractController
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
-			// List of warehouses for the user
+			// get the user
 			$user = $userRepository->findOneById($this->getUser());
+			// list of warehouses for the user except from ALL_DATA
 			$warehousesList = $user->getWarehouses();
-			// if ($warehouseRepository->findOneById($id)) {
-			// 	$warehouse = $warehouseRepository->findOneById($id);
-			// }
-			// $receptionsList = $productReceptionRepository->findByWarehouse($id);
+			foreach ($warehousesList as $w) {
+				if ($w->getWarehouseName() == 'ALL_DATA') {
+					$warehousesList->removeElement($w);
+				}
+			}
 		}
 		return $this->render('transactions/transactions.html.twig', [
 			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
-			// 'receptions_list' => $receptionsList,
 		]);
 	}
 
@@ -67,9 +69,9 @@ final class TransactionsController extends AbstractController
 	//* RECEPTIONS
 	//* **************************************************
 
-	//* RECEPTIONS LIST For the current warehouse
-	#[Route('/receptions/{id}', name: 'receptions')]
-	public function indexReception(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, $id): Response
+	//* RECEPTIONS LIST For the current user
+	#[Route('/receptions', name: 'receptions')]
+	public function indexReception(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository): Response
 	{
 		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
@@ -78,13 +80,53 @@ final class TransactionsController extends AbstractController
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
-			// List of warehouses for the user
+			// get the user
 			$user = $userRepository->findOneById($this->getUser());
+			// list of warehouses for the user except from ALL_DATA
 			$warehousesList = $user->getWarehouses();
-			if ($warehouseRepository->findOneById($id)) {
-				$warehouse = $warehouseRepository->findOneById($id);
+			foreach ($warehousesList as $w) {
+				if ($w->getWarehouseName() == 'ALL_DATA') {
+					$warehousesList->removeElement($w);
+				}
 			}
-			$receptionsList = $productReceptionRepository->findByWarehouse($id);
+			// list of receptions for the user
+			$receptionsList = $productReceptionRepository->findAll();
+			foreach ($receptionsList as $pr) {
+				if ( !($warehousesList->contains($pr->getWarehouse())) ) {
+					$warehousesList->removeElement($pr);
+				}
+			}
+			// Form to select warehouse
+			$selectWarehouseForm = $formFactory->createBuilder()
+				->add('warehouse', ChoiceType::class, [
+										// 'mapped' => false,
+										'choices' => $user->getWarehouses(),
+										'preferred_choices' => [$warehouse],
+										'choice_label' => function (?Warehouse $w): string {
+															return $w ? ($w->getWarehouseName()) : '';
+														} 
+													])
+				->add('submit', SubmitType::class)
+				->getForm();
+			$selectWarehouseForm->handleRequest($request);
+			if ($selectWarehouseForm->isSubmitted() && $selectWarehouseForm->isValid()) {
+				$selectedWarehouse = $selectWarehouseForm->getData();
+				return $this->redirectToRoute('receptions_by_warehouse', ['id' => $selectedWarehouse['warehouse']->getId(),]);
+			}
+			// form to filter list
+			$filterForm = $formFactory->createBuilder()
+				->add('filter', TextType::class, ['required' => false, ])
+				->add('applyFilter', SubmitType::class)
+				->getForm();
+			$filterForm->handleRequest($request);
+			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+				$data = $filterForm->getData();
+				if ($data['filter'] != '') {
+					return $this->redirectToRoute('receptions_filtered', ['filter' => $data['filter']]);
+				} else {
+					return $this->redirectToRoute('receptions');
+				}
+			}
 		}
 		return $this->render('transactions/receptions/receptions.html.twig', [
 			'route_name' => $routeName,
@@ -92,6 +134,231 @@ final class TransactionsController extends AbstractController
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
 			'receptions_list' => $receptionsList,
+			'filter_form' => $filterForm,
+			'select_warehouse_form' => $selectWarehouseForm,
+		]);
+	}
+	//* RECEPTIONS LIST For the current warehouse filtered
+	#[Route('/receptions/filtered/{filter}', name: 'receptions_filtered')]
+	public function indexReceptionFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, $filter): Response
+	{
+		$routeName = $request->attributes->get('_route');
+		$userAuthentified = false;
+		$warehousesList = [];
+		$warehouse = New Warehouse;
+		// if user autentified 
+		if($this->getUser() instanceof User){
+			$userAuthentified = true;
+			// get the user
+			$user = $userRepository->findOneById($this->getUser());
+			// list of warehouses for the user except from ALL_DATA
+			$warehousesList = $user->getWarehouses();
+			foreach ($warehousesList as $w) {
+				if ($w->getWarehouseName() == 'ALL_DATA') {
+					$warehousesList->removeElement($w);
+				}
+			}
+			// list of receptions for the user, filtered
+			$receptionsList = $productReceptionRepository->findAllFiltered($filter);
+			foreach ($receptionsList as $pr) {
+				if ( !($warehousesList->contains($pr->getWarehouse())) ) {
+					$warehousesList->removeElement($pr);
+				}
+			}
+			// Form to select warehouse
+			$selectWarehouseForm = $formFactory->createBuilder()
+				->add('warehouse', ChoiceType::class, [
+										// 'mapped' => false,
+										'choices' => $user->getWarehouses(),
+										'preferred_choices' => [$warehouse],
+										'choice_label' => function (?Warehouse $w): string {
+															return $w ? ($w->getWarehouseName()) : '';
+														} 
+													])
+				->add('submit', SubmitType::class)
+				->getForm();
+			$selectWarehouseForm->handleRequest($request);
+			if ($selectWarehouseForm->isSubmitted() && $selectWarehouseForm->isValid()) {
+				$selectedWarehouse = $selectWarehouseForm->getData();
+				dump($selectedWarehouse);
+				return $this->redirectToRoute('receptions_by_warehouse', ['id' => $selectedWarehouse['warehouse']->getId(),]);
+			}
+			// form to filter list
+			$filterForm = $formFactory->createBuilder()
+				->add('filter', TextType::class, ['required' => false, ])
+				->add('applyFilter', SubmitType::class)
+				->getForm();
+			$filterForm->handleRequest($request);
+			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+				$data = $filterForm->getData();
+				if ($data['filter'] != '') {
+					return $this->redirectToRoute('receptions_filtered', ['filter' => $data['filter']]);
+				} else {
+					return $this->redirectToRoute('receptions');
+				}
+			}
+		}
+		return $this->render('transactions/receptions/receptions.html.twig', [
+			'route_name' => $routeName,
+			'user_authentified' => $userAuthentified,
+			'user_warehouses' => $warehousesList,
+			'warehouse' => $warehouse,
+			'receptions_list' => $receptionsList,
+			'filter_form' => $filterForm,
+			'select_warehouse_form' => $selectWarehouseForm,
+		]);
+	}
+
+	//* RECEPTIONS LIST For the current warehouse
+	#[Route('/receptions/{id}', name: 'receptions_by_warehouse')]
+	public function ReceptionByWarehouse(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, $id): Response
+	{
+		$routeName = $request->attributes->get('_route');
+		$userAuthentified = false;
+		$warehousesList = [];
+		$warehouse = New Warehouse;
+		// if user autentified 
+		if($this->getUser() instanceof User){
+			$userAuthentified = true;
+			// get the user
+			$user = $userRepository->findOneById($this->getUser());
+			// get the current warehouse
+			if ($warehouseRepository->findOneById($id)) {
+				$warehouse = $warehouseRepository->findOneById($id);
+			} else {
+				return $this->redirectToRoute('receptions');
+			}
+			// list of warehouses for the user except from ALL_DATA
+			$warehousesList = $user->getWarehouses();
+			foreach ($warehousesList as $w) {
+				if ($w->getWarehouseName() == 'ALL_DATA') {
+					$warehousesList->removeElement($w);
+				}
+			}
+			// list of receptions for the user and warehouse
+			$receptionsList = $productReceptionRepository->findByWarehouse($warehouse);
+			foreach ($receptionsList as $pr) {
+				if ( !($warehousesList->contains($pr->getWarehouse())) ) {
+					$warehousesList->removeElement($pr);
+				}
+			}
+			// Form to select warehouse
+			$selectWarehouseForm = $formFactory->createBuilder()
+				->add('warehouse', ChoiceType::class, [
+										// 'mapped' => false,
+										'choices' => $user->getWarehouses(),
+										'preferred_choices' => [$warehouse],
+										'choice_label' => function (?Warehouse $w): string {
+															return $w ? ($w->getWarehouseName()) : '';
+														} 
+													])
+				->add('submit', SubmitType::class)
+				->getForm();
+			$selectWarehouseForm->handleRequest($request);
+			if ($selectWarehouseForm->isSubmitted() && $selectWarehouseForm->isValid()) {
+				$selectedWarehouse = $selectWarehouseForm->getData();
+				dump($selectedWarehouse);
+				return $this->redirectToRoute('receptions_by_warehouse', ['id' => $selectedWarehouse['warehouse']->getId(),]);
+			}
+			// form to filter list
+			$filterForm = $formFactory->createBuilder()
+				->add('filter', TextType::class, ['required' => false, ])
+				->add('applyFilter', SubmitType::class)
+				->getForm();
+			$filterForm->handleRequest($request);
+			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+				$data = $filterForm->getData();
+				if ($data['filter'] != '') {
+					return $this->redirectToRoute('receptions_by_warehouse_filtered', ['id' => $id, 'filter' => $data['filter']]);
+				} else {
+					return $this->redirectToRoute('receptions_by_warehouse', ['id' => $id]);
+				}
+			}
+		}
+		return $this->render('transactions/receptions/receptions.html.twig', [
+			'route_name' => $routeName,
+			'user_authentified' => $userAuthentified,
+			'user_warehouses' => $warehousesList,
+			'warehouse' => $warehouse,
+			'receptions_list' => $receptionsList,
+			'filter_form' => $filterForm,
+			'select_warehouse_form' => $selectWarehouseForm,
+		]);
+	}
+	//* RECEPTIONS LIST For the current warehouse filtered
+	#[Route('/receptions/{id}/filtered/{filter}', name: 'receptions_by_warehouse_filtered')]
+	public function ReceptionByWarehouseFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, $id, $filter): Response
+	{
+		$routeName = $request->attributes->get('_route');
+		$userAuthentified = false;
+		$warehousesList = [];
+		$warehouse = New Warehouse;
+		// if user autentified 
+		if($this->getUser() instanceof User){
+			$userAuthentified = true;
+			// get the user
+			$user = $userRepository->findOneById($this->getUser());
+			// get the current warehouse
+			if ($warehouseRepository->findOneById($id)) {
+				$warehouse = $warehouseRepository->findOneById($id);
+			} else {
+				return $this->redirectToRoute('receptions');
+			}
+			// list of warehouses for the user except from ALL_DATA
+			$warehousesList = $user->getWarehouses();
+			foreach ($warehousesList as $w) {
+				if ($w->getWarehouseName() == 'ALL_DATA') {
+					$warehousesList->removeElement($w);
+				}
+			}
+			// list of receptions for the user and warehouse, filtered
+			$receptionsList = $productReceptionRepository->findByWarehouseFiltered($warehouse, $filter);
+			foreach ($receptionsList as $pr) {
+				if ( !($warehousesList->contains($pr->getWarehouse())) ) {
+					$warehousesList->removeElement($pr);
+				}
+			}
+			// Form to select warehouse
+			$selectWarehouseForm = $formFactory->createBuilder()
+				->add('warehouse', ChoiceType::class, [
+										// 'mapped' => false,
+										'choices' => $user->getWarehouses(),
+										'preferred_choices' => [$warehouse],
+										'choice_label' => function (?Warehouse $w): string {
+															return $w ? ($w->getWarehouseName()) : '';
+														} 
+													])
+				->add('submit', SubmitType::class)
+				->getForm();
+			$selectWarehouseForm->handleRequest($request);
+			if ($selectWarehouseForm->isSubmitted() && $selectWarehouseForm->isValid()) {
+				$selectedWarehouse = $selectWarehouseForm->getData();
+				dump($selectedWarehouse);
+				return $this->redirectToRoute('receptions_by_warehouse', ['id' => $selectedWarehouse['warehouse']->getId(),]);
+			}
+			// form to filter list
+			$filterForm = $formFactory->createBuilder()
+				->add('filter', TextType::class, ['required' => false, ])
+				->add('applyFilter', SubmitType::class)
+				->getForm();
+			$filterForm->handleRequest($request);
+			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+				$data = $filterForm->getData();
+				if ($data['filter'] != '') {
+					return $this->redirectToRoute('receptions_by_warehouse_filtered', ['id' => $id, 'filter' => $data['filter']]);
+				} else {
+					return $this->redirectToRoute('receptions_by_warehouse', ['id' => $id]);
+				}
+			}
+		}
+		return $this->render('transactions/receptions/receptions.html.twig', [
+			'route_name' => $routeName,
+			'user_authentified' => $userAuthentified,
+			'user_warehouses' => $warehousesList,
+			'warehouse' => $warehouse,
+			'receptions_list' => $receptionsList,
+			'filter_form' => $filterForm,
+			'select_warehouse_form' => $selectWarehouseForm,
 		]);
 	}
 
@@ -107,13 +374,15 @@ final class TransactionsController extends AbstractController
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
-			// List of warehouses for the user
+			// get the user
 			$user = $userRepository->findOneById($this->getUser());
+			// list of warehouses for the user except from ALL_DATA
 			$warehousesList = $user->getWarehouses();
-			if ($warehouseRepository->findOneById($id)) {
-				$warehouse = $warehouseRepository->findOneById($id);
+			foreach ($warehousesList as $w) {
+				if ($w->getWarehouseName() == 'ALL_DATA') {
+					$warehousesList->removeElement($w);
+				}
 			}
-			// $productList = $productRepository->findAll();
 		}
 		// Form
 		$productReception = new ProductReception;
@@ -136,115 +405,115 @@ final class TransactionsController extends AbstractController
 			'form' => $form,
 		]);
 	}
-		//* RECEPTION DETAIL : EDIT AND ADD PRODUCTS
-		#[Route('/receptions/{id}/{productReceptionId}', name: 'reception_detail', methods: ['GET', 'POST'])]
-		public function newReceptionDetail(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, MovementRepository $movementRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId): Response
-		{
-			$routeName = $request->attributes->get('_route');
-			$userAuthentified = false;
-			$warehousesList = [];
-			$warehouse = New Warehouse;
-			$allData = new Warehouse;
-			$productList = [];
-			$filterForm = null;
-			$productReception = $productReceptionRepository->findOneById($productReceptionId);
-			// if user autentified 
-			if($this->getUser() instanceof User){
-				$userAuthentified = true;
-				// List of warehouses for the user
-				$user = $userRepository->findOneById($this->getUser());
-				$warehousesList = $user->getWarehouses();
-				if ($warehouseRepository->findOneById($id)) {
-					$warehouse = $warehouseRepository->findOneById($id);
-				}
-				// All products list
-				$allData = $warehouseRepository->findOneByWarehouseName('ALL_DATA');
-				//filter product list
-				$filterForm = $formFactory->createBuilder()
-							->add('filter', TextType::class, ['required' => false, ])
-							->add('applyFilter', SubmitType::class)
-							->getForm();
-				$filterForm->handleRequest($request);
-				if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-					$data = $filterForm->getData();
-					if ($data['filter'] != '') {
-						return $this->redirectToRoute('reception_detail_filter', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => $data['filter']]);
-					}
+
+	//* RECEPTION DETAIL : EDIT AND ADD PRODUCTS
+	#[Route('/receptions/{id}/{productReceptionId}', name: 'reception_detail', methods: ['GET', 'POST'])]
+	public function newReceptionDetail(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, MovementRepository $movementRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId): Response
+	{
+		$routeName = $request->attributes->get('_route');
+		$userAuthentified = false;
+		$warehousesList = [];
+		$warehouse = New Warehouse;
+		$allData = new Warehouse;
+		$productList = [];
+		$filterForm = null;
+		$productReception = $productReceptionRepository->findOneById($productReceptionId);
+		// if user autentified 
+		if($this->getUser() instanceof User){
+			$userAuthentified = true;
+			// get the user
+			$user = $userRepository->findOneById($this->getUser());
+			$warehousesList = $user->getWarehouses();
+			if ($warehouseRepository->findOneById($id)) {
+				$warehouse = $warehouseRepository->findOneById($id);
+			}
+			// All products list
+			$allData = $warehouseRepository->findOneByWarehouseName('ALL_DATA');
+			//filter product list
+			$filterForm = $formFactory->createBuilder()
+						->add('filter', TextType::class, ['required' => false, ])
+						->add('applyFilter', SubmitType::class)
+						->getForm();
+			$filterForm->handleRequest($request);
+			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+				$data = $filterForm->getData();
+				if ($data['filter'] != '') {
+					return $this->redirectToRoute('reception_detail_filter', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => $data['filter']]);
 				}
 			}
-			// $formSelectProductToAdd = $this->createForm(ProductCollectionFromWarehouseType::class, $allData);
-			$product = new Product;
-			$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true])
-						->add('product', ChoiceType::class, [
-												// 'mapped' => false,
-												'choices' => $allData->getProducts(),
-												'choice_label' => function (?Product $p): string {
-																	return $p ? ($p->getProductName() . ' | ' . 
-																								$p->getBrand()->getBrandName() . ' | ' .
-																								'Serial : ' . $p->getProductSerialNumber() . ' | ' .
-																								'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
-																								'Value : ' . $p->getProductValue()
-																							) : '';
-																} 
-											])
-						->add('add_product', SubmitType::class);
-			$formSelectProductToAdd->handleRequest($request);
-			if ($formSelectProductToAdd->isSubmitted() && $formSelectProductToAdd->isValid() ) {
-				$productAndQty = $formSelectProductToAdd->getData();
-				$product = $productAndQty['product'];
-				$qty = $productAndQty['qty'];
-				if ($qty != 0) {
-					dump($product);
-					dump($qty);
-					$newMovement = new Movement;
-					$newMovement->setProduct($product);
-					$newMovement->setProductReception($productReception);
-					$newMovement->setLastQty(0); //! A MODIFIER AVEC QTE EN STOCK
-					$newMovement->setNewQty($qty);
-					$newMovement->setMovementType('PRODUCT_RECEPTION');
-					$manager->persist($newMovement);
-					$manager->flush();
-					$productReception->addMovement($newMovement);
-				}
-				$manager->flush();
-				return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
-			}
-			//* Form for all products selected in the reception
-			$formSelectedProducts = $this->createForm(ProductCollectionFromProductReceptionType::class, $productReception);
-			$formSelectedProducts->handleRequest($request);
-			if ($formSelectedProducts->isSubmitted() && $formSelectedProducts->isValid() ) {
-				$productReceptionUpdated = $formSelectedProducts->getData();
-				// unset($formSelectedProducts);
-				// $formSelectedProducts = $this->createForm(ProductCollectionFromProductReceptionType::class, $productReception);
-				$manager->persist($productReceptionUpdated);
-				$manager->flush();
-				return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
-			}
-			return $this->render('transactions/receptions/reception_detail.html.twig', [
-				'route_name' => $routeName,
-				'user_authentified' => $userAuthentified,
-				'user_warehouses' => $warehousesList,
-				'warehouse' => $warehouse,
-				'product_reception' => $productReception,
-				'product_list' => $productList,
-				'filter_form' => $filterForm,
-				'form_select_product_to_add' => $formSelectProductToAdd,
-				'form_selected_products' => $formSelectedProducts,
-			]);
 		}
-	
-	
-		//* RECEPTION DETAIL : REMOVE MOVEMENT
-		#[Route('/receptions/{id}/{productReceptionId}/remove/{movementId}', name: 'delete_movement', methods: ['GET', 'POST'])]
-		public function removeProductReceptionDetail(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, MovementRepository $movementRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId, $movementId): Response
-		{
-			$movementToDelete = $movementRepository->findOneById($movementId);
-			$manager->remove($movementToDelete);
+		// $formSelectProductToAdd = $this->createForm(ProductCollectionFromWarehouseType::class, $allData);
+		$product = new Product;
+		$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true])
+					->add('product', ChoiceType::class, [
+											// 'mapped' => false,
+											'choices' => $allData->getProducts(),
+											'choice_label' => function (?Product $p): string {
+																return $p ? ($p->getProductName() . ' | ' . 
+																							$p->getBrand()->getBrandName() . ' | ' .
+																							'Serial : ' . $p->getProductSerialNumber() . ' | ' .
+																							'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
+																							'Value : ' . $p->getProductValue()
+																						) : '';
+															} 
+										])
+					->add('add_product', SubmitType::class);
+		$formSelectProductToAdd->handleRequest($request);
+		if ($formSelectProductToAdd->isSubmitted() && $formSelectProductToAdd->isValid() ) {
+			$productAndQty = $formSelectProductToAdd->getData();
+			$product = $productAndQty['product'];
+			$qty = $productAndQty['qty'];
+			if ($qty != 0) {
+				dump($product);
+				dump($qty);
+				$newMovement = new Movement;
+				$newMovement->setProduct($product);
+				$newMovement->setProductReception($productReception);
+				$newMovement->setLastQty(0); //! A MODIFIER AVEC QTE EN STOCK
+				$newMovement->setNewQty($qty);
+				$newMovement->setMovementType('PRODUCT_RECEPTION');
+				$manager->persist($newMovement);
+				$manager->flush();
+				$productReception->addMovement($newMovement);
+			}
 			$manager->flush();
-			
 			return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
 		}
-		// ! FAIRE AVEC FILTRE
+		//* Form for all products selected in the reception
+		$formSelectedProducts = $this->createForm(ProductCollectionFromProductReceptionType::class, $productReception);
+		$formSelectedProducts->handleRequest($request);
+		if ($formSelectedProducts->isSubmitted() && $formSelectedProducts->isValid() ) {
+			$productReceptionUpdated = $formSelectedProducts->getData();
+			// unset($formSelectedProducts);
+			// $formSelectedProducts = $this->createForm(ProductCollectionFromProductReceptionType::class, $productReception);
+			$manager->persist($productReceptionUpdated);
+			$manager->flush();
+			return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
+		}
+		return $this->render('transactions/receptions/reception_detail.html.twig', [
+			'route_name' => $routeName,
+			'user_authentified' => $userAuthentified,
+			'user_warehouses' => $warehousesList,
+			'warehouse' => $warehouse,
+			'product_reception' => $productReception,
+			'product_list' => $productList,
+			'filter_form' => $filterForm,
+			'form_select_product_to_add' => $formSelectProductToAdd,
+			'form_selected_products' => $formSelectedProducts,
+		]);
+	}
+
+	//* RECEPTION DETAIL : REMOVE MOVEMENT
+	#[Route('/movements/remove/{movementId}', name: 'delete_reception_movement', methods: ['GET', 'POST'])]
+	public function removeProductReceptionDetail(EntityManagerInterface $manager, MovementRepository $movementRepository, $id, $productReceptionId, $movementId): Response
+	{
+		$movementToDelete = $movementRepository->findOneById($movementId);
+		$manager->remove($movementToDelete);
+		$manager->flush();
+		
+		return $this->redirectToRoute('reception_detail', ['id' => $id, 'productReceptionId' => $productReceptionId]);
+	}
+	// ! FAIRE AVEC FILTRE
 	//* NEW RECEPTION DETAIL : EDIT AND ADD PRODUCTS
 	#[Route('/receptions/{id}/{productReceptionId}/{filter}', name: 'reception_detail_filter')]
 	public function newReceptionDetailFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository ,WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository, ProductRepository $productRepository, $id, $productReceptionId, $filter): Response
@@ -259,7 +528,7 @@ final class TransactionsController extends AbstractController
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
-			// List of warehouses for the user
+			// get the user
 			$user = $userRepository->findOneById($this->getUser());
 			$warehousesList = $user->getWarehouses();
 			if ($warehouseRepository->findOneById($id)) {
@@ -331,11 +600,26 @@ final class TransactionsController extends AbstractController
 	//* STOCK MODIFICATIONS
 	//* **************************************************
 	#[Route('/stock_modifications', name: 'stock_modifications')]
-	public function indexStockModifications(): Response
+	public function indexStockModifications(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockModificationRepository $stockModificationRepository): Response
 	{
-		// $routeName = $request->attributes->get('_route');
+		$routeName = $request->attributes->get('_route');
+		$userAuthentified = false;
+		$warehousesList = [];
+		$warehouse = New Warehouse;
+		// if user autentified 
+		if($this->getUser() instanceof User){
+			$userAuthentified = true;
+			// get the user
+			$user = $userRepository->findOneById($this->getUser());
+			$warehousesList = $user->getWarehouses();
+			$stockModificationsList = $stockModificationRepository->findAll();
+		}
 		return $this->render('transactions/stock_modifications/stock_modifications.html.twig', [
-			'showMenu' => true,
+			'route_name' => $routeName,
+			'user_authentified' => $userAuthentified,
+			'user_warehouses' => $warehousesList,
+			'warehouse' => $warehouse,
+			'stock_modifications_list' => $stockModificationsList,
 		]);
 	}
 
