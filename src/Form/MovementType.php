@@ -15,7 +15,7 @@ class MovementType extends AbstractType
 	{
 		$builder
 			->add('product', ProductType::class)
-			->add('newQty', IntegerType::class)
+			->add('movementQty', IntegerType::class)
 			->add('submit', SubmitType::class)
 		;
 	}

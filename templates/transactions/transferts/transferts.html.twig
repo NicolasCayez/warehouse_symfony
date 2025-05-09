@@ -43,19 +43,19 @@
 									<tr class="m-0 ps-1 text-center">
 										<th scope="col" class="title">Transfert Date</th>
 										<th scope="col" class="title">Message</th>
-										<th scope="col" class="title">Warehouse</th>
-										<th scope="col" class="title">Origin -> Destination</th>
+										<th scope="col" class="title">From</th>
+										<th scope="col" class="title">To</th>
 										<th scope="col" class="title"></th>
 									</tr>
 								</thead>
 								<tbody>
 									{% for one_transfert in transfert_list|sort((a,b) => [b.getStockTransfertDate] <=> [a.getStockTransfertDate]) %}
-										{% if one_transfert.getId < one_transfert.getLinkedTransfert.getId %}
+										{% if one_transfert.isStockTransfertOrigin %}
 											<tr class="m-0 ps-1">
-												<td class="title cstm-darkBlue">{{ one_transfert.getStockTransfertDate|date("Y - m - d") }}</td>
+												<td class="title cstm-darkBlue">{{ one_transfert.getStockTransfertDate|date("Y-m-d - H:m:s") }}</td>
 												<td class="title cstm-darkBlue">{{ one_transfert.getStockTransfertMessage }}</td>
 												<td class="title cstm-darkBlue">{{ one_transfert.getWarehouse.getWarehouseName }}</td>
-												<td class="title cstm-darkBlue">{{ one_transfert.getWarehouse.getWarehouseName ~ ' -> ' ~ one_transfert.getLinkedTransfert.getWarehouse.getWarehouseName }}</td>
+												<td class="title cstm-darkBlue">{{ one_transfert.getLinkedTransfert.getWarehouse.getWarehouseName }}</td>
 												<td class="title cstm-darkBlue"> <a href={{ path('transfert_detail', { 'id': one_transfert.getWarehouse.getId, 'transfertId': one_transfert.getId }) }} class="btn btn-sm btn-primary">Detail</a></td>
 											</tr>
 										{% endif %}

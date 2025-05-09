@@ -6,6 +6,7 @@ namespace App\Form;
 use App\Entity\ProductReception;
 use App\Entity\StockTransfert;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -18,7 +19,6 @@ class StockTransfertType extends AbstractType
 	{
 		$builder
 		->add('stock_transfert_message', TextareaType::class)
-		->add('stock_transfert_date', DateType::class, ['widget' => 'choice', ])
 		->add('submit', SubmitType::class, ['label' => 'Create',])
 		;
 	}

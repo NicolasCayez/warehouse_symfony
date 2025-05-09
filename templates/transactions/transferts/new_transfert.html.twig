@@ -6,52 +6,67 @@
 {% endblock %}
 
 {% block page_content %}
-	<div class="row content grid-1-5">
-		{# 20% width : Menu#}
-		{% include "/shared_templates/dashboard_menu.html.twig" %}
-		<div class="col">
-			{# 80% width : Main content #}
-			<div class="row h-100 align-content-start">
-
-				{{ form_start(form_new_transfert) }}
-					{# 1st ROW : Warehouses List, Selected Warehouse, Search bar #}
-					<div class="h-35 text-light">
-						<div class="col h-100 p-1">
-							<div class="cstm-card h-100">
-								<p>New stock transfert from warehouse : <span class="bg-cstm-light cstm-darkBlue">{{ form_new_transfert.warehouse_origin.warehouse_name.vars.value }}</span> to warehouse : {{ form_row(form_new_transfert.warehouses_destination) }}</p>
-								{{ form_row(form_new_transfert.stock_transfert_date) }}
-								{{ form_row(form_new_transfert.stock_transfert_message) }}
-								{{ form_row(form_new_transfert.submit) }}
+	<div class="row h-fill py-0 mt-1">
+		{# COL 1 #}
+		<div class="col-2">
+			<div class="d-flex row text-light h-100 py-1">
+				{# Dashboard #}
+				<div class="col cstm-card h-100 mx-1">
+					<p>Dashboard</p>
+					{% include "/shared_templates/dashboard_menu.html.twig" %}
+				</div>
+			</div>
+		</div>
+		{# COL 2 #}
+		<div class="col d-flex flex-column">
+			{# COL 2 ROW 1 #}
+			<div class="row text-light py-1 h-fill">
+				{# COL 2 ROW 1 COL 1 #}
+				<div class="col d-flex flex-column text-light h-100">
+					<div class="cstm-card mx-1 h-100">
+						<p>New stock transfert</p>
+						<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 mt-5">
+							<div class="col mx-auto">
+								{{ form_start(form_new_transfert, {'attr': {'class': ''}}) }}
+									{# From #}
+									<div class="row row-cols-2">
+										<div class="col-auto me-auto">
+											<p>From warehouse :</p>
+										</div>
+										<div class="col-auto">
+											<p class="bg-cstm-light cstm-bluedark px-3 py-1 rounded rounded-2">{{ warehouse.getWarehouseName }}</p>
+										</div>
+									</div>
+									{# To #}
+									<div class="row">
+										<div class="col-auto me-auto">
+											<p class="">to warehouse :</p>
+										</div>
+										<div class="col-auto">
+											{{ form_row(form_new_transfert.warehouse_destination, {'label': false}) }}
+										</div>
+									</div>
+									{# Message #}
+									<div class="row">
+										Stock transfert message
+									</div>
+									<div class="row">
+										{{ form_row(form_new_transfert.stock_transfert_message, {'label': false, 'attr': {'class': 'w-100', 'rows': 5}}) }}
+									</div>
+									{# Submit #}
+									<div class="row">
+										{{ form_row(form_new_transfert.submit) }}
+									</div>
+									<div class="hidden">
+										{{ form_row(form_new_transfert) }}
+									</div>
+								{{ form_end(form_new_transfert) }}
 							</div>
 						</div>
 					</div>
-					{# 2nd ROW : Last events #}
-					<div class="h-55 p-1">
-						<div class="cstm-card h-100">
-							<p>Selected Products</p>
-
-							{% for transfert in transfert_list %}
-								<p>{{ transfert.getStockTransfertDate|date("Y - m - d") }}</p>
-							{% endfor %}
-
-
-
-
-
-
-						</div>
-					{# 2nd ROW : Last events #}
-					<div class="row h-20 p-1 mb-0">
-						<div class="col-auto cstm-card ms-auto p-1 mt-auto">
-							<button class="btn btn-light">Validation</button>
-						</div>
-					</div>
-					<div class="hidden">
-						{{ form_row(form_new_transfert) }}
-					</div>
-				{{ form_end(form_new_transfert) }}
-
+				</div>
 			</div>
 		</div>
 	</div>
+
 {% endblock %}

@@ -305,6 +305,21 @@ a:hover{
   border: solid 2px red;
 }
 
+.navbar-vertical-separator {
+  width: 1px;
+}
+
+/* change navbar background on collapse */
+@media (max-width: 992px) {
+  #navbarScroll{
+    background: #0F1E33;
+    padding-bottom: 1em;
+  }
+
+  .navbar-vertical-separator {
+  display: none;
+}
+}
 
 /** ************************* **/
 /** FORMS                     **/

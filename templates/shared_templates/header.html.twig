@@ -1,44 +1,126 @@
-<header class="navbar sticky-top bg-cstm-blue text-light vh-10">
+<header class="sticky-top bg-cstm-blue text-light" data-bs-theme="dark">
+
+	<nav class="navbar navbar-expand-lg pt-0">
+
+		<div class="container-xxl">
+
+			<a id="headerTitle" href={{ path("") }} class="navbar-brand">
+				<div class="row">
+					<img id="logo" src={{ asset('img/logo.png') }} alt="Logo WareHouse" class="col bg-light p-1 rounded rounded-1">
+					<p class="col m-auto fs-3 title-bold text-light ms-1">WareHouse</p>
+				</div>
+			</a>
+
+
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarScroll">
+				{% if app.user == null %}
+					<div class="navbar-nav col-auto nav-item ms-auto">
+						<a href={{ path("app_login") }} class="nav-link mx-3 fs-5 title text-light">Log in</a>
+					</div>
+				{% else %}
+				<ul class="navbar-nav mx-auto my-2 my-lg-0">
+						<li class="col-auto nav-item">
+							<a href={{ path("") }} class="nav-link mx-3 fs-5 title text-light ">
+								{# <img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG"> #}
+								Home
+							</a>
+						</li>
+						<li class="col-auto nav-item">
+							<a href={{ path("warehouses") }} class="nav-link mx-3 fs-5 title text-light ">
+								{# <img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG"> #}
+								Warehouses
+							</a>
+						</li>
+						<li class="col-auto nav-item">
+							<a href={{ path("products") }} class="nav-link mx-3 fs-5 title text-light ">
+								{# <img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG"> #}
+								Products
+							</a>
+						</li>
+						<li class="col-auto nav-item">
+							<a href={{ path("transactions") }} class="nav-link mx-3 fs-5 title text-light ">
+								{# <img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG"> #}
+								Transactions
+							</a>
+						</li>
+						<li class="col-auto nav-item">
+							<hr class="navbar-horizontal-separator">
+						</li>
+					</ul>
+					<div class="col-auto nav-item">
+						<div class="row h-100">
+							<div class="col-auto ms-auto">
+								<hr class="navbar-vertical-separator bg-cstm-light h-100 m-0">
+							</div>
+							<p class="col-auto px-2 ms-auto my-0 py-0 text-center fs-6">User : <br> {{ app.user.username }}</p>
+							<div class="col-auto">
+								{% if "ROLE_ADMIN" in app.user.roles %}
+									<a href={{ path("admin") }} class="row px-2 ms-1 fs-6 text-warning">Admin</a>
+								{% endif %}
+								<a href={{ path("app_logout") }} class="row px-2 ms-1 fs-6 text-danger">Log out</a>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+
+		</div>
+	</nav>
+
+</header>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{# <header class="navbar sticky-top bg-cstm-blue text-light vh-10">
 	<nav class="box-container">
 		<div class="d-inline-flex col-auto title-bold ms-2 pe-5 me-5">
 			<img id="logo" src={{ asset('img/logo.png') }} alt="Logo WareHouse" class="col">
-			<a id="headerTitle" href="#" class="my-auto col ms-2 fs-2 text-light">WareHouse</a>
+			<a id="headerTitle" href="#" class="my-auto col ms-2 fs-3 text-light">WareHouse</a>
 		</div>
 		{% if app.user == null %}
-			{# If user is not logged in #}
 			<a href={{ path("app_login") }} class="ps-2 ms-auto">Se connecter</a>
 		{% else %}
-			{# If user is logged in #}
-			{# Link #}
 			<div class="d-inline-flex col-auto ms-5 title">
 				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
 				<a href={{ path("home") }} class="my-auto col ms-2 fs-5 text-light {{ 'home' in route_name ? 'title-bold' }}">Home</a>
 			</div>
-			{# Link #}
 			<div class="d-inline-flex col-auto ms-5 title">
 				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
 				<a href={{ path("warehouses") }} class="my-auto col ms-2 fs-5 text-light {{ 'warehouses' in route_name ? 'title-bold' }}">Warehouses</a>
 			</div>
-			{# Link #}
 			<div class="d-inline-flex col-auto ms-5 title">
 				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
 				<a href={{ path("products") }} class="my-auto col ms-2 fs-5 text-light {{ 'product' in route_name ? 'title-bold' }}">Products</a>
 			</div>
-			{# Link #}
 			<div class="d-inline-flex col-auto ms-5 title">
 				<img src={{ asset('img/home.png') }} alt="Logo WareHouse" class="col iconLG my-auto">
 				<a href={{ path("transactions") }} class="my-auto col ms-2 fs-5 text-light {{ 'transaction' in route_name ? 'title-bold' }}">Transactions History</a>
 			</div>
-			{# COnnected informations #}
 			<p class="px-2 ms-auto my-0 py-0 text-center fs-5">Connecté : <br> {{ app.user.username }}</p>
 			<div class="col-auto text-center">
 				{% if "ROLE_ADMIN" in app.user.roles %}
-					{# IF USER IS ADMINISTRATOR #}
 					<a href={{ path("admin") }} class="row px-2 ms-1 fs-5 text-warning">Administration</a>
 				{% endif %}
-				{# Log out #}
 				<a href={{ path("app_logout") }} class="row px-2 ms-1 fs-5 text-danger">Se déconnecter</a>
 			</div>
 		{% endif %}
 	</nav>
-</header>
+</header> #}

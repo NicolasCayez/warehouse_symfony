@@ -63,7 +63,7 @@
 						{{ form_start(form_select_product_to_add) }}
 							<div class="row form-row-span-3">
 								{{ form_row(form_select_product_to_add.product) }}
-								{{ form_row(form_select_product_to_add.qty, {'attr': {'class': 'w-100'}}) }}
+								{{ form_row(form_select_product_to_add.qty, {'label': 'Qty to transfert :'}) }}
 								{{ form_row(form_select_product_to_add.submit, {'attr': {'class': 'mt-auto'}}) }}
 							</div>
 						{{ form_end(form_select_product_to_add) }}
@@ -77,6 +77,9 @@
 					<div class="cstm-card mx-1 h-100">
 						<p>Transferred products</p>
 						{{ form_start(form_selected_products) }}
+						<pre>
+							{{ dump(form_selected_products.vars.value) }}
+						</pre>
 							{% if form_selected_products.vars.value.getMovements|length > 0 %}
 								{# {{ form_row(form_selected_products.test_submit) }} #}
 								<table class="table table-sm table-striped-columns table-hover table-responsive">
@@ -95,14 +98,14 @@
 										{% for one_movement in form_selected_products.movements %}
 											{% if my_filter in one_movement.vars.value.getProduct.getProductName or my_filter == '' %}
 												<tr class="m-0 ps-1">
-													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getId }} / {{ one_movement.vars.value.getProduct.getProductName }}</td>
+													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductName }}</td>
 													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductSerialNumber }}</td>
 													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductRef }}</td>
 													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductRef2 }}</td>
-													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductValue }}</td>
-													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductQuantity(utils, inventoryRepository, productReceptionRepository, stockModificationRepository, stockTransfertRepository, warehouse) - one_movement.vars.value.getNewQty }}</td>
+													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductValue }} €</td>
+													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductQuantity(utils, warehouse) - one_movement.vars.value.getMovementQty }}</td>
 													<td class="title cstm-darkBlue text-end form-row-span-3">
-														{{ form_row(one_movement.newQty, {'label': 'Qty (' ~ one_movement.vars.value.getNewQty ~ ')', 'value': one_movement.vars.value.newQty, 'attr': {'class': 'w-75'}}) }}
+														{{ form_row(one_movement.movementQty, {'label': 'Qty (' ~ one_movement.vars.value.getMovementQty ~ ')', 'value': one_movement.vars.value.movementQty, 'attr': {'class': 'w-75'}}) }}
 														<div class="my-auto ms-auto">
 															{{ form_row(one_movement.submit, {'label': 'Update', 'attr': {'class': 'btn btn-sm btn-success'}}) }}
 														</div>

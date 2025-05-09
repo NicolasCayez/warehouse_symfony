@@ -41,11 +41,33 @@
 					<div class="row mt-1">
 						<div class="col mx-1">
 							<div class="card bg-cstm-light ">
-								<p class="row my-0 cstm-darkBlue mx-3 title-bold">Stats</p>
-								<hr class="w-75 mx-auto">
-								<p class="row ps-3 my-0 cstm-darkBlue">Stat1</p>
-								<p class="row ps-3 my-0 cstm-darkBlue">Stat1</p>
-								<p class="row ps-3 my-0 cstm-darkBlue">Stat1</p>
+								<p class="row my-0 cstm-darkBlue mx-3 title-bold">Stock</p>
+								<div class="bg-light overflow-auto vh-60">
+									<table class="table table-sm table-striped-columns table-hover table-responsive pb-2">
+										<thead>
+											<tr class="m-0 ps-1 text-center">
+												<th scope="col" class="title">Product Name</th>
+												<th scope="col" class="title">Serial</th>
+												<th scope="col" class="title">Ref</th>
+												<th scope="col" class="title">Ref 2</th>
+												<th scope="col" class="title">Value</th>
+												<th scope="col" class="title">Stock</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for one_product in warehouse_products %}
+												<tr class="m-0 ps-1">
+													<td class="title cstm-darkBlue">{{ one_product.getProductName }}</td>
+													<td class="title cstm-darkBlue">{{ one_product.getProductSerialNumber }}</td>
+													<td class="title cstm-darkBlue">{{ one_product.getProductRef }}</td>
+													<td class="title cstm-darkBlue">{{ one_product.getProductRef2 }}</td>
+													<td class="title cstm-darkBlue text-end">{{ one_product.getProductValue }} €</td>
+													<td class="title cstm-darkBlue text-end">{{ one_product.getProductQuantity(utils, warehouse) }}</td>
+												</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>

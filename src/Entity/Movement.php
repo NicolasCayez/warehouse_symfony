@@ -21,7 +21,7 @@ class Movement
     private ?int $lastQty = null;
 
     #[ORM\Column]
-    private ?int $newQty = null;
+    private ?int $movementQty = null;
 
     #[ORM\ManyToOne(inversedBy: 'movements')]
     private ?ProductReception $productReception = null;
@@ -67,14 +67,14 @@ class Movement
         return $this;
     }
 
-    public function getNewQty(): ?int
+    public function getMovementQty(): ?int
     {
-        return $this->newQty;
+        return $this->movementQty;
     }
 
-    public function setNewQty(int $newQty): static
+    public function setMovementQty(int $newQty): static
     {
-        $this->newQty = $newQty;
+        $this->movementQty = $newQty;
 
         return $this;
     }

@@ -20,12 +20,22 @@ Products
 
 Transactions
   <div class="row row-cols-1 justify-content-center">
-    <a href={{ path('receptions') }} class="col-8 btn btn-sm btn-light m-1 {{ 'receptions' in route_name ? 'title-bold' }}">Product receptions</a>
-    <a href={{ path('transferts') }} class="col-8 btn btn-sm btn-light m-1 {{ 'transferts' in route_name ? 'title-bold' }}">Stock transferts</a>
     {% if warehouse is defined and warehouse.getId != null %}
-      <a href={{ path("new_transfert", {"id": warehouse.getId}) }} class="col-8 btn btn-sm btn-light m-1 {{ 'new_transfert' in route_name ? 'title-bold' }}"> New Transfert</a>
+      <a href={{ path('receptions_by_warehouse', {"id": warehouse.getId}) }} class="col-8 btn btn-sm btn-light m-1 {{ 'receptions' in route_name ? 'title-bold' }}">Product receptions</a>
+      <a href={{ path("new_reception", {"id": warehouse.getId}) }} class="col-8 btn btn-sm btn-light m-1 {{ 'new_transfert' in route_name ? 'title-bold' }}"> New reception</a>
+      <hr class="w-50 my-0">
+      <a href={{ path('transferts_by_warehouse', {"id": warehouse.getId}) }} class="col-8 btn btn-sm btn-light m-1 {{ 'transferts' in route_name ? 'title-bold' }}">Stock transferts</a>
+      <a href={{ path("new_transfert", {"id": warehouse.getId}) }} class="col-8 btn btn-sm btn-light m-1 {{ 'new_transfert' in route_name ? 'title-bold' }}"> New transfert</a>
+      <hr class="w-50 my-0">
+      <a href={{ path('stock_modifications', {"id": warehouse.getId}) }} class="col-8 btn btn-sm btn-light m-1 {{ 'stock_modifications' in route_name ? 'title-bold' }}">Stock modifications</a>
+    {% else %}
+      <a href={{ path('receptions') }} class="col-8 btn btn-sm btn-light m-1 {{ 'receptions' in route_name ? 'title-bold' }}">Product receptions</a>
+      <hr class="w-50 my-0">
+      <a href={{ path('transferts') }} class="col-8 btn btn-sm btn-light m-1 {{ 'transferts' in route_name ? 'title-bold' }}">Stock transferts</a>
+      <hr class="w-50 my-0">
+      <a href={{ path('stock_modifications') }} class="col-8 btn btn-sm btn-light m-1 {{ 'stock_modifications' in route_name ? 'title-bold' }}">Stock Modifications</a>
     {% endif %}
-    <a href={{ path('stock_modifications') }} class="col-8 btn btn-sm btn-light m-1 {{ 'stock_modifications' in route_name ? 'title-bold' }}">Stock Modifications</a>
+      <hr class="w-50 my-0">
     <a href="" class="col-8 btn btn-sm btn-secondary m-1">Inventories</a>
   </div>
 

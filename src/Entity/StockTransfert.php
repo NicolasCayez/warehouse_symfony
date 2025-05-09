@@ -20,7 +20,8 @@ class StockTransfert
     private ?string $stockTransfertMessage = null;
 
     #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'linkedStockTransfert', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    // #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn]
     private ?self $linkedTransfert = null;
 
     #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'linkedTransfert', cascade: ['persist', 'remove'])]
@@ -30,7 +31,8 @@ class StockTransfert
     private ?\DateTimeImmutable $stockTransfertDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'stockTransferts')]
-    #[ORM\JoinColumn(nullable: false)]
+    // #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn]
     private ?Warehouse $warehouse = null;
 
     /**
@@ -38,6 +40,9 @@ class StockTransfert
      */
     #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'stockTransfert')]
     private Collection $movements;
+
+    #[ORM\Column]
+    private ?bool $transfertOrigin = null;
 
     public function __construct()
     {
@@ -140,6 +145,18 @@ class StockTransfert
                 $movement->setStockTransfert(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isStockTransfertOrigin(): ?bool
+    {
+        return $this->transfertOrigin;
+    }
+
+    public function setStockTransfertOrigin(bool $transfertOrigin): static
+    {
+        $this->transfertOrigin = $transfertOrigin;
 
         return $this;
     }

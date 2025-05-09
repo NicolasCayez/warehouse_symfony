@@ -8,6 +8,8 @@ use App\Repository\ProductRepository;
 use App\Repository\StockModificationRepository;
 use App\Repository\StockTransfertRepository;
 use App\Service\Utils;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -351,12 +353,12 @@ class Product
     }
 
     public function getProductQuantity(Utils $utils,
-                                    InventoryRepository $inventoryRepository,
-                                    ProductReceptionRepository $productReceptionRepository,
-                                    StockModificationRepository $stockModificationRepository,
-                                    StockTransfertRepository $stockTransfertRepository,
                                     Warehouse $warehouse): ?string
     {
-        return $utils->getProductQuantity($utils, $inventoryRepository, $productReceptionRepository, $stockModificationRepository, $stockTransfertRepository, $warehouse, $this);
+        return $utils->getProductQuantity($utils, $warehouse, $this);
+    }
+    public function getProductQuantityByDateTime(Utils $utils, Warehouse $warehouse, DateTimeImmutable $dateTime): ?string
+    {
+        return $utils->getProductQuantityByDateTime($utils, $warehouse, $dateTime, $this);
     }
 }

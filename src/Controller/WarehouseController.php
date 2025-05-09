@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Warehouse;
 use App\Repository\UserRepository;
 use App\Repository\WarehouseRepository;
+use App\Service\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class WarehouseController extends AbstractController
 {
+	//* ALL USER Warehouses
 	#[Route('/warehouses', name: 'warehouses')]
 	public function indexWarehouse(Request $request, WarehouseRepository $warehouseRepository, UserRepository $userRepository): Response
 	{
@@ -32,21 +34,31 @@ final class WarehouseController extends AbstractController
 			'user_warehouses' => $warehousesList,
 		]);
 	}
+
+	//* Warehouse detail
 	#[Route('/warehouses/{id}', name: 'warehouse_detail')]
-	public function warehouseDetail(Request $request, WarehouseRepository $warehouseRepository, UserRepository $userRepository, $id): Response
+	public function warehouseDetail(Request $request, WarehouseRepository $warehouseRepository, UserRepository $userRepository, Utils $utils,
+      $id): Response
 	{
 		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
+		$allproductList = $warehouseRepository->findOneByWarehouseName('ALL_DATA')->getProducts();
+		$warehouseProductList = [];
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
-			// List of warehouses for the user
+			// get the user
 			$user = $userRepository->findOneById($this->getUser());
 			$warehousesList = $user->getWarehouses();
 			if ($warehouseRepository->findOneById($id)) {
 				$warehouse = $warehouseRepository->findOneById($id);
+			}
+			foreach ($allproductList as $one_product) {
+				if ($utils->getProductQuantity($utils, $warehouse, $one_product)) {
+					array_push($warehouseProductList, $one_product);
+				}
 			}
 		}
 		return $this->render('warehouses/warehouse_detail.html.twig', [
@@ -54,6 +66,8 @@ final class WarehouseController extends AbstractController
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
+			'warehouse_products' => $warehouseProductList,
+			'utils' => $utils,
 		]);
 	}
 }

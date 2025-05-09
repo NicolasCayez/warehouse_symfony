@@ -370,7 +370,6 @@ final class TransactionsController extends AbstractController
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
-		// $productList = [];
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
@@ -470,7 +469,7 @@ final class TransactionsController extends AbstractController
 				$newMovement->setProduct($product);
 				$newMovement->setProductReception($productReception);
 				$newMovement->setLastQty(0); //! A MODIFIER AVEC QTE EN STOCK
-				$newMovement->setNewQty($qty);
+				$newMovement->setMovementQty($qty);
 				$newMovement->setMovementType('PRODUCT_RECEPTION');
 				$manager->persist($newMovement);
 				$manager->flush();
@@ -578,7 +577,7 @@ final class TransactionsController extends AbstractController
 			$productWithQty = $formSelectProductToAdd->getData();
 			$newMovement = new Movement;
 			$newMovement->setProduct($productWithQty['product']);
-			$newMovement->setNewQty($productWithQty['new_qty']);
+			$newMovement->setMovementQty($productWithQty['new_qty']);
 			$manager->persist($newMovement);
 			$manager->flush();
 			return $this->redirectToRoute('reception_detail_filter', ['id' => $id, 'productReceptionId' => $productReceptionId, 'filter' => $filter]);
