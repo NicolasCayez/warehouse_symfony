@@ -63,7 +63,7 @@
 						{{ form_start(form_select_product_to_add) }}
 							<div class="row form-row-span-3">
 								{{ form_row(form_select_product_to_add.product) }}
-								{{ form_row(form_select_product_to_add.qty, {'label': 'Qty to transfert :'}) }}
+								{{ form_row(form_select_product_to_add.qty, {'label': 'Qty to transfert :', 'attr': {'min': 0}}) }}
 								{{ form_row(form_select_product_to_add.submit, {'attr': {'class': 'mt-auto'}}) }}
 							</div>
 						{{ form_end(form_select_product_to_add) }}
@@ -77,9 +77,6 @@
 					<div class="cstm-card mx-1 h-100">
 						<p>Transferred products</p>
 						{{ form_start(form_selected_products) }}
-						<pre>
-							{{ dump(form_selected_products.vars.value) }}
-						</pre>
 							{% if form_selected_products.vars.value.getMovements|length > 0 %}
 								{# {{ form_row(form_selected_products.test_submit) }} #}
 								<table class="table table-sm table-striped-columns table-hover table-responsive">

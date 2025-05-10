@@ -17,13 +17,13 @@ class ProductNewQtyType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options): void
 	{
 		$builder
-			->add('product_name', TextType::class)
-			->add('product_serial_number', TextType::class)
-			->add('product_ref', TextType::class)
-			->add('product_ref2', TextType::class)
-			->add('product_value', NumberType::class)
-			->add('qty', IntegerType::class, ['mapped' => false, 'data' => 0])
-			->add('add', SubmitType::class)
+			// ->add('product_name', TextType::class)
+			// ->add('product_serial_number', TextType::class)
+			// ->add('product_ref', TextType::class)
+			// ->add('product_ref2', TextType::class)
+			// ->add('product_value', NumberType::class)
+			->add('qty', IntegerType::class, ['mapped' => false, 'data' => 0, 'required' => false])
+			// ->add('add', SubmitType::class)
 		;
 	}
 

@@ -7,11 +7,14 @@ use App\Entity\Product;
 use App\Entity\StockTransfert;
 use App\Entity\User;
 use App\Entity\Warehouse;
+use App\Form\ProductAndQtyListType;
+use App\Form\ProductAndQtyType;
 use App\Form\ProductChoiceQtyType;
 use App\Form\ProductCollectionFromProductReceptionType;
 use App\Form\ProductCollectionFromStockTransfertType;
 use App\Form\ProductCollectionFromWarehouseType;
 use App\Form\ProductNewQtyType;
+use App\Form\ProductToAddCollectionFromWarehouseType;
 use App\Form\QtyType;
 use App\Form\SelectWarehouseType;
 use App\Form\StockTransfertDetailType;
@@ -28,9 +31,11 @@ use App\Repository\WarehouseRepository;
 use App\Service\Utils;
 use DateTime;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -489,14 +494,18 @@ final class WipController extends AbstractController
 			;
 			// form to select products to add
 			$product = new Product;
-			$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true])
+			$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true,], $utils, $warehouse)
 				->add('product', ChoiceType::class, [
 						// 'mapped' => false,
+						// 'label_html' => true,
 						'choices' => $allData->getProducts(),
-						'choice_label' => function (?Product $p): string {
+						'choice_label' => function (?Product $p) use ($utils, $warehouse) : string {
+							// $html = '<p>{{ warehouse->getWarehouseName }}</p>';
+							// return $p ? ($html) : ''; } 
 							return $p ? ($p->getProductName() . ' | ' . $p->getBrand()->getBrandName() . ' | ' .
 								'Serial : ' . $p->getProductSerialNumber() . ' | ' .
 								'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
+								'Actual Qty : ' . $p->getProductQuantity($utils, $warehouse) . ' | ' . 
 								'Value : ' . $p->getProductValue() ) : ''; } 
 					])
 				->add('submit', SubmitType::class);
@@ -551,7 +560,7 @@ final class WipController extends AbstractController
 			'my_filter' => '',
 		]);
 	}
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
 	#[Route('/transferts/{id}/{transfertId}/filtered/{filter}', name: 'transfert_detail_filtered')]
 	public function transfertDetailFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, Utils $utils, UserRepository $userRepository, WarehouseRepository $warehouseRepository, InventoryRepository $inventoryRepository,
 	ProductReceptionRepository $productReceptionRepository, StockModificationRepository $stockModificationRepository, StockTransfertRepository $stockTransfertRepository, $id, $transfertId, $filter): Response
