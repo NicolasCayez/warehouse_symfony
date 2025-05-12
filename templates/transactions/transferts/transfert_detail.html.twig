@@ -100,9 +100,9 @@
 													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductRef }}</td>
 													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductRef2 }}</td>
 													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductValue }} €</td>
-													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductQuantity(utils, warehouse) - one_movement.vars.value.getMovementQty }}</td>
+													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductQuantity(utils, warehouse) + one_movement.vars.value.getMovementQty }}</td>
 													<td class="title cstm-darkBlue text-end form-row-span-3">
-														{{ form_row(one_movement.movementQty, {'label': 'Qty (' ~ one_movement.vars.value.getMovementQty ~ ')', 'value': one_movement.vars.value.movementQty, 'attr': {'class': 'w-75'}}) }}
+														{{ form_row(one_movement.movementQty, {'label': 'Qty (' ~ one_movement.vars.value.getMovementQty ~ ')', 'value': one_movement.vars.value.movementQty, 'attr': {'class': 'w-75', 'min':0}}) }}
 														<div class="my-auto ms-auto">
 															{{ form_row(one_movement.submit, {'label': 'Update', 'attr': {'class': 'btn btn-sm btn-success'}}) }}
 														</div>

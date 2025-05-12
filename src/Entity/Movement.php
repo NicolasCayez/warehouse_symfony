@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MovementRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MovementRepository::class)]
 class Movement
@@ -21,6 +22,7 @@ class Movement
     private ?int $lastQty = null;
 
     #[ORM\Column]
+    #[ASSERT\NotBlank]
     private ?int $movementQty = null;
 
     #[ORM\ManyToOne(inversedBy: 'movements')]

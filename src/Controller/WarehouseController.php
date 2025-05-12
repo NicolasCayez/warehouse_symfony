@@ -27,6 +27,9 @@ final class WarehouseController extends AbstractController
 			// List of warehouses for the user
 			$user = $userRepository->findOneById($this->getUser());
 			$warehousesList = $user->getWarehouses();
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('warehouses/warehouses.html.twig', [
 			'route_name' => $routeName,
@@ -60,6 +63,9 @@ final class WarehouseController extends AbstractController
 					array_push($warehouseProductList, $one_product);
 				}
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('warehouses/warehouse_detail.html.twig', [
 			'route_name' => $routeName,

@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
 
 class Utils{
-  /** Cette méthode permet de nettoyer les données entrées par l'utilisateur
+  /** Cleans the user inputs
   * @param string $value
   * @return null|string
   */
@@ -24,6 +24,10 @@ class Utils{
     return htmlspecialchars(strip_tags(trim($value)));
   }
 
+  /** Gets the latest inventory for one warehouse
+  * @param Warehouse $warehouse
+  * @return null|Inventory
+  */
   public static function getLatestInventory($warehouse):?Inventory {
     $inventoriesList = $warehouse->getInventories();
     if ($inventoriesList) {
@@ -40,6 +44,11 @@ class Utils{
     return null;
   }
 
+  /** Gets the latest inventory for one warehouse, by date
+  * @param Warehouse $warehouse
+  * @param DateTimeImmutable $dateTime
+  * @return null|Inventory
+  */
   public static function getLatestInventoryByDateTime($warehouse, $dateTime):?Inventory {
     $inventoriesList = $warehouse->getInventories();
     if ($inventoriesList) {
@@ -47,7 +56,7 @@ class Utils{
       $inventory->setInventoryDate(NEW DateTimeImmutable('1972-01-01', null));
       foreach ($inventoriesList as $inv) {
         if ($inv->getInventoryDate() > $dateTime) {
-          $inventoriesList->remove($inv);
+          $inventoriesList->removeElement($inv);
         } elseif ($inv->getInventoryDate() <= $dateTime  && $inv->getInventoryDate() > $inventory->getInventoryDate()) {
           $inventory = $inv;
         }
@@ -58,6 +67,12 @@ class Utils{
     return null;
   }
 
+  /** Gets the product quantity for one warehouse
+  * @param Utils $utils
+  * @param Warehouse $warehouse
+  * @param Product $product
+  * @return 0|Integer
+  */
   public static function getProductQuantity(
       Utils $utils,
       Warehouse $warehouse,
@@ -92,9 +107,17 @@ class Utils{
     }
     foreach ($warehouse->getStockTransferts() as $stockTransfert) {
       if ($stockTransfert->getStockTransfertDate() > $latestInventory->getInventoryDate()) {
-        foreach ($stockTransfert->getMovements() as $mvmt) {
-          if ($mvmt->getProduct() == $product) {
-            $qty = $qty + $mvmt->getMovementQty();
+        if ($stockTransfert->isStockTransfertOrigin()) {
+          foreach ($stockTransfert->getMovements() as $mvmt) {
+            if ($mvmt->getProduct() == $product) {
+              $qty = $qty - $mvmt->getMovementQty();
+            }
+          }
+        } else {
+          foreach ($stockTransfert->getLinkedTransfert()->getMovements() as $mvmt) {
+            if ($mvmt->getProduct() == $product) {
+              $qty = $qty + $mvmt->getMovementQty();
+            }
           }
         }
       }
@@ -102,6 +125,13 @@ class Utils{
     return $qty;
   }
 
+    /** Gets the product quantity for one warehouse, by date
+  * @param Utils $utils
+  * @param Warehouse $warehouse
+  * @param DateTimeImmutable $dateTime
+  * @param Product $product
+  * @return 0|Integer
+  */
   public static function getProductQuantityByDateTime(
       Utils $utils,
       Warehouse $warehouse,
@@ -137,9 +167,17 @@ class Utils{
     }
     foreach ($warehouse->getStockTransferts() as $stockTransfert) {
       if ($stockTransfert->getStockTransfertDate() > $latestInventory->getInventoryDate()) {
-        foreach ($stockTransfert->getMovements() as $mvmt) {
-          if ($mvmt->getProduct() == $product) {
-            $qty = $qty + $mvmt->getMovementQty();
+        if ($stockTransfert->isStockTransfertOrigin()) {
+          foreach ($stockTransfert->getMovements() as $mvmt) {
+            if ($mvmt->getProduct() == $product) {
+              $qty = $qty - $mvmt->getMovementQty();
+            }
+          }
+        } else {
+          foreach ($stockTransfert->getLinkedTransfert()->getMovements() as $mvmt) {
+            if ($mvmt->getProduct() == $product) {
+              $qty = $qty + $mvmt->getMovementQty();
+            }
           }
         }
       }

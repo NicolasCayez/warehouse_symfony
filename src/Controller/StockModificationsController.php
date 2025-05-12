@@ -28,13 +28,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class TransactionsController extends AbstractController
-{	
+final class StockModificationsController extends AbstractController
+{
+
 	//* **************************************************
-	//* TRANSACTIONS
+	//* STOCK MODIFICATIONS
 	//* **************************************************
-	#[Route('/transactions', name: 'transactions')]
-	public function indexTransactions(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, ProductReceptionRepository $productReceptionRepository): Response
+	#[Route('/stock_modifications', name: 'stock_modifications')]
+	public function indexStockModifications(Request $request, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockModificationRepository $stockModificationRepository): Response
 	{
 		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
@@ -45,22 +46,16 @@ final class TransactionsController extends AbstractController
 			$userAuthentified = true;
 			// get the user
 			$user = $userRepository->findOneById($this->getUser());
-			// list of warehouses for the user except from ALL_DATA
 			$warehousesList = $user->getWarehouses();
-			foreach ($warehousesList as $w) {
-				if ($w->getWarehouseName() == 'ALL_DATA') {
-					$warehousesList->removeElement($w);
-				}
-			}
-		} else {
-			// User not identified
-			return $this->redirectToRoute('');
+			$stockModificationsList = $stockModificationRepository->findAll();
 		}
-		return $this->render('transactions/transactions.html.twig', [
+		return $this->render('transactions/stock_modifications/stock_modifications.html.twig', [
 			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
+			'stock_modifications_list' => $stockModificationsList,
 		]);
 	}
+
 }

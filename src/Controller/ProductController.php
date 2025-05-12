@@ -44,6 +44,9 @@ final class ProductController extends AbstractController
 				$data = $filterForm->getData();
 				return $this->redirectToRoute('products_filtered', ['filter' => $data['filter']]);
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('products/products.html.twig', [
 			'route_name' => $routeName,
@@ -81,6 +84,9 @@ final class ProductController extends AbstractController
 			$data = $filterForm->getData();
 			return $this->redirectToRoute('products_filtered', ['filter' => $data['filter']]);
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('products/products.html.twig', [
 			'route_name' => $routeName,

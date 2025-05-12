@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StockTransfertRepository::class)]
 class StockTransfert
@@ -17,6 +18,8 @@ class StockTransfert
     private ?int $id = null;
     
     #[ORM\Column(type: Types::TEXT)]
+    #[ASSERT\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $stockTransfertMessage = null;
 
     #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'linkedStockTransfert', cascade: ['persist', 'remove'])]

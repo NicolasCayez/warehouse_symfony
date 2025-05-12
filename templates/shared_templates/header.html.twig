@@ -57,6 +57,9 @@
 								<hr class="navbar-vertical-separator bg-cstm-light h-100 m-0">
 							</div>
 							<p class="col-auto px-2 ms-auto my-0 py-0 text-center fs-6">User : <br> {{ app.user.username }}</p>
+							<div class="col-auto ms-auto">
+								<hr class="navbar-vertical-separator bg-cstm-light h-100 m-0">
+							</div>
 							<div class="col-auto">
 								{% if "ROLE_ADMIN" in app.user.roles %}
 									<a href={{ path("admin") }} class="row px-2 ms-1 fs-6 text-warning">Admin</a>

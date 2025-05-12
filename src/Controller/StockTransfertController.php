@@ -7,36 +7,22 @@ use App\Entity\Product;
 use App\Entity\StockTransfert;
 use App\Entity\User;
 use App\Entity\Warehouse;
-use App\Form\ProductAndQtyListType;
-use App\Form\ProductAndQtyType;
-use App\Form\ProductChoiceQtyType;
-use App\Form\ProductCollectionFromProductReceptionType;
 use App\Form\ProductCollectionFromStockTransfertType;
-use App\Form\ProductCollectionFromWarehouseType;
-use App\Form\ProductNewQtyType;
-use App\Form\ProductToAddCollectionFromWarehouseType;
 use App\Form\QtyType;
-use App\Form\SelectWarehouseType;
-use App\Form\StockTransfertDetailType;
 use App\Form\StockTransfertType;
 use App\Form\WarehouseType;
 use App\Repository\InventoryRepository;
 use App\Repository\MovementRepository;
 use App\Repository\ProductReceptionRepository;
-use App\Repository\ProductRepository;
 use App\Repository\StockModificationRepository;
 use App\Repository\StockTransfertRepository;
 use App\Repository\UserRepository;
 use App\Repository\WarehouseRepository;
 use App\Service\Utils;
-use DateTime;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -44,16 +30,16 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class WipController extends AbstractController
+final class StockTransfertController extends AbstractController
 {	
-	//* **************************************************
-	//* TRANSFERTS
-	//* **************************************************
-
-	//* TRANSFERTS LIST For the current user
+	/** Route : transferts
+  * Displays the transferts list for the user
+  * No parameters
+  */
 	#[Route('/transferts', name: 'transferts')]
-	public function indexTransfert(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository): Response
+	public function indexTransfert(Request $request, FormFactoryInterface $formFactory, UserRepository $userRepository, StockTransfertRepository $stockTransfertRepository): Response
 	{
 		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
@@ -108,6 +94,9 @@ final class WipController extends AbstractController
 					return $this->redirectToRoute('transferts');
 				}
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('transactions/transferts/transferts.html.twig', [
 			'route_name' => $routeName,
@@ -120,9 +109,12 @@ final class WipController extends AbstractController
 		]);
 	}
 
-	//* TRANSFERTS LIST For the current user filtered
+	/** Route : transferts_filtered
+  * Displays the transferts list for the user, filtered
+  * @Param string $filter
+  */
 	#[Route('/transferts/filtered/', name: 'transferts_filtered')]
-	public function indexTransfertFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository, $filter): Response
+	public function indexTransfertFiltered(Request $request, FormFactoryInterface $formFactory, UserRepository $userRepository, StockTransfertRepository $stockTransfertRepository, $filter): Response
 	{
 		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
@@ -177,6 +169,9 @@ final class WipController extends AbstractController
 					return $this->redirectToRoute('transferts');
 				}
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('transactions/transferts/transferts.html.twig', [
 			'route_name' => $routeName,
@@ -189,9 +184,12 @@ final class WipController extends AbstractController
 		]);
 	}
 
-	//* TRANSFERTS LIST For the current warehouse
+	/** Route : transferts_by_warehouse
+  * Displays the transferts list for the user and warehouse, filtered
+  * @Param integer $id - The warehouse id
+  */
 	#[Route('/transferts/{id}', name: 'transferts_by_warehouse')]
-	public function transfertByWarehouse(Request $request, FormFactoryInterface $formFactory,  EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository, $id): Response
+	public function transfertByWarehouse(Request $request, FormFactoryInterface $formFactory, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository, $id): Response
 	{
 		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
@@ -253,6 +251,9 @@ final class WipController extends AbstractController
 					return $this->redirectToRoute('transferts_by_warehouse_filtered', ['id' => $id, 'filter' => $data['filter']]);
 				}
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('transactions/transferts/transferts.html.twig', [
 			'user_authentified' => $userAuthentified,
@@ -265,9 +266,13 @@ final class WipController extends AbstractController
 		]);
 	}
 
-	//* TRANSFERTS LIST For the current warehouse filtered
+	/** Route : transferts_by_warehouse_filtered
+  * Displays the transferts list for the user and warehouse, filtered
+  * @Param integer $id - The warehouse id
+  * @Param string $filter
+  */
 	#[Route('/transferts/{id}/filtered/{filter}', name: 'transferts_by_warehouse_filtered')]
-	public function transfertByWarehouseFiltered(Request $request, FormFactoryInterface $formFactory,  EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository, $id, $filter): Response
+	public function transfertByWarehouseFiltered(Request $request, FormFactoryInterface $formFactory, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository, $id, $filter): Response
 	{
 		$routeName = $request->attributes->get('_route');
 		$userAuthentified = false;
@@ -328,6 +333,9 @@ final class WipController extends AbstractController
 					return $this->redirectToRoute('transferts_by_warehouse', ['id' => $id]);
 				}
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('transactions/transferts/transferts.html.twig', [
 			'route_name' => $routeName,
@@ -341,10 +349,12 @@ final class WipController extends AbstractController
 		]);
 	}
 
-
-	//* NEW TRANSFERT
+	/** Route : new_transfert
+  * To create a new transfert for the warehouse
+  * @Param integer $id - The warehouse id
+  */
 	#[Route('/transferts/{id}/new', name: 'new_transfert')]
-	public function newTransfert(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, StockTransfertRepository $stockTransfertRepository, $id): Response
+	public function newTransfert(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, $id): Response
 	{
 		$userAuthentified = false;
 		$routeName = $request->attributes->get('_route');
@@ -426,6 +436,9 @@ final class WipController extends AbstractController
 				$manager->flush();
 				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $newStockTransfert->getId()]);
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('transactions/transferts/new_transfert.html.twig', [
 			'route_name' => $routeName,
@@ -437,14 +450,20 @@ final class WipController extends AbstractController
 		]);
 	}
 
+	/** Route : transfert_detail
+  * To edit a transfert detail : add or edit movements (one product and quantity)
+  * @Param integer $id - The warehouse id
+  * @Param integer $transfertId - The transfert id
+  */
 	#[Route('/transferts/{id}/{transfertId}', name: 'transfert_detail')]
-	public function transfertDetail(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, Utils $utils, UserRepository $userRepository, WarehouseRepository $warehouseRepository, InventoryRepository $inventoryRepository,
+	public function transfertDetail(Request $request, ValidatorInterface $validator, FormFactoryInterface $formFactory, EntityManagerInterface $manager, Utils $utils, UserRepository $userRepository, WarehouseRepository $warehouseRepository, InventoryRepository $inventoryRepository,
 	ProductReceptionRepository $productReceptionRepository, StockModificationRepository $stockModificationRepository, StockTransfertRepository $stockTransfertRepository, $id, $transfertId): Response
 	{
 		$userAuthentified = false;
 		$routeName = $request->attributes->get('_route');
 		$warehousesList = [];
 		$warehouse = New Warehouse;
+		$errors = null;
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
@@ -497,11 +516,8 @@ final class WipController extends AbstractController
 			$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true,], $utils, $warehouse)
 				->add('product', ChoiceType::class, [
 						// 'mapped' => false,
-						// 'label_html' => true,
 						'choices' => $allData->getProducts(),
 						'choice_label' => function (?Product $p) use ($utils, $warehouse) : string {
-							// $html = '<p>{{ warehouse->getWarehouseName }}</p>';
-							// return $p ? ($html) : ''; } 
 							return $p ? ($p->getProductName() . ' | ' . $p->getBrand()->getBrandName() . ' | ' .
 								'Serial : ' . $p->getProductSerialNumber() . ' | ' .
 								'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
@@ -513,6 +529,17 @@ final class WipController extends AbstractController
 			if ($formSelectProductToAdd->isSubmitted() && $formSelectProductToAdd->isValid() ) {
 				$productAndQty = $formSelectProductToAdd->getData();
 				$product = $productAndQty['product'];
+				$errors = $validator->validate($product);
+				if (count($errors) > 0) {
+					/*
+					* Uses a __toString method on the $errors variable which is a
+					* ConstraintViolationList object. This gives us a nice string
+					* for debugging.
+					*/
+					$errorsString = (string) $errors;
+
+					return new Response($errorsString);
+				}
 				$qty = $productAndQty['qty'];
 				if ($qty > 0) {
 					// FROM
@@ -521,7 +548,7 @@ final class WipController extends AbstractController
 					$newMovement->setStockTransfert($stockTransfert);
 					$lastQuantity = $product->getProductQuantityByDateTime($utils, $warehouse, $stockTransfert->getStockTransfertDate());
 					$newMovement->setLastQty($lastQuantity);
-					$newMovement->setMovementQty(-($qty));
+					$newMovement->setMovementQty($qty);
 					$newMovement->setMovementType('STOCK_TRANSFERT');
 					$manager->persist($newMovement);
 					$stockTransfert->addMovement($newMovement);
@@ -541,6 +568,9 @@ final class WipController extends AbstractController
 				$manager->flush();
 				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('transactions/transferts/transfert_detail.html.twig', [
 			'user_authentified' => $userAuthentified,
@@ -560,8 +590,14 @@ final class WipController extends AbstractController
 			'my_filter' => '',
 		]);
 	}
-	
-	#[Route('/transferts/{id}/{transfertId}/filtered/{filter}', name: 'transfert_detail_filtered')]
+
+	/** Route : transfert_detail_filtered
+  * To edit a transfert detail : add or edit movements (product and quantity), filtered
+  * @Param integer $id - The warehouse id
+  * @Param integer $transfertId - The transfert id
+  * @Param string $filter
+  */
+	#[Route('/transferts/{id}/{transfertId}/filter/{filter}', name: 'transfert_detail_filtered')]
 	public function transfertDetailFiltered(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, Utils $utils, UserRepository $userRepository, WarehouseRepository $warehouseRepository, InventoryRepository $inventoryRepository,
 	ProductReceptionRepository $productReceptionRepository, StockModificationRepository $stockModificationRepository, StockTransfertRepository $stockTransfertRepository, $id, $transfertId, $filter): Response
 	{
@@ -627,10 +663,11 @@ final class WipController extends AbstractController
 				->add('product', ChoiceType::class, [
 						// 'mapped' => false,
 						'choices' => $allData->getProducts(),
-						'choice_label' => function (?Product $p): string {
+						'choice_label' => function (?Product $p) use ($utils, $warehouse) : string {
 											return $p ? ($p->getProductName() . ' | ' . $p->getBrand()->getBrandName() . ' | ' .
 																		'Serial : ' . $p->getProductSerialNumber() . ' | ' .
 																		'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
+																		'Actual Qty : ' . $p->getProductQuantity($utils, $warehouse) . ' | ' .
 																		'Value : ' . $p->getProductValue() ) : ''; } 
 					])
 				->add('submit', SubmitType::class);
@@ -645,13 +682,14 @@ final class WipController extends AbstractController
 					$newMovement = new Movement;
 					$newMovement->setProduct($product);
 					$newMovement->setStockTransfert($stockTransfert);
-					$lastquantity = $product->getProductQuantity($utils, $inventoryRepository, $productReceptionRepository, $stockModificationRepository, $stockTransfertRepository, $warehouse);
+					$lastquantity = $product->getProductQuantity($utils, $warehouse);
 					$newMovement->setLastQty($lastquantity);
 					$newMovement->setMovementQty($qty);
 					$newMovement->setMovementType('STOCK_TRANSFERT');
 					$manager->persist($newMovement);
 					$manager->flush();
-					$stockTransfert->addMovement($newMovement);
+					$warehouse->addProduct($product);
+					$stockTransfert->getLinkedTransfert()->getWarehouse()->addProduct($product);
 				}
 				$manager->flush();
 				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
@@ -665,6 +703,9 @@ final class WipController extends AbstractController
 				$manager->flush();
 				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
 			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
 		}
 		return $this->render('transactions/transferts/transfert_detail.html.twig', [
 			'user_authentified' => $userAuthentified,
@@ -685,36 +726,18 @@ final class WipController extends AbstractController
 		]);
 	}
 
-
-
-
-
-			//* RECEPTION DETAIL : REMOVE MOVEMENT
-			#[Route('/transferts/{id}/{transfertId}/remove/{movementId}', name: 'delete_transfert_movement', methods: ['GET', 'POST'])]
-			public function removeProductReceptionDetail(EntityManagerInterface $manager, MovementRepository $movementRepository, $id, $transfertId, $movementId): Response
-			{
-				$movementToDelete = $movementRepository->findOneById($movementId);
-				$manager->remove($movementToDelete);
-				$manager->flush();
-				
-				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
-			}
-	
-	
-	
-	//! **************************************************
-	//! TEST *********************************************
-	//! **************************************************
-	#[Route('/test', name: 'test')]
-	public function test (Utils $utils,
-												WarehouseRepository $warehouseRepository,
-												ProductRepository $productRepository)
+	/** Route : delete_transfert_movement
+  * To delete a movement linked to a transfert
+  * @Param integer $id - The warehouse id
+  * @Param integer $transfertId - The transfert id
+  * @Param integer $movementId - The movement id
+  */
+	#[Route('/transferts/{id}/{transfertId}/remove/{movementId}', name: 'delete_transfert_movement', methods: ['GET', 'POST'])]
+	public function removeProductReceptionDetail(EntityManagerInterface $manager, MovementRepository $movementRepository, $id, $transfertId, $movementId): Response
 	{
-		$warehouse = $warehouseRepository->findOneById(47);
-		$product = $productRepository->findOneById(815);
-		dump($utils->getProductQuantity($utils, $warehouse, $product));
-		
-		// COMMENTER POUR VERIFIER DEBUG
-		return $this->redirectToRoute('');
+		$movementToDelete = $movementRepository->findOneById($movementId);
+		$manager->remove($movementToDelete);
+		$manager->flush();
+		return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
 	}
 }
