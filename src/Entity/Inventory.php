@@ -23,7 +23,7 @@ class Inventory
     private ?bool $inventoryClosed = null;
 
     #[ORM\ManyToOne(inversedBy: 'inventories')]
-    #[ORM\JoinColumn(nullable: false)]
+    // #[ORM\JoinColumn(nullable: false)]
     private ?Warehouse $warehouse = null;
 
     /**

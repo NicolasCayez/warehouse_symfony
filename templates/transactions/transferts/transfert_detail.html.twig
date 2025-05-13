@@ -18,7 +18,7 @@
 			</div>
 		</div>
 		{# COL 2 #}
-		<div class="col d-flex flex-column">
+		<div class="col-10 d-flex flex-column">
 			{# COL 2 ROW 1 #}
 			<div class="row text-light py-1">
 				{# COL 2 ROW 1 COL 1 #}
@@ -33,7 +33,7 @@
 								</div>
 								|
 								<div class="col-auto px-2">
-									{{ form_transfert_detail.vars.value.getWarehouse.getWarehouseName ~ ' -> ' ~ form_transfert_detail.vars.value.getLinkedTransfert.getWarehouse.getWarehouseName }}
+									{{ form_transfert_detail.vars.value.getWarehouse.getWarehouseName ~ ' -> ' ~ form_transfert_detail.vars.value.getLinkedStockTransfert(stockTransfertRepository).getWarehouse.getWarehouseName }}
 								</div>
 								| Message :
 								<div class="col-auto px-2">
@@ -62,7 +62,7 @@
 						<p>Products to add</p>
 						{{ form_start(form_select_product_to_add) }}
 							<div class="row form-row-span-3">
-								{{ form_row(form_select_product_to_add.product) }}
+								{{ form_row(form_select_product_to_add.product, {'attr': {'class': 'w-75'}}) }}
 								{{ form_row(form_select_product_to_add.qty, {'label': 'Qty to transfert :', 'attr': {'min': 0}}) }}
 								{{ form_row(form_select_product_to_add.submit, {'attr': {'class': 'mt-auto'}}) }}
 							</div>
@@ -100,14 +100,20 @@
 													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductRef }}</td>
 													<td class="title cstm-darkBlue">{{ one_movement.vars.value.getProduct.getProductRef2 }}</td>
 													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductValue }} €</td>
-													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductQuantity(utils, warehouse) + one_movement.vars.value.getMovementQty }}</td>
+													<td class="title cstm-darkBlue text-end">{{ one_movement.vars.value.getProduct.getProductQuantity(utils, stockTransfertRepository, warehouse) + one_movement.vars.value.getMovementQty }}</td>
 													<td class="title cstm-darkBlue text-end form-row-span-3">
 														{{ form_row(one_movement.movementQty, {'label': 'Qty (' ~ one_movement.vars.value.getMovementQty ~ ')', 'value': one_movement.vars.value.movementQty, 'attr': {'class': 'w-75', 'min':0}}) }}
 														<div class="my-auto ms-auto">
 															{{ form_row(one_movement.submit, {'label': 'Update', 'attr': {'class': 'btn btn-sm btn-success'}}) }}
 														</div>
 														<div class="mx-0 w-auto mx-auto">
-															<a class='btn btn-sm btn-danger my-auto' href={{ path('delete_transfert_movement', {'id': warehouse.getId, 'transfertId': stock_transfert.getId, 'movementId': one_movement.vars.value.getId}) }}>Delete</a>
+															<button class='toggleShowDelete btn btn-sm btn-danger my-auto' type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfirmDelete-{{ one_movement.vars.value.getId }}" aria-expanded="false" aria-controls="collapseConfirmDelete-{{ one_movement.vars.value.getId }}">
+																	Delete
+															</button>
+															<a  href={{ path('delete_transfert_movement', {'id': warehouse.getId, 'transfertId': stock_transfert.getId, 'movementId': one_movement.vars.value.getId}) }}
+																	id="collapseConfirmDelete-{{ one_movement.vars.value.getId }}" class='collapse btn btn-sm btn-danger my-auto collapse'>
+																	Confirm Delete
+															</a>
 														</div>
 													</td>
 												</tr>

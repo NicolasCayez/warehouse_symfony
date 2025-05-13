@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StockTransfertRepository::class)]
@@ -19,29 +20,38 @@ class StockTransfert
     
     #[ORM\Column(type: Types::TEXT)]
     #[ASSERT\NotBlank]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(min: 3,
+                    max: 255,
+                    minMessage: 'Write at least {{ limit }} charaters',
+                    maxMessage: 'Write less than {{ limit }} characters')]
     private ?string $stockTransfertMessage = null;
 
-    #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'linkedStockTransfert', cascade: ['persist', 'remove'])]
-    // #[ORM\JoinColumn(nullable: false)]
-    #[ORM\JoinColumn]
+    // #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'linkedStockTransfert', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'linkedStockTransfert', cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: true)]
+    // #[ORM\JoinColumn]
     private ?self $linkedTransfert = null;
+    //!!!!!!!!!!!!!!!
+    #[ORM\Column(nullable: true)]
+    private ?int $linkedStockTransfertId = null;
+    //!!!!!!!!!!!!!!!
 
-    #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'linkedTransfert', cascade: ['persist', 'remove'])]
+    // #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'linkedTransfert', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'linkedTransfert')]
     private ?self $linkedStockTransfert = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $stockTransfertDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'stockTransferts')]
-    // #[ORM\JoinColumn(nullable: false)]
-    #[ORM\JoinColumn]
+    #[ORM\JoinColumn(nullable: false)]
+    // #[ORM\JoinColumn]
     private ?Warehouse $warehouse = null;
 
     /**
      * @var Collection<int, Movement>
      */
-    #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'stockTransfert')]
+    #[ORM\OneToMany(targetEntity: Movement::class, mappedBy: 'stockTransfert', cascade: ['persist', 'remove'])]
     private Collection $movements;
 
     #[ORM\Column]
@@ -80,7 +90,16 @@ class StockTransfert
 
         return $this;
     }
+    //!!!!!!!!!!!!!!!!!!!!!!!
+    public function removeLinkedTransfert(): static
+    {
+        $this->linkedTransfert = $this;
+        
+        return $this;
+    }
+    //!!!!!!!!!!!!!!!!!!!!!!!
 
+    // public function getLinkedStockTransfert(StockTransfertRepository $stockTransfertRepository): ?self
     public function getLinkedStockTransfert(): ?self
     {
         return $this->linkedStockTransfert;
@@ -94,6 +113,35 @@ class StockTransfert
         }
 
         $this->linkedStockTransfert = $linkedStockTransfert;
+
+        return $this;
+    }
+    //!!!!!!!!!!!!!!!!!!!!!!!!!
+    public function removeLinkedStockTransfert(): static
+    {
+        // set the owning side of the relation if necessary
+        // $linkedStockTransfert = $this->getLinkedStockTransfert();
+        // if ($linkedStockTransfert->getLinkedTransfert() !== $linkedStockTransfert) {
+        //     $linkedStockTransfert->setLinkedTransfert($linkedStockTransfert);
+        // }
+        $this->linkedStockTransfert = $this;
+        // $this->linkedStockTransfert = null;
+        return $this;
+    }
+    //!!!!!!!!!!!!!!!!!!!!!!!!!
+    // public function getLinkedStockTransfert(StockTransfertRepository $stockTransfertRepository): ?self
+    // {
+    //     $linkedStockTransfert = $stockTransfertRepository->findOneById($this->linkedStockTransfertId);
+    //     return $linkedStockTransfert;
+    // }
+    public function getLinkedStockTransfertId(): int
+    {
+        return $this->linkedStockTransfertId;
+    }
+
+    public function setLinkedStockTransfertId(int $linkedStockTransfertId): static
+    {
+        $this->linkedStockTransfertId = $linkedStockTransfertId;
 
         return $this;
     }

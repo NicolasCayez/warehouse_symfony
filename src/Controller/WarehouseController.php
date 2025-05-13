@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Warehouse;
+use App\Repository\StockTransfertRepository;
 use App\Repository\UserRepository;
 use App\Repository\WarehouseRepository;
 use App\Service\Utils;
@@ -40,7 +41,7 @@ final class WarehouseController extends AbstractController
 
 	//* Warehouse detail
 	#[Route('/warehouses/{id}', name: 'warehouse_detail')]
-	public function warehouseDetail(Request $request, WarehouseRepository $warehouseRepository, UserRepository $userRepository, Utils $utils,
+	public function warehouseDetail(Request $request, StockTransfertRepository $stockTransfertRepository, WarehouseRepository $warehouseRepository, UserRepository $userRepository, Utils $utils,
       $id): Response
 	{
 		$routeName = $request->attributes->get('_route');
@@ -59,7 +60,7 @@ final class WarehouseController extends AbstractController
 				$warehouse = $warehouseRepository->findOneById($id);
 			}
 			foreach ($allproductList as $one_product) {
-				if ($utils->getProductQuantity($utils, $warehouse, $one_product)) {
+				if ($utils->getProductQuantity($utils, $stockTransfertRepository, $warehouse, $one_product)) {
 					array_push($warehouseProductList, $one_product);
 				}
 			}
@@ -73,6 +74,7 @@ final class WarehouseController extends AbstractController
 			'user_warehouses' => $warehousesList,
 			'warehouse' => $warehouse,
 			'warehouse_products' => $warehouseProductList,
+			'stockTransfertRepository' => $stockTransfertRepository,
 			'utils' => $utils,
 		]);
 	}

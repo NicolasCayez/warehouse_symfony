@@ -23,8 +23,8 @@
 		<div class="col d-flex flex-column pe-2">
 			{# COL 2 ROW 1 #}
 			<div class="row text-light py-1">
-				<div class="cstm-card mx-1">
-					<p>Warehouses</p>
+				<div id="my_warehouses" class="cstm-card mx-1">
+					<p>My Warehouses</p>
 					<ul class="list-unstyled mt-0 overflow-auto row row-cols-1 row-cols-lg-2">
 						{% for one_warehouse in user_warehouses %}
 							{% if one_warehouse.getWarehouseName != 'ALL_DATA' %}

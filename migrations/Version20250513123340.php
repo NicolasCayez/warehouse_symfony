@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250509144856 extends AbstractMigration
+final class Version20250513123340 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -22,7 +22,7 @@ final class Version20250509144856 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE brand (id INT AUTO_INCREMENT NOT NULL, brand_name VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE family (id INT AUTO_INCREMENT NOT NULL, family_name VARCHAR(50) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE inventory (id INT AUTO_INCREMENT NOT NULL, warehouse_id INT NOT NULL, inventory_date DATE NOT NULL COMMENT \'(DC2Type:date_immutable)\', inventory_closed TINYINT(1) NOT NULL, INDEX IDX_B12D4A365080ECDE (warehouse_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE inventory (id INT AUTO_INCREMENT NOT NULL, warehouse_id INT DEFAULT NULL, inventory_date DATE NOT NULL COMMENT \'(DC2Type:date_immutable)\', inventory_closed TINYINT(1) NOT NULL, INDEX IDX_B12D4A365080ECDE (warehouse_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE movement (id INT AUTO_INCREMENT NOT NULL, product_id INT NOT NULL, product_reception_id INT DEFAULT NULL, stock_modification_id INT DEFAULT NULL, stock_transfert_id INT DEFAULT NULL, inventory_id INT DEFAULT NULL, last_qty INT NOT NULL, movement_qty INT NOT NULL, movement_type VARCHAR(20) NOT NULL, INDEX IDX_F4DD95F74584665A (product_id), INDEX IDX_F4DD95F7F1B0FD39 (product_reception_id), INDEX IDX_F4DD95F7ABC92A86 (stock_modification_id), INDEX IDX_F4DD95F71DF771BE (stock_transfert_id), INDEX IDX_F4DD95F79EEA759 (inventory_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE product (id INT AUTO_INCREMENT NOT NULL, brand_id INT NOT NULL, supplier_id INT NOT NULL, product_serial_number VARCHAR(50) DEFAULT NULL, product_name VARCHAR(50) NOT NULL, product_ref VARCHAR(50) DEFAULT NULL, product_ref2 VARCHAR(50) DEFAULT NULL, product_value NUMERIC(8, 2) DEFAULT NULL, INDEX IDX_D34A04AD44F5D008 (brand_id), INDEX IDX_D34A04AD2ADD6D8C (supplier_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE product_family (product_id INT NOT NULL, family_id INT NOT NULL, INDEX IDX_C79A60FF4584665A (product_id), INDEX IDX_C79A60FFC35E566A (family_id), PRIMARY KEY(product_id, family_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');

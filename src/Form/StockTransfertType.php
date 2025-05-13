@@ -12,13 +12,16 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 
 class StockTransfertType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options): void
 	{
 		$builder
-		->add('stock_transfert_message', TextareaType::class)
+		->add('stock_transfert_message', TextareaType::class, [
+			'constraints' => [new Length(['min' => 3])]
+		])
 		->add('submit', SubmitType::class, ['label' => 'Create',])
 		;
 	}

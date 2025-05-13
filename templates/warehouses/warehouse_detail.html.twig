@@ -62,7 +62,7 @@
 													<td class="title cstm-darkBlue">{{ one_product.getProductRef }}</td>
 													<td class="title cstm-darkBlue">{{ one_product.getProductRef2 }}</td>
 													<td class="title cstm-darkBlue text-end">{{ one_product.getProductValue }} €</td>
-													<td class="title cstm-darkBlue text-end">{{ one_product.getProductQuantity(utils, warehouse) }}</td>
+													<td class="title cstm-darkBlue text-end">{{ one_product.getProductQuantity(utils, stockTransfertRepository, warehouse) }}</td>
 												</tr>
 											{% endfor %}
 										</tbody>

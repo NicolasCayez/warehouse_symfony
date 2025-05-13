@@ -30,6 +30,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class StockTransfertController extends AbstractController
@@ -106,6 +107,7 @@ final class StockTransfertController extends AbstractController
 			'transfert_list' => $transfertList,
 			'filter_form' => $filterForm,
 			'select_warehouse_form' => $selectWarehouseForm,
+			'stock_transfert_repository' => $stockTransfertRepository,
 		]);
 	}
 
@@ -181,6 +183,7 @@ final class StockTransfertController extends AbstractController
 			'transfert_list' => $transfertList,
 			'filter_form' => $filterForm,
 			'select_warehouse_form' => $selectWarehouseForm,
+			'stock_transfert_repository' => $stockTransfertRepository,
 		]);
 	}
 
@@ -217,6 +220,7 @@ final class StockTransfertController extends AbstractController
 			// $transfertList = $stockTransfertRepository->findByWarehouse($warehouse);
 			$transfertList = $stockTransfertRepository->findAll();
 			foreach ($transfertList as $key => $st) {
+				// if ( $warehouse != $st->getWarehouse() && $warehouse != $st->getLinkedStockTransfert($stockTransfertRepository)->getWarehouse()  ) {
 				if ( $warehouse != $st->getWarehouse() && $warehouse != $st->getLinkedStockTransfert()->getWarehouse()  ) {
 					unset($transfertList[$key]);
 				}
@@ -263,6 +267,7 @@ final class StockTransfertController extends AbstractController
 			'route_name' => $routeName,
 			'filter_form' => $filterForm,
 			'select_warehouse_form' => $selectWarehouseForm,
+			'stock_transfert_repository' => $stockTransfertRepository,
 		]);
 	}
 
@@ -345,7 +350,7 @@ final class StockTransfertController extends AbstractController
 			'transfert_list' => $transfertList,
 			'filter_form' => $filterForm,
 			'select_warehouse_form' => $selectWarehouseForm,
-
+			'stock_transfert_repository' => $stockTransfertRepository,
 		]);
 	}
 
@@ -410,7 +415,9 @@ final class StockTransfertController extends AbstractController
 											return $w ? ($w->getWarehouseName()) : '';
 										} 
 					])
-				->add('stock_transfert_message', TextareaType::class)
+				->add('stock_transfert_message', TextareaType::class, [
+					'constraints' => [new Length(['min' => 3])] //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				])
 				->add('submit', SubmitType::class, ['label' => 'Create',])
 				->getForm();
 			$formNewTransfert->handleRequest($request);
@@ -431,8 +438,11 @@ final class StockTransfertController extends AbstractController
 				$newLinkedStockTransfert->setStockTransfertMessage($data['stock_transfert_message']);
 				$newLinkedStockTransfert->setStockTransfertOrigin(false);
 				$manager->persist($newLinkedStockTransfert);
+				$manager->flush();
 				$newStockTransfert->setLinkedStockTransfert($newLinkedStockTransfert);
 				$newLinkedStockTransfert->setLinkedStockTransfert($newStockTransfert);
+				// $newStockTransfert->setLinkedStockTransfertId($newLinkedStockTransfert->getId());
+				// $newLinkedStockTransfert->setLinkedStockTransfertId($newStockTransfert->getId());
 				$manager->flush();
 				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $newStockTransfert->getId()]);
 			}
@@ -508,20 +518,20 @@ final class StockTransfertController extends AbstractController
 					])
 				->add('warehouse_destination', WarehouseType::class, [
 						'mapped' => false,
-						'data' => $stockTransfert->getLinkedTransfert()->getWarehouse(),
+						'data' => $stockTransfert->getLinkedStockTransfert($stockTransfertRepository)->getWarehouse(),
 					])
 			;
 			// form to select products to add
 			$product = new Product;
-			$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true,], $utils, $warehouse)
+			$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true,], $utils, $stockTransfertRepository, $warehouse)
 				->add('product', ChoiceType::class, [
 						// 'mapped' => false,
 						'choices' => $allData->getProducts(),
-						'choice_label' => function (?Product $p) use ($utils, $warehouse) : string {
+						'choice_label' => function (?Product $p) use ($utils, $stockTransfertRepository, $warehouse) : string {
 							return $p ? ($p->getProductName() . ' | ' . $p->getBrand()->getBrandName() . ' | ' .
 								'Serial : ' . $p->getProductSerialNumber() . ' | ' .
 								'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
-								'Actual Qty : ' . $p->getProductQuantity($utils, $warehouse) . ' | ' . 
+								'Actual Qty : ' . $p->getProductQuantity($utils, $stockTransfertRepository, $warehouse) . ' | ' . 
 								'Value : ' . $p->getProductValue() ) : ''; } 
 					])
 				->add('submit', SubmitType::class);
@@ -546,7 +556,7 @@ final class StockTransfertController extends AbstractController
 					$newMovement = new Movement;
 					$newMovement->setProduct($product);
 					$newMovement->setStockTransfert($stockTransfert);
-					$lastQuantity = $product->getProductQuantityByDateTime($utils, $warehouse, $stockTransfert->getStockTransfertDate());
+					$lastQuantity = $product->getProductQuantityByDateTime($utils, $stockTransfertRepository, $warehouse, $stockTransfert->getStockTransfertDate());
 					$newMovement->setLastQty($lastQuantity);
 					$newMovement->setMovementQty($qty);
 					$newMovement->setMovementType('STOCK_TRANSFERT');
@@ -554,7 +564,7 @@ final class StockTransfertController extends AbstractController
 					$stockTransfert->addMovement($newMovement);
 					$manager->flush();
 					$warehouse->addProduct($product);
-					$stockTransfert->getLinkedTransfert()->getWarehouse()->addProduct($product);
+					$stockTransfert->getLinkedStockTransfert($stockTransfertRepository)->getWarehouse()->addProduct($product);
 				}
 				$manager->flush();
 				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
@@ -588,6 +598,7 @@ final class StockTransfertController extends AbstractController
 			'stockModificationRepository' => $stockModificationRepository,
 			'stockTransfertRepository' => $stockTransfertRepository,
 			'my_filter' => '',
+			'all_data' => $allData,
 		]);
 	}
 
@@ -663,11 +674,11 @@ final class StockTransfertController extends AbstractController
 				->add('product', ChoiceType::class, [
 						// 'mapped' => false,
 						'choices' => $allData->getProducts(),
-						'choice_label' => function (?Product $p) use ($utils, $warehouse) : string {
+						'choice_label' => function (?Product $p) use ($utils, $stockTransfertRepository, $warehouse) : string {
 											return $p ? ($p->getProductName() . ' | ' . $p->getBrand()->getBrandName() . ' | ' .
 																		'Serial : ' . $p->getProductSerialNumber() . ' | ' .
 																		'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
-																		'Actual Qty : ' . $p->getProductQuantity($utils, $warehouse) . ' | ' .
+																		'Actual Qty : ' . $p->getProductQuantity($utils, $stockTransfertRepository, $warehouse) . ' | ' .
 																		'Value : ' . $p->getProductValue() ) : ''; } 
 					])
 				->add('submit', SubmitType::class);
@@ -739,5 +750,56 @@ final class StockTransfertController extends AbstractController
 		$manager->remove($movementToDelete);
 		$manager->flush();
 		return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
+	}
+
+		/** Route : delete_transfert
+  * To edit a transfert detail : add or edit movements (one product and quantity)
+  * @Param integer $id - The warehouse id
+  * @Param integer $transfertId - The transfert id
+  */
+	#[Route('/transferts/{id}/remove/{transfertId}', name: 'delete_transfert')]
+	public function deleteTransfert(EntityManagerInterface $manager, Utils $utils, UserRepository $userRepository, StockTransfertRepository $stockTransfertRepository, $id, $transfertId): Response
+	{
+		//if user autentified 
+		if($this->getUser() instanceof User){
+			// get the user
+			$user = $userRepository->findOneById($this->getUser());
+
+			//if user is admin or manager
+			$userHasRightsToDelete = false;
+			foreach ($user->getRoles() as $role) {
+				if (str_contains($role, 'ROLE_ADMIN') || str_contains($role, 'ROLE_MANAGER')) {
+					$userHasRightsToDelete = true;
+				}
+			}
+			// User not allowed, no action and back to the transfert detail
+			if (!$userHasRightsToDelete) {
+				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
+			}
+			//User allowed, proceeding wit the delete action
+			//get the current transfert
+			$stockTransfert = $stockTransfertRepository->findOneById($transfertId);
+			// $linkedStockTransfert = $stockTransfertRepository->findOneById($stockTransfert->getLinkedStockTransfertId());
+			$linkedStockTransfert = $stockTransfert->getLinkedStockTransfert();
+			$conn = $manager->getConnection();
+			// remove aull linked movements
+			$sql = '
+							UPDATE stock_transfert
+							SET linked_transfert_id = NULL
+							where id = :id
+							or id = :linkedId
+							';
+			$conn->executeQuery($sql, ['id' => $transfertId, 'linkedId' => $linkedStockTransfert->getId()]);
+			$manager->remove($stockTransfert);
+			$manager->flush();
+
+			$manager->remove($linkedStockTransfert);
+
+			$manager->flush();
+			return $this->redirectToRoute('transferts', ['id' => $id]);
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
+		}
 	}
 }

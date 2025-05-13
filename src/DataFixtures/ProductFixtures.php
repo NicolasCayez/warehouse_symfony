@@ -86,6 +86,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
 			$lastProduct = $this->productRepository->findOneById($lastId);
 			// link product to ALL_DATA warahouse
 			$all_data_warehouse->addProduct($lastProduct);
+			$lastProduct->addWarehouse($all_data_warehouse);
 			// Family
 			$family->addProduct($lastProduct);
 			// Brand

@@ -75,6 +75,7 @@ class Utils{
   */
   public static function getProductQuantity(
       Utils $utils,
+      StockTransfertRepository $stockTransfertRepository,
       Warehouse $warehouse,
       Product $product
     ):?int {
@@ -114,7 +115,7 @@ class Utils{
             }
           }
         } else {
-          foreach ($stockTransfert->getLinkedTransfert()->getMovements() as $mvmt) {
+          foreach ($stockTransfert->getLinkedStockTransfert($stockTransfertRepository)->getMovements() as $mvmt) {
             if ($mvmt->getProduct() == $product) {
               $qty = $qty + $mvmt->getMovementQty();
             }
@@ -134,6 +135,7 @@ class Utils{
   */
   public static function getProductQuantityByDateTime(
       Utils $utils,
+      StockTransfertRepository $stockTransfertRepository,
       Warehouse $warehouse,
       DateTimeImmutable $dateTime,
       Product $product
@@ -174,7 +176,7 @@ class Utils{
             }
           }
         } else {
-          foreach ($stockTransfert->getLinkedTransfert()->getMovements() as $mvmt) {
+          foreach ($stockTransfert->getLinkedStockTransfert($stockTransfertRepository)->getMovements() as $mvmt) {
             if ($mvmt->getProduct() == $product) {
               $qty = $qty + $mvmt->getMovementQty();
             }

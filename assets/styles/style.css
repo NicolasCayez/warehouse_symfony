@@ -19,6 +19,10 @@
   font-family: "Segoe UI", Arial, sans-serif;
 }
 
+table .title:hover {
+  font-family: 'NirmalaUI-Semilight';
+}
+
 /** ************************* **/
 /** COLORS                    **/
 /** ************************* **/
@@ -297,6 +301,9 @@ a:hover{
   rotate: 0deg;
 }
 
+.toggleShowDelete:has(+ .show) {
+  display: none;
+}
 
 /** ************************* **/
 /** TESTING BORDER            **/
@@ -317,8 +324,8 @@ a:hover{
   }
 
   .navbar-vertical-separator {
-  display: none;
-}
+    display: none;
+  }
 }
 
 /** ************************* **/

@@ -352,13 +352,12 @@ class Product
         return $this;
     }
 
-    public function getProductQuantity(Utils $utils,
-                                    Warehouse $warehouse): ?string
+    public function getProductQuantity(Utils $utils, StockTransfertRepository $stockTransfertRepository, Warehouse $warehouse): ?string
     {
-        return $utils->getProductQuantity($utils, $warehouse, $this);
+        return $utils->getProductQuantity($utils, $stockTransfertRepository, $warehouse, $this);
     }
-    public function getProductQuantityByDateTime(Utils $utils, Warehouse $warehouse, DateTimeImmutable $dateTime): ?string
+    public function getProductQuantityByDateTime(Utils $utils, StockTransfertRepository $stockTransfertRepository, Warehouse $warehouse, DateTimeImmutable $dateTime): ?string
     {
-        return $utils->getProductQuantityByDateTime($utils, $warehouse, $dateTime, $this);
+        return $utils->getProductQuantityByDateTime($utils, $stockTransfertRepository, $warehouse, $dateTime, $this);
     }
 }

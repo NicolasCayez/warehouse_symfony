@@ -13,7 +13,7 @@
 			</div>
 		</div>
 		{# COL 2 #}
-		<div class="col d-flex flex-column">
+		<div class="col-10 d-flex flex-column">
 			{# COL 2 ROW 1 #}
 			<div class="row text-light py-1">
 				{# COL 2 ROW 1 COL 1 #}
@@ -55,8 +55,23 @@
 												<td class="title cstm-darkBlue">{{ one_transfert.getStockTransfertDate|date("Y-m-d - H:m:s") }}</td>
 												<td class="title cstm-darkBlue">{{ one_transfert.getStockTransfertMessage }}</td>
 												<td class="title cstm-darkBlue">{{ one_transfert.getWarehouse.getWarehouseName }}</td>
-												<td class="title cstm-darkBlue">{{ one_transfert.getLinkedTransfert.getWarehouse.getWarehouseName }}</td>
-												<td class="title cstm-darkBlue"> <a href={{ path('transfert_detail', { 'id': one_transfert.getWarehouse.getId, 'transfertId': one_transfert.getId }) }} class="btn btn-sm btn-primary">Detail</a></td>
+												<td class="title cstm-darkBlue">{{ one_transfert.getLinkedStockTransfert(stock_transfert_repository).getWarehouse.getWarehouseName }}</td>
+												<td class="title cstm-darkBlue text-end form-row-span-2">
+													<div class="my-auto ms-auto">
+														<a href={{ path('transfert_detail', { 'id': one_transfert.getWarehouse.getId, 'transfertId': one_transfert.getId }) }} class="btn btn-sm btn-primary">Detail</a>
+													</div>
+													<div class="mx-0 w-auto mx-auto">
+														<button class='toggleShowDelete btn btn-sm btn-danger my-auto' type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfirmDelete-{{ one_transfert.getId }}" aria-expanded="false" aria-controls="collapseConfirmDelete-{{ one_transfert.getId }}">
+																Delete
+														</button>
+														{# <a href={{ path('transfert_detail', { 'id': one_transfert.getWarehouse.getId, 'transfertId': one_transfert.getId }) }} class="btn btn-sm btn-danger my-auto">Delete</a> #}
+
+														<a  href={{ path('delete_transfert', { 'id': one_transfert.getWarehouse.getId, 'transfertId': one_transfert.getId }) }}
+																id="collapseConfirmDelete-{{ one_transfert.getId }}" class='collapse btn btn-sm btn-danger my-auto'>
+																Confirm Delete
+														</a>
+													</div>
+												</td>
 											</tr>
 										{% endif %}
 									{% endfor %}

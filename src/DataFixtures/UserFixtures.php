@@ -39,7 +39,7 @@ class UserFixtures extends Fixture
         $i = 1;
         $user = new User();
         $user->setUsername('NicoManager');
-        $user->setRoles(["ROLE_USER","ROLE_Manager"]);
+        $user->setRoles(["ROLE_USER","ROLE_MANAGER"]);
         $plainPassword = '123456';
         $user->setPassword(password_hash($plainPassword, PASSWORD_BCRYPT));
         $user->setUserLastName('Cayez');
