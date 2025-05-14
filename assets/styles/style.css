@@ -305,6 +305,18 @@ a:hover{
   display: none;
 }
 
+
+ul:has(+ #form_stock_transfert_message) {
+  margin-top: 5px;
+  padding: 3px;
+  color: red;
+  background-color: whitesmoke;
+  border: solid 1px red;
+  text-align: center;
+  list-style-type: none;
+}
+
+
 /** ************************* **/
 /** TESTING BORDER            **/
 /** ************************* **/

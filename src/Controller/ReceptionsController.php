@@ -27,6 +27,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints\Regex;
 
 final class ReceptionsController extends AbstractController
 {	
@@ -79,7 +80,12 @@ final class ReceptionsController extends AbstractController
 			}
 			// form to filter list
 			$filterForm = $formFactory->createBuilder()
-				->add('filter', TextType::class, ['required' => false, ])
+				->add('filter', TextType::class, [
+						'required' => false,
+						'constraints' => [
+								new Regex('/^[a-zA-Z0-9_.-]+$/'),
+							]
+					])
 				->add('applyFilter', SubmitType::class)
 				->getForm();
 			$filterForm->handleRequest($request);

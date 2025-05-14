@@ -22,8 +22,10 @@ class StockTransfert
     #[ASSERT\NotBlank]
     #[Assert\Length(min: 3,
                     max: 255,
-                    minMessage: 'Write at least {{ limit }} charaters',
-                    maxMessage: 'Write less than {{ limit }} characters')]
+                    minMessage: 'You must write at least {{ limit }} characters',
+                    maxMessage: 'You must write at most {{ limit }} characters')]
+    #[Assert\Regex(pattern: '/^[a-zA-Z0-9_.-]+$/',
+                    message: 'You should write only letters, numbers, and _ - .')]
     private ?string $stockTransfertMessage = null;
 
     // #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'linkedStockTransfert', cascade: ['persist', 'remove'])]
@@ -31,10 +33,6 @@ class StockTransfert
     #[ORM\JoinColumn(nullable: true)]
     // #[ORM\JoinColumn]
     private ?self $linkedTransfert = null;
-    //!!!!!!!!!!!!!!!
-    #[ORM\Column(nullable: true)]
-    private ?int $linkedStockTransfertId = null;
-    //!!!!!!!!!!!!!!!
 
     // #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'linkedTransfert', cascade: ['persist', 'remove'])]
     #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'linkedTransfert')]
@@ -90,14 +88,12 @@ class StockTransfert
 
         return $this;
     }
-    //!!!!!!!!!!!!!!!!!!!!!!!
     public function removeLinkedTransfert(): static
     {
         $this->linkedTransfert = $this;
         
         return $this;
     }
-    //!!!!!!!!!!!!!!!!!!!!!!!
 
     // public function getLinkedStockTransfert(StockTransfertRepository $stockTransfertRepository): ?self
     public function getLinkedStockTransfert(): ?self
@@ -116,33 +112,9 @@ class StockTransfert
 
         return $this;
     }
-    //!!!!!!!!!!!!!!!!!!!!!!!!!
     public function removeLinkedStockTransfert(): static
     {
-        // set the owning side of the relation if necessary
-        // $linkedStockTransfert = $this->getLinkedStockTransfert();
-        // if ($linkedStockTransfert->getLinkedTransfert() !== $linkedStockTransfert) {
-        //     $linkedStockTransfert->setLinkedTransfert($linkedStockTransfert);
-        // }
         $this->linkedStockTransfert = $this;
-        // $this->linkedStockTransfert = null;
-        return $this;
-    }
-    //!!!!!!!!!!!!!!!!!!!!!!!!!
-    // public function getLinkedStockTransfert(StockTransfertRepository $stockTransfertRepository): ?self
-    // {
-    //     $linkedStockTransfert = $stockTransfertRepository->findOneById($this->linkedStockTransfertId);
-    //     return $linkedStockTransfert;
-    // }
-    public function getLinkedStockTransfertId(): int
-    {
-        return $this->linkedStockTransfertId;
-    }
-
-    public function setLinkedStockTransfertId(int $linkedStockTransfertId): static
-    {
-        $this->linkedStockTransfertId = $linkedStockTransfertId;
-
         return $this;
     }
 
