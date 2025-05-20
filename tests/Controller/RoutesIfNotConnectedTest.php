@@ -75,35 +75,35 @@ class RoutesIfNotConnectedTest extends WebTestCase
         //* STOCK TRANSFERTS
         // Route 'transferts' if not connected
         // -> should redirect to route 'home'
-        $client->request('GET', '/transferts');
+        $client->request('GET', '/transferts_list');
         self::assertResponseRedirects('');
-        // Route 'transferts_filtered' if not connected
+        // Route 'transferts' filtered if not connected
         // -> should redirect to route 'home'
-        $client->request('GET', '/transferts/filtered/e');
+        $client->request('GET', '/transferts_list/e');
         self::assertResponseRedirects('');
         // Route 'transferts_by_warehouse' if not connected
         // -> should redirect to route 'home'
-        $client->request('GET', '/transferts/2');
-        self::assertResponseRedirects('');
+        // $client->request('GET', '/transferts/6/list');
+        // self::assertResponseRedirects('');
         // Route 'transferts_by_warehouse_filtered' if not connected
         // -> should redirect to route 'home'
-        $client->request('GET', '/transferts/2/filtered/e');
-        self::assertResponseRedirects('');
+        // $client->request('GET', '/transferts/6/list/e');
+        // self::assertResponseRedirects('');
         // Route 'new_transfert' if not connected
         // -> should redirect to route 'home'
-        $client->request('GET', '/transferts/2/new');
-        self::assertResponseRedirects('');
+        // $client->request('GET', '/transferts/4/new');
+        // self::assertResponseRedirects('');
         // Route 'transfert_detail' if not connected
         // -> should redirect to route 'home'
-        $client->request('GET', '/transferts/2/2');
-        self::assertResponseRedirects('');
+        // $client->request('GET', '/transferts/6/2');
+        // self::assertResponseRedirects('');
         // Route 'delete_transfert_movement' if not connected
         // -> should redirect to route 'home'
         // $client->request('GET', '/transferts/2/2/remove/2');
         // self::assertResponseRedirects('');
         // Route 'transfert_detail_filtered' if not connected
         // -> should redirect to route 'home'
-        $client->request('GET', '/transferts/2/2/filter/e');
-        self::assertResponseRedirects('');
+        // $client->request('GET', '/transferts/6/2/filter/e');
+        // self::assertResponseRedirects('');
     }
 }

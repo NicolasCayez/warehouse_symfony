@@ -50,58 +50,63 @@ final class StockTransfertController extends AbstractController
 		$warehousesList = [];
 		$warehouse = New Warehouse;
 		// if user autentified 
-		if($this->getUser() instanceof User){
-			$userAuthentified = true;
+		if($this->getUser() instanceof User) {
 			// get the user
 			$user = $userRepository->findOneById($this->getUser());
-			// list of warehouses for the user except from ALL_DATA
-			$warehousesList = $user->getWarehouses();
-			foreach ($warehousesList as $w) {
-				if ($w->getWarehouseName() == 'ALL_DATA') {
-					$warehousesList->removeElement($w);
+			if (array_search('ROLE_MANAGER', $user->getRoles()) || array_search('ROLE_ADMIN', $user->getRoles())){
+				$userAuthentified = true;
+				// list of warehouses for the user except from ALL_DATA
+				$warehousesList = $user->getWarehouses();
+				foreach ($warehousesList as $w) {
+					if ($w->getWarehouseName() == 'ALL_DATA') {
+						$warehousesList->removeElement($w);
+					}
 				}
-			}
-			// list of receptions for the user, filtered
-			$transfertList = $stockTransfertRepository->findAllFiltered($filter);
-			foreach ($transfertList as $st) {
-				if ( !($warehousesList->contains($st->getWarehouse())) ) {
-					$warehousesList->removeElement($st);
+				// list of transferts for the user, filtered
+				$transfertList = $stockTransfertRepository->findAllFiltered($filter);
+				foreach ($transfertList as $st) {
+					if ( !($warehousesList->contains($st->getWarehouse())) ) {
+						$warehousesList->removeElement($st);
+					}
 				}
-			}
-			// Form to select warehouse
-			$selectWarehouseForm = $formFactory->createBuilder()
-						->add('warehouse', ChoiceType::class, [
-												// 'mapped' => false,
-												'choices' => $user->getWarehouses(),
-												'choice_label' => function (?Warehouse $w): string {
-																	return $w ? ($w->getWarehouseName()) : '';
-																} 
-															])
-						->add('submit', SubmitType::class)
-						->getForm();
-			$selectWarehouseForm->handleRequest($request);
-			if ($selectWarehouseForm->isSubmitted() && $selectWarehouseForm->isValid()) {
-				$selectedWarehouse = $selectWarehouseForm->getData();
-				return $this->redirectToRoute('transferts_by_warehouse', ['id' => $selectedWarehouse['warehouse']->getId(),]);
-			}
-			// form to filter list
-			$filterForm = $formFactory->createBuilder()
-				->add('filter', TextType::class, [
-						'required' => false,
-						'constraints' => [
-								new Regex('/^[a-zA-ZÀ-ÖØ-öø-ÿ0-9]+$/'),
-							]
-					])
-				->add('applyFilter', SubmitType::class)
-				->getForm();
-			$filterForm->handleRequest($request);
-			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-				$data = $filterForm->getData();
-				if ($data['filter'] != '') {
-					return $this->redirectToRoute('transferts', ['filter' => $data['filter']]);
-				} else {
-					return $this->redirectToRoute('transferts');
+				// Form to select warehouse
+				$selectWarehouseForm = $formFactory->createBuilder()
+							->add('warehouse', ChoiceType::class, [
+													// 'mapped' => false,
+													'choices' => $user->getWarehouses(),
+													'choice_label' => function (?Warehouse $w): string {
+																		return $w ? ($w->getWarehouseName()) : '';
+																	} 
+																])
+							->add('submit', SubmitType::class)
+							->getForm();
+				$selectWarehouseForm->handleRequest($request);
+				if ($selectWarehouseForm->isSubmitted() && $selectWarehouseForm->isValid()) {
+					$selectedWarehouse = $selectWarehouseForm->getData();
+					return $this->redirectToRoute('transferts_by_warehouse', ['id' => $selectedWarehouse['warehouse']->getId(),]);
 				}
+				// form to filter list
+				$filterForm = $formFactory->createBuilder()
+					->add('filter', TextType::class, [
+							'required' => false,
+							'constraints' => [
+									new Regex('/^[a-zA-ZÀ-ÖØ-öø-ÿ0-9]+$/'),
+								]
+						])
+					->add('applyFilter', SubmitType::class)
+					->getForm();
+				$filterForm->handleRequest($request);
+				if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+					$data = $filterForm->getData();
+					if ($data['filter'] != '') {
+						return $this->redirectToRoute('transferts', ['filter' => $data['filter']]);
+					} else {
+						return $this->redirectToRoute('transferts');
+					}
+				}
+			} else {
+				// User not allowed
+				return $this->redirectToRoute('');
 			}
 		} else {
 			// User not identified
@@ -135,64 +140,69 @@ final class StockTransfertController extends AbstractController
 		$warehousesList = [];
 		$warehouse = New Warehouse;
 		// if user autentified 
-		if($this->getUser() instanceof User){
-			$userAuthentified = true;
+		if($this->getUser() instanceof User) {
 			// get the user
 			$user = $userRepository->findOneById($this->getUser());
-			// get the current warehouse
-			if ($warehouseRepository->findOneById($id)) {
-				$warehouse = $warehouseRepository->findOneById($id);
-			} else {
-				return $this->redirectToRoute('transferts');
-			}
-			// list of warehouses for the user except from ALL_DATA
-			$warehousesList = $user->getWarehouses();
-			foreach ($warehousesList as $w) {
-				if ($w->getWarehouseName() == 'ALL_DATA') {
-					$warehousesList->removeElement($w);
-				}
-			}
-			// list of transferts for the user and warehouse, filtered
-			$transfertList = $stockTransfertRepository->findByWarehouseFiltered($warehouse, $filter);
-			foreach ($transfertList as $st) {
-				if ( !($warehousesList->contains($st->getWarehouse())) ) {
-					$warehousesList->removeElement($st);
-				}
-			}
-			// Form to select warehouse
-			$selectWarehouseForm = $formFactory->createBuilder()
-			->add('warehouse', ChoiceType::class, [
-				// 'mapped' => false,
-				'choices' => $user->getWarehouses(),
-				'preferred_choices' => [$warehouse],
-				'choice_label' => function (?Warehouse $w): string {return $w ? ($w->getWarehouseName()) : '';} 
-							])
-			->add('submit', SubmitType::class)
-			->getForm();
-			$selectWarehouseForm->handleRequest($request);
-			if ($selectWarehouseForm->isSubmitted() && $selectWarehouseForm->isValid()) {
-				$selectedWarehouse = $selectWarehouseForm->getData();
-				dump($selectedWarehouse);
-				return $this->redirectToRoute('transferts_by_warehouse', ['id' => $selectedWarehouse['warehouse']->getId(),]);
-			}
-			// form to filter list
-			$filterForm = $formFactory->createBuilder()
-				->add('filter', TextType::class, [
-						'required' => false,
-						'constraints' => [
-								new Regex('/^[a-zA-Z0-9_.-]+$/'),
-							]
-					])
-				->add('applyFilter', SubmitType::class)
-				->getForm();
-			$filterForm->handleRequest($request);
-			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-				$data = $filterForm->getData();
-				if ($data['filter'] != '') {
-					return $this->redirectToRoute('transferts_by_warehouse', ['id' => $id, 'filter' => $data['filter']]);
+			if (array_search('ROLE_MANAGER', $user->getRoles()) || array_search('ROLE_ADMIN', $user->getRoles())){
+				$userAuthentified = true;
+				// get the current warehouse
+				if ($warehouseRepository->findOneById($id)) {
+					$warehouse = $warehouseRepository->findOneById($id);
 				} else {
-					return $this->redirectToRoute('transferts_by_warehouse', ['id' => $id]);
+					return $this->redirectToRoute('transferts');
 				}
+				// list of warehouses for the user except from ALL_DATA
+				$warehousesList = $user->getWarehouses();
+				foreach ($warehousesList as $w) {
+					if ($w->getWarehouseName() == 'ALL_DATA') {
+						$warehousesList->removeElement($w);
+					}
+				}
+				// list of transferts for the user and warehouse, filtered
+				$transfertList = $stockTransfertRepository->findByWarehouseFiltered($warehouse, $filter);
+				foreach ($transfertList as $st) {
+					if ( !($warehousesList->contains($st->getWarehouse()) || $warehousesList->contains($st->getLinkedStockTransfert()->getWarehouse()) )) {
+						$warehousesList->removeElement($st);
+					}
+				}
+				// Form to select warehouse
+				$selectWarehouseForm = $formFactory->createBuilder()
+				->add('warehouse', ChoiceType::class, [
+					// 'mapped' => false,
+					'choices' => $user->getWarehouses(),
+					'preferred_choices' => [$warehouse],
+					'choice_label' => function (?Warehouse $w): string {return $w ? ($w->getWarehouseName()) : '';} 
+								])
+				->add('submit', SubmitType::class)
+				->getForm();
+				$selectWarehouseForm->handleRequest($request);
+				if ($selectWarehouseForm->isSubmitted() && $selectWarehouseForm->isValid()) {
+					$selectedWarehouse = $selectWarehouseForm->getData();
+					dump($selectedWarehouse);
+					return $this->redirectToRoute('transferts_by_warehouse', ['id' => $selectedWarehouse['warehouse']->getId(),]);
+				}
+				// form to filter list
+				$filterForm = $formFactory->createBuilder()
+					->add('filter', TextType::class, [
+							'required' => false,
+							'constraints' => [
+									new Regex('/^[a-zA-Z0-9_.-]+$/'),
+								]
+						])
+					->add('applyFilter', SubmitType::class)
+					->getForm();
+				$filterForm->handleRequest($request);
+				if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+					$data = $filterForm->getData();
+					if ($data['filter'] != '') {
+						return $this->redirectToRoute('transferts_by_warehouse', ['id' => $id, 'filter' => $data['filter']]);
+					} else {
+						return $this->redirectToRoute('transferts_by_warehouse', ['id' => $id]);
+					}
+				}
+			} else {
+				// User not allowed
+				return $this->redirectToRoute('');
 			}
 		} else {
 			// User not identified
@@ -222,80 +232,85 @@ final class StockTransfertController extends AbstractController
 		$warehousesList = [];
 		$warehouse = New Warehouse;
 		// if user autentified 
-		if($this->getUser() instanceof User){
+	if($this->getUser() instanceof User) {
+		// get the user
+		$user = $userRepository->findOneById($this->getUser());
+		if (array_search('ROLE_MANAGER', $user->getRoles()) || array_search('ROLE_ADMIN', $user->getRoles())){
 			$userAuthentified = true;
-			// get the user
-			$user = $userRepository->findOneById($this->getUser());
-			// get the current warehouse
-			if ($warehouseRepository->findOneById($id)) {
-				$warehouse = $warehouseRepository->findOneById($id);
-			} else {
-				return $this->redirectToRoute('transferts');
-			}
-			// list of warehouses for the user except from ALL_DATA
-			$warehousesList = $user->getWarehouses();
-			foreach ($warehousesList as $w) {
-				if ($w->getWarehouseName() == 'ALL_DATA') {
-					$warehousesList->removeElement($w);
+				// get the current warehouse
+				if ($warehouseRepository->findOneById($id)) {
+					$warehouse = $warehouseRepository->findOneById($id);
+				} else {
+					return $this->redirectToRoute('transferts');
 				}
-			}
-			// list of warehouses except the actual one
-			$warehouses_Destination = [];
-			foreach ($warehousesList as $w) {
-				if ($w != $warehouse) {
-					array_push($warehouses_Destination, $w);
+				// list of warehouses for the user except from ALL_DATA
+				$warehousesList = $user->getWarehouses();
+				foreach ($warehousesList as $w) {
+					if ($w->getWarehouseName() == 'ALL_DATA') {
+						$warehousesList->removeElement($w);
+					}
 				}
-			}
-			// form
-			$newStockTransfert = new StockTransfert;
-			$formNewTransfert = $formFactory->createBuilder()
-				->add('warehouse_destination', ChoiceType::class, [
-						// 'mapped' => false,
-						'choices' => $warehouses_Destination,
-						'choice_label' => function (?Warehouse $w): string {
-											return $w ? ($w->getWarehouseName()) : '';
-										} 
-					])
-				->add('stock_transfert_message', TextareaType::class, [
-					'constraints' => [
-						new Length([
-							'min' => 3,
-							'minMessage' => 'You must write at least {{ limit }} characters',
-							'max' => 255,
-							'maxMessage' => 'You must write at most {{ limit }} characters',
-						]),
-						new Regex(
-							'/^[0-9A-Za-zÀ-ÖØ-öø-ÿ\'\"()&.\-_\s]+$/', 'You should write letters, numbers, or " \' _ - . &'
-						),
-					]
-				])
-				->add('submit', SubmitType::class, ['label' => 'Create',])
-				->getForm();
-			$formNewTransfert->handleRequest($request);
-			if ($formNewTransfert->isSubmitted() && $formNewTransfert->isValid()) {
-				$data = $formNewTransfert->getData();
-				$dateTime = new DateTimeImmutable();
+				// list of warehouses except the actual one
+				$warehouses_Destination = [];
+				foreach ($warehousesList as $w) {
+					if ($w != $warehouse) {
+						array_push($warehouses_Destination, $w);
+					}
+				}
+				// form
 				$newStockTransfert = new StockTransfert;
-				$newLinkedStockTransfert = new StockTransfert;
-				// FROM
-				$newStockTransfert->setWarehouse($warehouse);
-				$newStockTransfert->setStockTransfertDate($dateTime);
-				$newStockTransfert->setStockTransfertMessage($data['stock_transfert_message']);
-				$newStockTransfert->setStockTransfertOrigin(true);
-				$manager->persist($newStockTransfert);
-				// TO
-				$newLinkedStockTransfert->setWarehouse($data['warehouse_destination']);
-				$newLinkedStockTransfert->setStockTransfertDate($dateTime);
-				$newLinkedStockTransfert->setStockTransfertMessage($data['stock_transfert_message']);
-				$newLinkedStockTransfert->setStockTransfertOrigin(false);
-				$manager->persist($newLinkedStockTransfert);
-				$manager->flush();
-				$newStockTransfert->setLinkedStockTransfert($newLinkedStockTransfert);
-				$newLinkedStockTransfert->setLinkedStockTransfert($newStockTransfert);
-				// $newStockTransfert->setLinkedStockTransfertId($newLinkedStockTransfert->getId());
-				// $newLinkedStockTransfert->setLinkedStockTransfertId($newStockTransfert->getId());
-				$manager->flush();
-				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $newStockTransfert->getId()]);
+				$formNewTransfert = $formFactory->createBuilder()
+					->add('warehouse_destination', ChoiceType::class, [
+							// 'mapped' => false,
+							'choices' => $warehouses_Destination,
+							'choice_label' => function (?Warehouse $w): string {
+												return $w ? ($w->getWarehouseName()) : '';
+											} 
+						])
+					->add('stock_transfert_message', TextareaType::class, [
+						'constraints' => [
+							new Length([
+								'min' => 3,
+								'minMessage' => 'You must write at least {{ limit }} characters',
+								'max' => 255,
+								'maxMessage' => 'You must write at most {{ limit }} characters',
+							]),
+							new Regex(
+								'/^[0-9A-Za-zÀ-ÖØ-öø-ÿ\'\"()&.\-_\s]+$/', 'You should write letters, numbers, or " \' _ - . &'
+							),
+						]
+					])
+					->add('submit', SubmitType::class, ['label' => 'Create',])
+					->getForm();
+				$formNewTransfert->handleRequest($request);
+if ($formNewTransfert->isSubmitted() && $formNewTransfert->isValid()) {
+	$data = $formNewTransfert->getData();
+	$dateTime = new DateTimeImmutable();
+	$newStockTransfert = new StockTransfert;
+	$newLinkedStockTransfert = new StockTransfert;
+	// FROM
+	$newStockTransfert->setWarehouse($warehouse);
+	$newStockTransfert->setStockTransfertDate($dateTime);
+	$newStockTransfert->setStockTransfertMessage($data['stock_transfert_message']);
+	$newStockTransfert->setStockTransfertOrigin(true);
+	$manager->persist($newStockTransfert);
+	// TO
+	$newLinkedStockTransfert->setWarehouse($data['warehouse_destination']);
+	$newLinkedStockTransfert->setStockTransfertDate($dateTime);
+	$newLinkedStockTransfert->setStockTransfertMessage($data['stock_transfert_message']);
+	$newLinkedStockTransfert->setStockTransfertOrigin(false);
+	$manager->persist($newLinkedStockTransfert);
+	$manager->flush();
+	$newStockTransfert->setLinkedStockTransfert($newLinkedStockTransfert);
+	$newLinkedStockTransfert->setLinkedStockTransfert($newStockTransfert);
+	// $newStockTransfert->setLinkedStockTransfertId($newLinkedStockTransfert->getId());
+	// $newLinkedStockTransfert->setLinkedStockTransfertId($newStockTransfert->getId());
+	$manager->flush();
+	return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $newStockTransfert->getId()]);
+}
+			} else {
+				// User not allowed
+				return $this->redirectToRoute('');
 			}
 		} else {
 			// User not identified
@@ -328,115 +343,122 @@ final class StockTransfertController extends AbstractController
 		$warehousesList = [];
 		$warehouse = New Warehouse;
 		// if user autentified 
-		if($this->getUser() instanceof User){
-			$userAuthentified = true;
+		if($this->getUser() instanceof User) {
 			// get the user
 			$user = $userRepository->findOneById($this->getUser());
-			// get the current warehouse
-			if ($warehouseRepository->findOneById($id)) {
-				$warehouse = $warehouseRepository->findOneById($id);
-			} else {
-				return $this->redirectToRoute('transferts');
-			}
-			// list of warehouses for the user except from ALL_DATA
-			$warehousesList = $user->getWarehouses();
-			foreach ($warehousesList as $w) {
-				if ($w->getWarehouseName() == 'ALL_DATA') {
-					$warehousesList->removeElement($w);
-				}
-			}
-			// get the current transfert
-			$stockTransfert = $stockTransfertRepository->findOneById($transfertId);
-			dump($stockTransfert);
-			// All_DATA products list filtered
-			$allData = $warehouseRepository->findOneByWarehouseName('ALL_DATA');
-			foreach ($allData->getProducts() as $product) {
-				if (!(str_contains($product->getProductName(), $filter))) {
-					$allData->removeProduct($product);
-				}
-			}
-			// form to filter list
-			$filterForm = $formFactory->createBuilder()
-				->add('filter', TextType::class, [
-						'required' => false,
-						'constraints' => [
-								new Regex('/^[a-zA-Z0-9_.-]+$/'),
-							]
-					])
-				->add('applyFilter', SubmitType::class)
-				->getForm();
-			$filterForm->handleRequest($request);
-			if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-				$data = $filterForm->getData();
-				if ($data['filter'] != '') {
-					return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId, 'filter' => $data['filter']]);
+			if (array_search('ROLE_MANAGER', $user->getRoles()) || array_search('ROLE_ADMIN', $user->getRoles())){
+				$userAuthentified = true;
+				// get the current warehouse
+				if ($warehouseRepository->findOneById($id)) {
+					$warehouse = $warehouseRepository->findOneById($id);
 				} else {
+					return $this->redirectToRoute('transferts');
+				}
+				// list of warehouses for the user except from ALL_DATA
+				$warehousesList = $user->getWarehouses();
+				foreach ($warehousesList as $w) {
+					if ($w->getWarehouseName() == 'ALL_DATA') {
+						$warehousesList->removeElement($w);
+					}
+				}
+				// get the current transfert
+				$stockTransfert = $stockTransfertRepository->findOneById($transfertId);
+				dump($stockTransfert);
+				// All_DATA products list filtered
+				$allData = $warehouseRepository->findOneByWarehouseName('ALL_DATA');
+				foreach ($allData->getProducts() as $product) {
+					if (!(str_contains($product->getProductName(), $filter))) {
+						$allData->removeProduct($product);
+					}
+				}
+				// form to filter list
+				$filterForm = $formFactory->createBuilder()
+					->add('filter', TextType::class, [
+							'required' => false,
+							'constraints' => [
+									new Regex('/^[a-zA-Z0-9_.-]+$/'),
+								]
+						])
+					->add('applyFilter', SubmitType::class)
+					->getForm();
+				$filterForm->handleRequest($request);
+				if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+					$data = $filterForm->getData();
+					if ($data['filter'] != '') {
+						return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId, 'filter' => $data['filter']]);
+					} else {
+						return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
+					}
+				}
+				// form do update stock transfert
+				$formTransfertDetail = $this->createForm(StockTransfertType::class, $stockTransfert)
+					->add('warehouse_origin', WarehouseType::class, [
+							'mapped' => false,
+							'data' => $stockTransfert->getWarehouse(),
+						])
+					->add('warehouse_destination', WarehouseType::class, [
+							'mapped' => false,
+							'data' => $stockTransfert->getLinkedTransfert()->getWarehouse(),
+						])
+				;
+				// form to select products to add
+				$product = new Product;
+				// Removing products already in the stock transfert
+				$allDataNoDuplicate = $allData;
+				foreach ($stockTransfert->getMovements() as $mvmt) {
+					if ($allData->getProducts()->contains($mvmt->getProduct())) {
+						$allData->getProducts()->removeElement($mvmt->getProduct());
+					}
+				}
+$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true])
+	->add('product', ChoiceType::class, [
+			// 'mapped' => false,
+			'choices' => $allDataNoDuplicate->getProducts(),
+			'choice_label' => function (?Product $p) use ($utils, $stockTransfertRepository, $warehouse) : string {
+								return $p ? ($p->getProductName() . ' | ' . $p->getBrand()->getBrandName() . ' | ' .
+															'Serial : ' . $p->getProductSerialNumber() . ' | ' .
+															'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
+															'Actual Qty : ' . $p->getProductQuantity($utils, $stockTransfertRepository, $warehouse) . ' | ' .
+															'Value : ' . $p->getProductValue() ) : ''; } 
+		])
+	->add('submit', SubmitType::class);
+				$formSelectProductToAdd->handleRequest($request);
+				if ($formSelectProductToAdd->isSubmitted() && $formSelectProductToAdd->isValid() ) {
+					$productAndQty = $formSelectProductToAdd->getData();
+					$product = $productAndQty['product'];
+					$qty = $productAndQty['qty'];
+					if ($qty != 0) {
+						dump($product);
+						dump($qty);
+						$newMovement = new Movement;
+						$newMovement->setProduct($product);
+						$newMovement->setStockTransfert($stockTransfert);
+						$lastquantity = $product->getProductQuantity($utils, $stockTransfertRepository, $warehouse);
+						$newMovement->setLastQty($lastquantity);
+						$newMovement->setMovementQty($qty);
+						$newMovement->setMovementType('STOCK_TRANSFERT');
+						$manager->persist($newMovement);
+						$manager->flush();
+						$warehouse->addProduct($product);
+						$manager->flush();
+						$stockTransfert->getLinkedTransfert()->getWarehouse()->addProduct($product);
+						$manager->flush();
+					}
+					$manager->flush();
 					return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
 				}
-			}
-			// form do update stock transfert
-			$formTransfertDetail = $this->createForm(StockTransfertType::class, $stockTransfert)
-				->add('warehouse_origin', WarehouseType::class, [
-						'mapped' => false,
-						'data' => $stockTransfert->getWarehouse(),
-					])
-				->add('warehouse_destination', WarehouseType::class, [
-						'mapped' => false,
-						'data' => $stockTransfert->getLinkedTransfert()->getWarehouse(),
-					])
-			;
-			// form to select products to add
-			$product = new Product;
-			// Removing products already in the stock transfert
-			$allDataNoDuplicate = $allData;
-			foreach ($stockTransfert->getMovements() as $mvmt) {
-				if ($allData->getProducts()->contains($mvmt->getProduct())) {
-					$allData->getProducts()->removeElement($mvmt->getProduct());
-				}
-			}
-			$formSelectProductToAdd = $this->createForm(QtyType::class, null, ['allow_extra_fields' => true])
-				->add('product', ChoiceType::class, [
-						// 'mapped' => false,
-						'choices' => $allDataNoDuplicate->getProducts(),
-						'choice_label' => function (?Product $p) use ($utils, $stockTransfertRepository, $warehouse) : string {
-											return $p ? ($p->getProductName() . ' | ' . $p->getBrand()->getBrandName() . ' | ' .
-																		'Serial : ' . $p->getProductSerialNumber() . ' | ' .
-																		'Ref : ' . $p->getProductRef() . ' / ' . $p->getProductRef() . ' | ' .
-																		'Actual Qty : ' . $p->getProductQuantity($utils, $stockTransfertRepository, $warehouse) . ' | ' .
-																		'Value : ' . $p->getProductValue() ) : ''; } 
-					])
-				->add('submit', SubmitType::class);
-			$formSelectProductToAdd->handleRequest($request);
-			if ($formSelectProductToAdd->isSubmitted() && $formSelectProductToAdd->isValid() ) {
-				$productAndQty = $formSelectProductToAdd->getData();
-				$product = $productAndQty['product'];
-				$qty = $productAndQty['qty'];
-				if ($qty != 0) {
-					dump($product);
-					dump($qty);
-					$newMovement = new Movement;
-					$newMovement->setProduct($product);
-					$newMovement->setStockTransfert($stockTransfert);
-					$lastquantity = $product->getProductQuantity($utils, $stockTransfertRepository, $warehouse);
-					$newMovement->setLastQty($lastquantity);
-					$newMovement->setMovementQty($qty);
-					$newMovement->setMovementType('STOCK_TRANSFERT');
-					$manager->persist($newMovement);
-					$manager->flush();
-					$warehouse->addProduct($product);
-					$stockTransfert->getLinkedTransfert()->getWarehouse()->addProduct($product);
-				}
-				$manager->flush();
-				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
-			}
-			//* Form for all products selected in the transfert
-			$formSelectedProducts = $this->createForm(ProductCollectionFromStockTransfertType::class, $stockTransfert);
-			$formSelectedProducts->handleRequest($request);
-			if ($formSelectedProducts->isSubmitted() && $formSelectedProducts->isValid() ) {
-				$productReceptionUpdated = $formSelectedProducts->getData();
-				$manager->persist($productReceptionUpdated);
-				$manager->flush();
-				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
+//* Form for all products selected in the transfert
+$formSelectedProducts = $this->createForm(ProductCollectionFromStockTransfertType::class, $stockTransfert);
+$formSelectedProducts->handleRequest($request);
+if ($formSelectedProducts->isSubmitted() && $formSelectedProducts->isValid() ) {
+	$productReceptionUpdated = $formSelectedProducts->getData();
+	$manager->persist($productReceptionUpdated);
+	$manager->flush();
+	return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
+}
+			} else {
+				// User not allowed
+				return $this->redirectToRoute('');
 			}
 		} else {
 			// User not identified
@@ -468,12 +490,25 @@ final class StockTransfertController extends AbstractController
   * @Param integer $movementId - The movement id
   */
 	#[Route('/transferts/{id}/detail/{transfertId}/remove/{movementId}', name: 'delete_transfert_movement', methods: ['GET', 'POST'])]
-	public function removeProductReceptionDetail(EntityManagerInterface $manager, MovementRepository $movementRepository, $id, $transfertId, $movementId): Response
+	public function removeProductReceptionDetail(EntityManagerInterface $manager, UserRepository $userRepository, MovementRepository $movementRepository, $id, $transfertId, $movementId): Response
 	{
-		$movementToDelete = $movementRepository->findOneById($movementId);
-		$manager->remove($movementToDelete);
-		$manager->flush();
-		return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
+				//if user autentified 
+		if($this->getUser() instanceof User) {
+			// get the user
+			$user = $userRepository->findOneById($this->getUser());
+			if (array_search('ROLE_MANAGER', $user->getRoles()) || array_search('ROLE_ADMIN', $user->getRoles())){
+				$movementToDelete = $movementRepository->findOneById($movementId);
+				$manager->remove($movementToDelete);
+				$manager->flush();
+				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
+			} else {
+				// User not allowed
+				return $this->redirectToRoute('');
+			}
+		} else {
+			// User not identified
+			return $this->redirectToRoute('');
+		}
 	}
 
 		/** Route : delete_transfert
@@ -485,42 +520,33 @@ final class StockTransfertController extends AbstractController
 	public function deleteTransfert(EntityManagerInterface $manager, Utils $utils, UserRepository $userRepository, StockTransfertRepository $stockTransfertRepository, $id, $transfertId): Response
 	{
 		//if user autentified 
-		if($this->getUser() instanceof User){
+		if($this->getUser() instanceof User) {
 			// get the user
 			$user = $userRepository->findOneById($this->getUser());
-
-			//if user is admin or manager
-			$userHasRightsToDelete = false;
-			foreach ($user->getRoles() as $role) {
-				if (str_contains($role, 'ROLE_ADMIN') || str_contains($role, 'ROLE_MANAGER')) {
-					$userHasRightsToDelete = true;
-				}
+			if (array_search('ROLE_MANAGER', $user->getRoles()) || array_search('ROLE_ADMIN', $user->getRoles())){
+				//User allowed, proceeding wit the delete action
+//get the current transfert
+$stockTransfert = $stockTransfertRepository->findOneById($transfertId);
+// $linkedStockTransfert = $stockTransfertRepository->findOneById($stockTransfert->getLinkedStockTransfertId());
+$linkedStockTransfert = $stockTransfert->getLinkedStockTransfert();
+$conn = $manager->getConnection();
+// remove aull linked movements
+$sql = '
+				UPDATE stock_transfert
+				SET linked_transfert_id = NULL
+				where id = :id
+				or id = :linkedId
+				';
+$conn->executeQuery($sql, ['id' => $transfertId, 'linkedId' => $linkedStockTransfert->getId()]);
+$manager->remove($stockTransfert);
+$manager->flush();
+$manager->remove($linkedStockTransfert);
+$manager->flush();
+				return $this->redirectToRoute('transferts', ['id' => $id]);
+			} else {
+				// User not allowed
+				return $this->redirectToRoute('');
 			}
-			// User not allowed, no action and back to the transfert detail
-			if (!$userHasRightsToDelete) {
-				return $this->redirectToRoute('transfert_detail', ['id' => $id, 'transfertId' => $transfertId]);
-			}
-			//User allowed, proceeding wit the delete action
-			//get the current transfert
-			$stockTransfert = $stockTransfertRepository->findOneById($transfertId);
-			// $linkedStockTransfert = $stockTransfertRepository->findOneById($stockTransfert->getLinkedStockTransfertId());
-			$linkedStockTransfert = $stockTransfert->getLinkedStockTransfert();
-			$conn = $manager->getConnection();
-			// remove aull linked movements
-			$sql = '
-							UPDATE stock_transfert
-							SET linked_transfert_id = NULL
-							where id = :id
-							or id = :linkedId
-							';
-			$conn->executeQuery($sql, ['id' => $transfertId, 'linkedId' => $linkedStockTransfert->getId()]);
-			$manager->remove($stockTransfert);
-			$manager->flush();
-
-			$manager->remove($linkedStockTransfert);
-
-			$manager->flush();
-			return $this->redirectToRoute('transferts', ['id' => $id]);
 		} else {
 			// User not identified
 			return $this->redirectToRoute('');

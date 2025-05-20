@@ -48,18 +48,14 @@ final class WarehouseController extends AbstractController
 		$userAuthentified = false;
 		$warehousesList = [];
 		$warehouse = New Warehouse;
-		$allproductList = $warehouseRepository->findOneByWarehouseName('ALL_DATA')->getProducts();
 		$warehouseProductList = [];
 		// if user autentified 
 		if($this->getUser() instanceof User){
 			$userAuthentified = true;
 			// get the user
 			$user = $userRepository->findOneById($this->getUser());
-			$warehousesList = $user->getWarehouses();
-			if ($warehouseRepository->findOneById($id)) {
-				$warehouse = $warehouseRepository->findOneById($id);
-			}
-			foreach ($allproductList as $one_product) {
+			$warehouse = $warehouseRepository->findOneById($id);
+			foreach ($warehouse->getProducts() as $one_product) {
 				if ($utils->getProductQuantity($utils, $stockTransfertRepository, $warehouse, $one_product)) {
 					array_push($warehouseProductList, $one_product);
 				}

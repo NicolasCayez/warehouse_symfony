@@ -4,16 +4,8 @@
 use App\Entity\Inventory;
 use App\Entity\Product;
 use App\Entity\Warehouse;
-use App\Repository\InventoryRepository;
-use App\Repository\ProductReceptionRepository;
-use App\Repository\ProductRepository;
-use App\Repository\StockModificationRepository;
 use App\Repository\StockTransfertRepository;
-use DateTime;
 use DateTimeImmutable;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Validator\Constraints\Length;
-
 
 class Utils{
   /** Cleans the user inputs
@@ -126,66 +118,66 @@ class Utils{
     return $qty;
   }
 
-    /** Gets the product quantity for one warehouse, by date
-  * @param Utils $utils
-  * @param Warehouse $warehouse
-  * @param DateTimeImmutable $dateTime
-  * @param Product $product
-  * @return 0|Integer
-  */
-  public static function getProductQuantityByDateTime(
-      Utils $utils,
-      StockTransfertRepository $stockTransfertRepository,
-      Warehouse $warehouse,
-      DateTimeImmutable $dateTime,
-      Product $product
-    ):?int {
-    // Init
-    $latestInventory = $utils->getLatestInventoryByDateTime($warehouse, $dateTime);
-    $qty = 0;
-    foreach ($latestInventory->getMovements() as $mvmt) {
-      if ($mvmt->getProduct() == $product) {
-        $qty = $mvmt->getMovementQty();
+/** Gets the product quantity for one warehouse, by date
+* @param Utils $utils
+* @param Warehouse $warehouse
+* @param DateTimeImmutable $dateTime
+* @param Product $product
+* @return 0|Integer
+*/
+public static function getProductQuantityByDateTime(
+    Utils $utils,
+    StockTransfertRepository $stockTransfertRepository,
+    Warehouse $warehouse,
+    DateTimeImmutable $dateTime,
+    Product $product
+  ):?int {
+  // Init
+  $latestInventory = $utils->getLatestInventoryByDateTime($warehouse, $dateTime);
+  $qty = 0;
+  foreach ($latestInventory->getMovements() as $mvmt) {
+    if ($mvmt->getProduct() == $product) {
+      $qty = $mvmt->getMovementQty();
+    }
+  }
+  // get movements since inventory ang push results in the array
+  foreach ($warehouse->getProductReceptions() as $productReception) {
+    if ($productReception->getProductReceptionDate() > $latestInventory->getInventoryDate()) {
+      foreach ($productReception->getMovements() as $mvmt) {
+        if ($mvmt->getProduct() == $product) {
+          $qty = $qty + $mvmt->getMovementQty();
+        }
       }
     }
-    // get movements since inventory ang push results in the array
-    foreach ($warehouse->getProductReceptions() as $productReception) {
-      if ($productReception->getProductReceptionDate() > $latestInventory->getInventoryDate()) {
-        foreach ($productReception->getMovements() as $mvmt) {
+  }
+  foreach ($warehouse->getStockModifications() as $stockModification) {
+    if ($stockModification->getStockModificationDate() > $latestInventory->getInventoryDate()) {
+      foreach ($stockModification->getMovements() as $mvmt) {
+        if ($mvmt->getProduct() == $product) {
+          $qty = $qty + $mvmt->getNewQty();
+        }
+      }
+    }
+  }
+  foreach ($warehouse->getStockTransferts() as $stockTransfert) {
+    if ($stockTransfert->getStockTransfertDate() > $latestInventory->getInventoryDate()) {
+      if ($stockTransfert->isStockTransfertOrigin()) {
+        foreach ($stockTransfert->getMovements() as $mvmt) {
+          if ($mvmt->getProduct() == $product) {
+            $qty = $qty - $mvmt->getMovementQty();
+          }
+        }
+      } else {
+        foreach ($stockTransfert->getLinkedStockTransfert($stockTransfertRepository)->getMovements() as $mvmt) {
           if ($mvmt->getProduct() == $product) {
             $qty = $qty + $mvmt->getMovementQty();
           }
         }
       }
     }
-    foreach ($warehouse->getStockModifications() as $stockModification) {
-      if ($stockModification->getStockModificationDate() > $latestInventory->getInventoryDate()) {
-        foreach ($stockModification->getMovements() as $mvmt) {
-          if ($mvmt->getProduct() == $product) {
-            $qty = $qty + $mvmt->getNewQty();
-          }
-        }
-      }
-    }
-    foreach ($warehouse->getStockTransferts() as $stockTransfert) {
-      if ($stockTransfert->getStockTransfertDate() > $latestInventory->getInventoryDate()) {
-        if ($stockTransfert->isStockTransfertOrigin()) {
-          foreach ($stockTransfert->getMovements() as $mvmt) {
-            if ($mvmt->getProduct() == $product) {
-              $qty = $qty - $mvmt->getMovementQty();
-            }
-          }
-        } else {
-          foreach ($stockTransfert->getLinkedStockTransfert($stockTransfertRepository)->getMovements() as $mvmt) {
-            if ($mvmt->getProduct() == $product) {
-              $qty = $qty + $mvmt->getMovementQty();
-            }
-          }
-        }
-      }
-    }
-    return $qty;
   }
+  return $qty;
+}
 
 }
 

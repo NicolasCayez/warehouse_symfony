@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Warehouse;
 use App\Repository\UserRepository;
-use App\Repository\WarehouseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +39,6 @@ final class HomeController extends AbstractController
 			'route_name' => $routeName,
 			'user_authentified' => $userAuthentified,
 			'user_warehouses' => $warehousesList,
-			// 'warehouse' => $warehouse,
 		]);
 	}
 }
