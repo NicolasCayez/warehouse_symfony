@@ -59,4 +59,4 @@ jobs:
     - name: Run functionnal and unit tests
       env:
         DATABASE_URL: mysql://root:root@127.0.0.1:3306/warehouse_symfony?serverVersion=10.11.2-MariaDB&charset=utf8mb4
-      run: vendor/bin/phpunit
+      run: importmap:install | vendor/bin/phpunit
