@@ -1,0 +1,65 @@
+name: Symfony Cypress
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    services:
+      # https://docs.docker.com/samples/library/mysql/
+      mysql:
+        image: mariadb:10.11.2
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+    # uses: shivammathur/setup-php@v2
+    - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
+      with:
+        php-version: '8.2'
+    - uses: actions/checkout@v4
+    - name: Copy .env.test.local
+      run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+    - name: Install Dependencies
+      run: composer install -q --no-interaction --no-progress
+      # run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Create Database
+      run: |
+        mkdir -p data
+        touch data/database.sqlite
+    ## —— Tests  ———————————————————————————————————————————————————————————
+    - name: create database
+      env:
+        DATABASE_URL: mysql://root:root@127.0.0.1:3306/warehouse_symfony_test?serverVersion=10.11.2-MariaDB&charset=utf8mb4
+      run: php bin/console doctrine:database:create
+    - name: migration
+      env:
+        DATABASE_URL: mysql://root:root@127.0.0.1:3306/warehouse_symfony?serverVersion=10.11.2-MariaDB&charset=utf8mb4
+      run: php bin/console d:m:m --no-interaction --env=test
+    - name: fixtures
+      env:
+        DATABASE_URL: mysql://root:root@127.0.0.1:3306/warehouse_symfony?serverVersion=10.11.2-MariaDB&charset=utf8mb4
+      run: php bin/console d:f:l --no-interaction --env=test
+    - name: Cypress run
+      uses: cypress-io/github-action@v6
+      with:
+        build: npm run build
+        start: npm start
+        browser: chrome
