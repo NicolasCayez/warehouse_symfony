@@ -1,4 +1,4 @@
-name: Symfony
+name: Symfony phpUnit
 
 on:
   push:
@@ -62,6 +62,3 @@ jobs:
         vendor_dir: '%kernel.project_dir%/assets/vendors'
         DATABASE_URL: mysql://root:root@127.0.0.1:3306/warehouse_symfony?serverVersion=10.11.2-MariaDB&charset=utf8mb4
       run: vendor/bin/phpunit
-    ## —— Cypress  ———————————————————————————————————————————————————————————
-    - name: cypress test
-      run: npm run ./node_modules/.bin/cypress run --browser chrome
