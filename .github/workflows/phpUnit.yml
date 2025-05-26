@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  symfony:
+  symfony-PhpUnit:
     runs-on: ubuntu-latest
     services:
       # https://docs.docker.com/samples/library/mysql/
