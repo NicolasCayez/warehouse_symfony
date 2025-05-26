@@ -23,7 +23,6 @@ jobs:
         php-versions: ['8.2']
     steps:
       # —— Setup Github actions —————————————————————————————————————————————
-      # https://github.com/actions/checkout (official)
       - name: Checkout
         uses: actions/checkout@v4
       - name: Copy .env.test.local
