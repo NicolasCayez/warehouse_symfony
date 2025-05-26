@@ -49,7 +49,7 @@ jobs:
     # We use the dev env here
     - name: Load Doctrine migrations
       run: |
-        make load-migration
+        symfony console d:m:m -y
     - name: Load Doctrine fixtures
       run: |
         make load-fixtures
