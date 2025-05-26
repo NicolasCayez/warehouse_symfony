@@ -64,4 +64,4 @@ jobs:
       run: vendor/bin/phpunit
     ## —— Cypress  ———————————————————————————————————————————————————————————
     - name: cypress test
-      run: ./node_modules/.bin/cypress run --browser chrome
+      run: npm run ./node_modules/.bin/cypress run --browser chrome
