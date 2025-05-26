@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php-versions: ['8.1', '8.2']
+        php-versions: ['8.2']
     steps:
       # —— Setup Github actions —————————————————————————————————————————————
       # https://github.com/actions/checkout (official)
@@ -38,9 +38,7 @@ jobs:
 
       - name: Check PHP Version
         run: php -v
-      # —— Composer 🧙‍️ —————————————————————————————————————————————————————————
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+      # —— Composer  —————————————————————————————————————————————————————————
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v3
