@@ -225,7 +225,7 @@ final class StockTransfertController extends AbstractController
   * @Param integer $id - The warehouse id
   */
 	#[Route('/transferts/{id}/new', name: 'new_transfert', methods: ['GET', 'POST'])]
-	public function newTransfert(Request $request, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, $id): Response
+	public function newTransfert(Request $request, Utils $utils, FormFactoryInterface $formFactory, EntityManagerInterface $manager, UserRepository $userRepository, WarehouseRepository $warehouseRepository, $id): Response
 	{
 		$userAuthentified = false;
 		$routeName = $request->attributes->get('_route');
@@ -251,10 +251,10 @@ final class StockTransfertController extends AbstractController
 					}
 				}
 				// list of warehouses except the actual one
-				$warehouses_Destination = [];
+				$warehousesDestination = [];
 				foreach ($warehousesList as $w) {
 					if ($w != $warehouse) {
-						array_push($warehouses_Destination, $w);
+						array_push($warehousesDestination, $w);
 					}
 				}
 				// form
@@ -262,7 +262,7 @@ final class StockTransfertController extends AbstractController
 				$formNewTransfert = $formFactory->createBuilder()
 					->add('warehouse_destination', ChoiceType::class, [
 							// 'mapped' => false,
-							'choices' => $warehouses_Destination,
+							'choices' => $warehousesDestination,
 							'choice_label' => function (?Warehouse $w): string {
 												return $w ? ($w->getWarehouseName()) : '';
 											} 
@@ -291,13 +291,13 @@ if ($formNewTransfert->isSubmitted() && $formNewTransfert->isValid()) {
 	// FROM
 	$newStockTransfert->setWarehouse($warehouse);
 	$newStockTransfert->setStockTransfertDate($dateTime);
-	$newStockTransfert->setStockTransfertMessage($data['stock_transfert_message']);
+	$newStockTransfert->setStockTransfertMessage($utils->cleanInputStatic($data['stock_transfert_message']));
 	$newStockTransfert->setStockTransfertOrigin(true);
 	$manager->persist($newStockTransfert);
 	// TO
 	$newLinkedStockTransfert->setWarehouse($data['warehouse_destination']);
 	$newLinkedStockTransfert->setStockTransfertDate($dateTime);
-	$newLinkedStockTransfert->setStockTransfertMessage($data['stock_transfert_message']);
+	$newLinkedStockTransfert->setStockTransfertMessage($utils->cleanInputStatic($data['stock_transfert_message']));
 	$newLinkedStockTransfert->setStockTransfertOrigin(false);
 	$manager->persist($newLinkedStockTransfert);
 	$manager->flush();
