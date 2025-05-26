@@ -44,7 +44,10 @@ jobs:
         mkdir -p data
         touch data/database.sqlite
     - name: migration
-      run: symfony console d:m:m -y
+      uses: "nucleos/symfony-console-action@1.0.0"
+      env:
+        kernel: "App\\Kernel"
+        command: "symfony console d:m:m -y"
     - name: fixtures
       run: symfony console d:f:l -y
     - name: Execute tests (Unit and Feature tests) via PHPUnit
