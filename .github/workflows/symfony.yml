@@ -47,9 +47,9 @@ jobs:
 
     ## —— Tests  ———————————————————————————————————————————————————————————
     - name: Load Doctrine fixtures
-      run: php bin/console d:m:m -y
+      run: php bin/console d:m:m --no-interaction
     - name: Load Doctrine fixtures
-      run: php bin/console d:f:l -y
+      run: php bin/console d:f:l --no-interaction
     - name: Run functionnal and unit tests
       run: |
         cp phpunit.xml.ci phpunit.xml
