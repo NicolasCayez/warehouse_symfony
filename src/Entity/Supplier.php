@@ -24,7 +24,7 @@ class Supplier
     #[ORM\Column(length: 50)]
     private ?string $supplierName = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(length: 25, nullable: true)]
     private ?string $supplierPhone = null;
 
     #[ORM\Column(nullable: true)]

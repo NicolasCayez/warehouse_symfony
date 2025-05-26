@@ -24,7 +24,7 @@ class Warehouse
     #[ORM\Column(length: 50)]
     private ?string $warehouseName = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(length: 25, nullable: true)]
     private ?string $warehousePhone = null;
 
     #[ORM\Column(nullable: true)]
