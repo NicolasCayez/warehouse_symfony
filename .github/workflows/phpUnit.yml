@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   symfony-PhpUnit:
+
     runs-on: ubuntu-latest
     services:
       # https://docs.docker.com/samples/library/mysql/
@@ -38,10 +39,10 @@ jobs:
     - name: Install Dependencies
       run: composer install -q --no-interaction --no-progress
       # run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-    - name: Create Database
-      run: |
-        mkdir -p data
-        touch data/database.sqlite
+    #- name: Create Database
+      #run: |
+        #mkdir -p data
+        #touch data/database.sqlite
     ## —— Tests  ———————————————————————————————————————————————————————————
     - name: create database
       env:
